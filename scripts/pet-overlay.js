@@ -190,17 +190,34 @@ function run(argv) {
     label.setShadow(shadow);
     return label;
   }
+
+  function cg(r, g, b, a) { return $.NSColor.colorWithSRGBRedGreenBlueAlpha(r, g, b, a).CGColor; }
+
+  // Dark translucent pill behind the caption block so the light text stays
+  // readable over any background (the pet floats over white apps too).
+  var pill = $.CAShapeLayer.layer;
+  pill.setPath($.CGPathCreateWithRoundedRect($.CGRectMake(16, 2, winW - 32, 48), 12, 12, null));
+  pill.setFillColor(cg(0.07, 0.08, 0.12, 0.62));
+  win.contentView.layer.addSublayer(pill);
+
   var nameLabel = makeLabel(30, 12, true, 0.95, 0.78, 0.45, 0.95);
-  var moodLabel = makeLabel(6, 10, false, 0.80, 0.84, 0.98, 0.92);
+  var moodLabel = makeLabel(6, 10, false, 0.86, 0.89, 1.0, 0.95);
   win.contentView.addSubview(nameLabel);
   win.contentView.addSubview(moodLabel);
 
+  // setAlignment proved unreliable here — center deterministically by
+  // sizing the label to its text and placing the frame at the midpoint.
+  function centerLabel(label) {
+    label.sizeToFit;
+    var f = label.frame;
+    label.setFrameOrigin($.NSMakePoint((winW - f.size.width) / 2, f.origin.y));
+  }
+
   // EXP bar: progress to next evolution
   var EXPW = 110, EXPH = 4, expX = (winW - EXPW) / 2, expY = 25;
-  function cg(r, g, b, a) { return $.NSColor.colorWithSRGBRedGreenBlueAlpha(r, g, b, a).CGColor; }
   var expTrack = $.CAShapeLayer.layer;
   expTrack.setPath($.CGPathCreateWithRoundedRect($.CGRectMake(expX, expY, EXPW, EXPH), 2, 2, null));
-  expTrack.setFillColor(cg(0.28, 0.30, 0.42, 0.85));
+  expTrack.setFillColor(cg(0.50, 0.53, 0.68, 0.95)); // light enough to read on the dark pill
   win.contentView.layer.addSublayer(expTrack);
   var expFill = $.CAShapeLayer.layer;
   expFill.setFillColor(cg(0.49, 0.81, 1.0, 0.95));
@@ -240,6 +257,8 @@ function run(argv) {
       ? '어라…!? ' + dispName(evolveName) + '의 모습이…!'
       : 'What? ' + evolveName.toUpperCase() + ' is evolving!';
     moodLabel.setStringValue($(Date.now() < evolveUntil ? evolveMsg : moodText(p)));
+    centerLabel(nameLabel);
+    centerLabel(moodLabel);
     setExp(p);
     win.setAlphaValue(p.state === 'idle' ? 0.55 : 1.0);
   }
