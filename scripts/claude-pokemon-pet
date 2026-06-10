@@ -2,6 +2,8 @@
 # claude-pokemon-pet — Pokémon pet overlay for Claude Code.
 # Usage: claude-pokemon-pet [toggle|on|off|random|pet <name>|sprites|status|autostart]
 
+# Homebrew may be missing from PATH when hooks run from GUI-launched apps
+export PATH="/opt/homebrew/bin:/usr/local/bin:$PATH"
 # Resolve symlinks (e.g. a PATH symlink to this script) before finding ROOT
 SELF="$(readlink -f "$0" 2>/dev/null || echo "$0")"
 ROOT="$(cd "$(dirname "$SELF")/.." && pwd)"
