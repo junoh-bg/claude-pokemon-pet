@@ -70,7 +70,7 @@ The command is namespaced by plugin name: `/claude-pokemon-pet:pet`. Type
 ```
 /claude-pokemon-pet:pet            toggle the overlay
 /claude-pokemon-pet:pet random     roll a new random partner
-/claude-pokemon-pet:pet mew        switch to a specific pokémon (eevee picks a random branch)
+/claude-pokemon-pet:pet pikachu    switch to a specific pokémon (eevee picks a random branch)
 /claude-pokemon-pet:pet lang ko    switch language (ko | en | auto)
 /claude-pokemon-pet:pet status     show partner, state, and today's task count
 ```
