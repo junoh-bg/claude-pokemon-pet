@@ -205,6 +205,15 @@ Hook events: `UserPromptSubmit` → thinking, `PostToolUse` → working,
 hello + overlay autostart. All state lives in `~/.cache/claude-pokemon-pet/`; the
 plugin directory itself is never written to.
 
+## Privacy & security
+
+This plugin runs entirely on your machine. It downloads Pokémon sprites from
+[PokeAPI](https://github.com/PokeAPI/sprites) once on first run and makes no
+other network calls. It collects no data and sends nothing anywhere. All it
+writes is session state and your sprite cache under `~/.cache/claude-pokemon-pet/`.
+The overlay is a local `osascript` window; the hooks are small shell scripts
+you can read in `scripts/`.
+
 ## Credits
 
 Sprites are fetched at install time from
