@@ -129,6 +129,17 @@ Tunables at the top of `scripts/pet-overlay.js`:
 | `BOTTOM_OFFSET` | 30 | default distance from the bottom screen edge (px) |
 | `ROAM` | 240 | how far it wanders while working (px) |
 
+## Updating
+
+The marketplace is a local clone of this repo, and `/plugin install` resolves
+from that clone — it does not fetch from GitHub by itself. To update:
+
+```
+/plugin marketplace update claude-pokemon-pet
+/plugin install claude-pokemon-pet@claude-pokemon-pet
+/reload-plugins
+```
+
 ## Troubleshooting
 
 - **No pet after install** — run `<plugin-dir>/scripts/claude-pokemon-pet status`.
