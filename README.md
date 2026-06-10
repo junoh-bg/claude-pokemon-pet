@@ -131,9 +131,6 @@ Tunables at the top of `scripts/pet-overlay.js`:
 
 ## Updating
 
-The marketplace is a local clone of this repo, and `/plugin install` resolves
-from that clone — it does not fetch from GitHub by itself. To update:
-
 ```
 /plugin marketplace update claude-pokemon-pet
 /plugin install claude-pokemon-pet@claude-pokemon-pet
