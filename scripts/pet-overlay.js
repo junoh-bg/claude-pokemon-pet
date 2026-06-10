@@ -223,9 +223,16 @@ function run(argv) {
   expFill.setFillColor(cg(0.49, 0.81, 1.0, 0.95));
   win.contentView.layer.addSublayer(expFill);
   function setExp(p) {
-    var frac = p.final ? 1 :
-      p.stage === 2 ? (p.tasks - EVO2) / (EVO3 - EVO2) : p.tasks / EVO2;
+    var frac;
+    if (p.final) {
+      // Fully evolved: EXP keeps gathering — gold bar refills every 10 levels
+      var base = p.mons.length === 3 ? EVO3 : p.mons.length === 2 ? EVO2 : 0;
+      frac = ((p.tasks - base) % 10) / 10;
+    } else {
+      frac = p.stage === 2 ? (p.tasks - EVO2) / (EVO3 - EVO2) : p.tasks / EVO2;
+    }
     frac = Math.max(0.02, Math.min(1, frac));
+    expFill.setFillColor(p.final ? cg(1.0, 0.82, 0.25, 0.95) : cg(0.49, 0.81, 1.0, 0.95));
     expFill.setPath($.CGPathCreateWithRoundedRect(
       $.CGRectMake(expX, expY, EXPW * frac, EXPH), 2, 2, null));
   }
