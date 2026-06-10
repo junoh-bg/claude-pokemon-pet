@@ -2,7 +2,9 @@
 # claude-pet — Pokémon pet overlay for Claude Code.
 # Usage: claude-pet [toggle|on|off|random|pet <name>|sprites|status|autostart]
 
-ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+# Resolve symlinks (e.g. a PATH symlink to this script) before finding ROOT
+SELF="$(readlink -f "$0" 2>/dev/null || echo "$0")"
+ROOT="$(cd "$(dirname "$SELF")/.." && pwd)"
 CACHE="$HOME/.cache/claude-pet"
 CHAINS="$ROOT/data/chains.json"
 mkdir -p "$CACHE"
