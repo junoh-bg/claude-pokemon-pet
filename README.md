@@ -53,9 +53,10 @@ brew install jq gifsicle
    /plugin install claude-pokemon-pet@claude-pokemon-pet
    ```
 
-3. Start a new Claude Code session.
+3. Run `/reload-plugins` to activate it in the current session (or just
+   start a new session).
 
-On the first session, sprites for all 151 gen-1 Pokémon are downloaded
+On first activation, sprites for all 151 gen-1 Pokémon are downloaded
 (~5 MB, one time, a few seconds) and your first partner appears in the
 bottom-right corner of the screen your mouse is on.
 

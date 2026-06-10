@@ -13,6 +13,23 @@ mkdir -p "$CACHE"
 
 pid()   { pgrep -f "pet-overlay.js" | head -1; }
 stop()  { pkill -f "pet-overlay.js" 2>/dev/null; echo "overlay: off"; }
+
+# Spawn exactly one overlay. mkdir is atomic, so when two sessions' hooks race
+# only one wins the lock — prevents two overlays stacking on top of each other.
+launch() {
+    local lock="$CACHE/.launch.lock"
+    if [ -d "$lock" ]; then   # clear a lock leaked by a killed process
+        local age=$(( $(date +%s) - $(stat -f %m "$lock" 2>/dev/null || echo 0) ))
+        [ "$age" -gt 30 ] && rmdir "$lock" 2>/dev/null
+    fi
+    mkdir "$lock" 2>/dev/null || return 0   # another launch already in progress
+    if [ -z "$(pid)" ]; then
+        nohup osascript -l JavaScript "$ROOT/scripts/pet-overlay.js" "$ROOT" >/dev/null 2>&1 &
+        sleep 0.5   # let it register so a concurrent caller sees the pid
+    fi
+    rmdir "$lock" 2>/dev/null
+}
+
 start() {
     for dep in jq gifsicle osascript; do
         command -v "$dep" >/dev/null || { echo "claude-pokemon-pet: missing dependency: $dep (brew install jq gifsicle)" >&2; exit 1; }
@@ -21,9 +38,9 @@ start() {
     # Daily gacha: roll a new partner on the first start of the day.
     # The partner never changes while the overlay is running.
     if [ "$(cat "$CACHE/pet-date" 2>/dev/null)" != "$(date +%F)" ]; then
-        set_chain $(( RANDOM % $(jq length "$CHAINS") ))
+        set_chain $(( RANDOM % $(jq length "$CHAINS") )) >/dev/null
     fi
-    nohup osascript -l JavaScript "$ROOT/scripts/pet-overlay.js" "$ROOT" >/dev/null 2>&1 &
+    launch
     echo "overlay: on"
 }
 
