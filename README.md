@@ -22,13 +22,15 @@ completed task, and evolves along its real evolution chain.
   Mac (every app, window, and Space), not just the terminal. It is
   click-through, so it never steals clicks or focus. Hold ⌥ (Option) and
   drag to put it wherever you like.
+- **English & Korean** — names and battle text follow your system language,
+  with official Korean names for all 151 Pokémon (`피카츄의 10만볼트!`).
 
 ## Requirements
 
 | Requirement | Why |
 |---|---|
 | macOS | the overlay is a native AppKit window (JXA) |
-| Claude Code with plugin support | hooks + `/pet` command register via the plugin system |
+| Claude Code with plugin support | hooks + `/claude-pokemon-pet:pet` command register via the plugin system |
 | [`jq`](https://jqlang.github.io/jq/) | the CLI reads the evolution-chain data (JSON) from shell |
 | [`gifsicle`](https://www.lcdf.org/gifsicle/) | upscales sprites pixel-perfect (nearest-neighbor) and builds mirrored walking frames |
 
@@ -57,16 +59,16 @@ bottom-right corner of the screen your mouse is on.
 
 ## Usage
 
-### `/pet` from Claude Code
+### Slash command
 
-Plugin commands are namespaced by plugin name, so the full form is
-`/claude-pokemon-pet:pet` — typing `/pet` and picking it from the
-autocomplete menu gets you there:
+The command is namespaced by plugin name: `/claude-pokemon-pet:pet`. Type
+`/pet` and pick it from the autocomplete menu to get there.
 
 ```
 /claude-pokemon-pet:pet            toggle the overlay
 /claude-pokemon-pet:pet random     roll a new random partner
 /claude-pokemon-pet:pet mew        switch to a specific pokémon (eevee picks a random branch)
+/claude-pokemon-pet:pet lang ko    switch language (ko | en | auto)
 /claude-pokemon-pet:pet status     show partner, state, and today's task count
 ```
 
@@ -76,7 +78,7 @@ The same commands are available from your shell via the bundled CLI:
 
 ```sh
 ~/.claude/plugins/marketplaces/claude-pokemon-pet/scripts/claude-pokemon-pet \
-    [toggle|on|off|random|pet <name>|sprites|status]
+    [toggle|on|off|random|pet <name>|lang <ko|en|auto>|sprites|status]
 ```
 
 Optionally symlink it onto your PATH and bind a tmux key:
@@ -131,7 +133,8 @@ claude-pokemon-pet lang en     # force English
 claude-pokemon-pet lang auto   # follow the system again
 ```
 
-Korean names also work when picking a partner: `pet 파이리`.
+Korean names also work when picking a partner: `pet 파이리`. (The English
+captions shown elsewhere in this README appear in Korean when `lang` is `ko`.)
 
 ## Configuration
 
@@ -147,19 +150,25 @@ Tunables at the top of `scripts/pet-overlay.js`:
 
 ```
 /plugin marketplace update claude-pokemon-pet
-/plugin install claude-pokemon-pet@claude-pokemon-pet
 /reload-plugins
 ```
 
+`marketplace update` pulls the latest release and bumps the installed
+version; `reload-plugins` applies it to the current session.
+
 ## Troubleshooting
 
-- **No pet after install** — run `<plugin-dir>/scripts/claude-pokemon-pet status`.
-  Most common cause: missing `jq`/`gifsicle` (the CLI prints which).
+The CLI lives at
+`~/.claude/plugins/marketplaces/claude-pokemon-pet/scripts/claude-pokemon-pet`
+(referred to below as `claude-pokemon-pet`).
+
+- **No pet after install** — run `claude-pokemon-pet status`. Most common
+  cause: missing `jq`/`gifsicle` (the CLI prints which).
 - **Pet on the wrong screen** — it spawns on the screen your mouse is on at
   start. Toggle it off and on with the mouse on the right screen, or ⌥-drag
   it anywhere, including across displays.
 - **Reset position** — `rm ~/.cache/claude-pokemon-pet/pos`, then restart the pet.
-- **Re-download sprites** — `<plugin-dir>/scripts/claude-pokemon-pet sprites`.
+- **Re-download sprites** — `claude-pokemon-pet sprites`.
 - **Full reset** (level, partner, position, sprites) —
   `rm -r ~/.cache/claude-pokemon-pet`, then start a new session.
 
@@ -187,6 +196,7 @@ rm -f /opt/homebrew/bin/claude-pokemon-pet
 | `scripts/get-sprites.sh` | downloads sprites, builds nearest-neighbor upscales + mirrored variants |
 | `data/chains.json` | 81 gen-1 evolution chains + primary type (drives evolution and move pool) |
 | `data/gen1.txt` | dex number ↔ name |
+| `data/lang-ko.json` | official Korean names + move translations |
 
 Hook events: `UserPromptSubmit` → thinking, `PostToolUse` → working,
 `Stop` → done (+1 task), `PermissionRequest` → waiting, `SessionStart` →
