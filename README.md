@@ -13,8 +13,9 @@ with every completed task, and evolves along its real evolution chain.
 - **Levels & evolves** — Lv = tasks Claude completed today (resets daily).
   Evolves at Lv.6 and Lv.16, with an EXP bar and a proper
   `What? CHARMANDER is evolving!` moment.
-- **New partner daily** — one of 81 gen-1 evolution chains is rolled each
-  day (Magikarp days build character). `/pet random` rerolls anytime.
+- **Daily gacha** — one of 81 gen-1 evolution chains is rolled the first
+  time the overlay starts each day (Magikarp days build character). Your
+  partner never changes mid-run; `/pet random` rerolls anytime.
 - **Stays out of the way** — click-through, always-on-top, no background
   card. Hold ⌥ and drag to reposition; the spot is remembered.
 

@@ -51,11 +51,9 @@ function run(argv) {
 
   var chains = JSON.parse(readFile(ROOT + '/data/chains.json'));
 
+  // The partner never changes mid-run; the daily gacha roll happens in the
+  // CLI when the overlay starts (claude-pet start/autostart).
   function currentChain() {
-    if (readFile(CACHE + '/pet-date') !== today()) {  // daily random roll
-      writeFile(CACHE + '/pet', String(Math.floor(Math.random() * chains.length)));
-      writeFile(CACHE + '/pet-date', today());
-    }
     var idx = parseInt(readFile(CACHE + '/pet'), 10);
     if (isNaN(idx) || idx < 0 || idx >= chains.length) idx = 1; // charmander
     return chains[idx];

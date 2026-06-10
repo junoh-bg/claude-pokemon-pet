@@ -14,6 +14,11 @@ start() {
         command -v "$dep" >/dev/null || { echo "claude-pet: missing dependency: $dep (brew install jq gifsicle)" >&2; exit 1; }
     done
     [ -f "$CACHE/sprites-big/mew.gif" ] || "$ROOT/scripts/get-sprites.sh"
+    # Daily gacha: roll a new partner on the first start of the day.
+    # The partner never changes while the overlay is running.
+    if [ "$(cat "$CACHE/pet-date" 2>/dev/null)" != "$(date +%F)" ]; then
+        set_chain $(( RANDOM % $(jq length "$CHAINS") ))
+    fi
     nohup osascript -l JavaScript "$ROOT/scripts/pet-overlay.js" "$ROOT" >/dev/null 2>&1 &
     echo "overlay: on"
 }
