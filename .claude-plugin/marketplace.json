@@ -1,5 +1,6 @@
 {
   "name": "claude-pokemon-pet",
+  "description": "A floating Pokémon companion that lives on your screen and reacts to your Claude Code sessions.",
   "owner": { "name": "junoh-bg", "url": "https://github.com/junoh-bg" },
   "plugins": [
     {
