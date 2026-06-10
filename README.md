@@ -4,7 +4,9 @@ A floating Pokémon companion for Claude Code (macOS). A random gen-1 Pokémon
 appears on your screen, reacts to what Claude is doing, levels up with every
 completed task, and evolves along its real evolution chain.
 
-![charizard](https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/6.gif)
+<p align="center">
+  <img src="assets/demo.gif" width="720" alt="claude-pokemon-pet — a Charizard reacting to a Claude Code session">
+</p>
 
 ## Features
 
