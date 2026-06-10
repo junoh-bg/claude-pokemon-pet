@@ -17,7 +17,7 @@ completed task, and evolves along its real evolution chain.
   and a proper `What? CHARMANDER is evolving!` moment.
 - **Daily gacha** — one of 81 gen-1 evolution chains is rolled the first time
   the overlay starts each day (Magikarp days build character). Your partner
-  never changes mid-run; reroll anytime with `/pet random`.
+  never changes mid-run; reroll anytime with the `pet random` command.
 - **Stays out of the way** — click-through and always-on-top, so it never
   steals clicks or focus. Hold ⌥ (Option) and drag to reposition; the spot
   is remembered across restarts.
@@ -58,11 +58,15 @@ bottom-right corner of the screen your mouse is on.
 
 ### `/pet` from Claude Code
 
+Plugin commands are namespaced by plugin name, so the full form is
+`/claude-pokemon-pet:pet` — typing `/pet` and picking it from the
+autocomplete menu gets you there:
+
 ```
-/pet            toggle the overlay
-/pet random     roll a new random partner
-/pet mew        switch to a specific pokémon (eevee picks a random branch)
-/pet status     show partner, state, and today's task count
+/claude-pokemon-pet:pet            toggle the overlay
+/claude-pokemon-pet:pet random     roll a new random partner
+/claude-pokemon-pet:pet mew        switch to a specific pokémon (eevee picks a random branch)
+/claude-pokemon-pet:pet status     show partner, state, and today's task count
 ```
 
 ### CLI
@@ -70,15 +74,14 @@ bottom-right corner of the screen your mouse is on.
 The same commands are available from your shell via the bundled CLI:
 
 ```sh
-<plugin-dir>/scripts/claude-pet [toggle|on|off|random|pet <name>|sprites|status]
+~/.claude/plugins/marketplaces/claude-pokemon-pet/scripts/claude-pet \
+    [toggle|on|off|random|pet <name>|sprites|status]
 ```
 
-Find your plugin directory with `ls ~/.claude/plugins` (it is the directory
-containing `scripts/claude-pet`). Optionally symlink it onto your PATH and
-bind a tmux key:
+Optionally symlink it onto your PATH and bind a tmux key:
 
 ```sh
-ln -s <plugin-dir>/scripts/claude-pet /opt/homebrew/bin/claude-pet
+ln -s ~/.claude/plugins/marketplaces/claude-pokemon-pet/scripts/claude-pet /opt/homebrew/bin/claude-pet
 ```
 
 ```tmux
@@ -87,7 +90,7 @@ bind P run-shell "/opt/homebrew/bin/claude-pet toggle"
 ```
 
 `claude-pet off` also disables the session autostart until you run
-`claude-pet on` (or `/pet`) again.
+`claude-pet on` (or toggle via the slash command) again.
 
 ### Moods
 
@@ -115,7 +118,7 @@ Tunables at the top of `scripts/pet-overlay.js`:
 - **No pet after install** — run `<plugin-dir>/scripts/claude-pet status`.
   Most common cause: missing `jq`/`gifsicle` (the CLI prints which).
 - **Pet on the wrong screen** — it spawns on the screen your mouse is on at
-  start. `/pet` twice (off/on) with the mouse on the right screen, or ⌥-drag
+  start. Toggle it off and on with the mouse on the right screen, or ⌥-drag
   it anywhere, including across displays.
 - **Reset position** — `rm ~/.cache/claude-pet/pos`, then restart the pet.
 - **Re-download sprites** — `<plugin-dir>/scripts/claude-pet sprites`.
