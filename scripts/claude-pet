@@ -1,0 +1,54 @@
+#!/bin/bash
+# claude-pet — Pokémon pet overlay for Claude Code.
+# Usage: claude-pet [toggle|on|off|random|pet <name>|sprites|status|autostart]
+
+ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+CACHE="$HOME/.cache/claude-pet"
+CHAINS="$ROOT/data/chains.json"
+mkdir -p "$CACHE"
+
+pid()   { pgrep -f "pet-overlay.js" | head -1; }
+stop()  { pkill -f "pet-overlay.js" 2>/dev/null; echo "overlay: off"; }
+start() {
+    for dep in jq gifsicle osascript; do
+        command -v "$dep" >/dev/null || { echo "claude-pet: missing dependency: $dep (brew install jq gifsicle)" >&2; exit 1; }
+    done
+    [ -f "$CACHE/sprites-big/mew.gif" ] || "$ROOT/scripts/get-sprites.sh"
+    nohup osascript -l JavaScript "$ROOT/scripts/pet-overlay.js" "$ROOT" >/dev/null 2>&1 &
+    echo "overlay: on"
+}
+
+set_chain() {
+    echo "$1" > "$CACHE/pet"
+    date +%F > "$CACHE/pet-date"
+    echo "pet: $(jq -r ".[$1].mons | join(\" → \")" "$CHAINS")"
+}
+
+case "${1:-toggle}" in
+    toggle)    if [ -n "$(pid)" ]; then touch "$CACHE/off"; stop; else rm -f "$CACHE/off"; start; fi ;;
+    on)        rm -f "$CACHE/off"; [ -n "$(pid)" ] || start ;;
+    off)       touch "$CACHE/off"; stop ;;
+    autostart) [ -f "$CACHE/off" ] || [ -n "$(pid)" ] || start ;;
+    random)    set_chain $(( RANDOM % $(jq length "$CHAINS") )) ;;
+    pet)
+        # Any chain containing the name; random among matches (eevee branches)
+        idxs=($(jq -r --arg m "${2:-}" 'to_entries[] | select(.value.mons | index($m)) | .key' "$CHAINS"))
+        if [ ${#idxs[@]} -eq 0 ]; then
+            echo "unknown gen-1 pokémon: ${2:-?}" >&2
+            exit 1
+        fi
+        set_chain "${idxs[RANDOM % ${#idxs[@]}]}"
+        ;;
+    sprites)   exec "$ROOT/scripts/get-sprites.sh" ;;
+    status)
+        echo "overlay: $([ -n "$(pid)" ] && echo "on (pid $(pid))" || echo off)"
+        i=$(cat "$CACHE/pet" 2>/dev/null); i=${i:-1}
+        echo "chain:   $(jq -r ".[$i].mons | join(\" → \")" "$CHAINS" 2>/dev/null)"
+        echo "state:   $(cat "$CACHE/state" 2>/dev/null || echo none)"
+        echo "tasks:   $(cat "$CACHE/tasks" 2>/dev/null || echo '0 today')"
+        ;;
+    *)
+        echo "usage: claude-pet [toggle|on|off|random|pet <name>|sprites|status]" >&2
+        exit 1
+        ;;
+esac
