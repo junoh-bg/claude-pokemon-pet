@@ -5,7 +5,7 @@
         "matcher": "",
         "hooks": [
           { "type": "command", "command": "${CLAUDE_PLUGIN_ROOT}/scripts/pet-state.sh hello", "timeout": 5, "async": true },
-          { "type": "command", "command": "${CLAUDE_PLUGIN_ROOT}/scripts/claude-pet autostart", "timeout": 120, "async": true }
+          { "type": "command", "command": "${CLAUDE_PLUGIN_ROOT}/scripts/claude-pokemon-pet autostart", "timeout": 120, "async": true }
         ]
       }
     ],

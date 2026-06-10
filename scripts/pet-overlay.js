@@ -10,8 +10,8 @@ ObjC.import('QuartzCore');
 
 function run(argv) {
   var HOME = ObjC.unwrap($.NSHomeDirectory());
-  var ROOT = (argv && argv[0]) || HOME + '/.claude/pokemon-pet';
-  var CACHE = HOME + '/.cache/claude-pet';
+  var ROOT = (argv && argv[0]) || HOME + '/.claude/plugins/marketplaces/claude-pokemon-pet';
+  var CACHE = HOME + '/.cache/claude-pokemon-pet';
   var SPRITES = CACHE + '/sprites-big';
   var POSF = CACHE + '/pos';
   var EVO2 = 6, EVO3 = 16;       // tasks/day needed for stage 2 / 3
@@ -52,7 +52,7 @@ function run(argv) {
   var chains = JSON.parse(readFile(ROOT + '/data/chains.json'));
 
   // The partner never changes mid-run; the daily gacha roll happens in the
-  // CLI when the overlay starts (claude-pet start/autostart).
+  // CLI when the overlay starts (claude-pokemon-pet start/autostart).
   function currentChain() {
     var idx = parseInt(readFile(CACHE + '/pet'), 10);
     if (isNaN(idx) || idx < 0 || idx >= chains.length) idx = 1; // charmander

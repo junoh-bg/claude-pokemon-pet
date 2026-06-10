@@ -2,7 +2,7 @@
 # Claude Code hook helper: pet-state.sh <state>
 # "done" also bumps today's task counter (drives level/evolution).
 
-CACHE="$HOME/.cache/claude-pet"
+CACHE="$HOME/.cache/claude-pokemon-pet"
 mkdir -p "$CACHE"
 printf '%s %s\n' "${1:-idle}" "$(date +%s)" > "$CACHE/state"
 

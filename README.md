@@ -74,23 +74,23 @@ autocomplete menu gets you there:
 The same commands are available from your shell via the bundled CLI:
 
 ```sh
-~/.claude/plugins/marketplaces/claude-pokemon-pet/scripts/claude-pet \
+~/.claude/plugins/marketplaces/claude-pokemon-pet/scripts/claude-pokemon-pet \
     [toggle|on|off|random|pet <name>|sprites|status]
 ```
 
 Optionally symlink it onto your PATH and bind a tmux key:
 
 ```sh
-ln -s ~/.claude/plugins/marketplaces/claude-pokemon-pet/scripts/claude-pet /opt/homebrew/bin/claude-pet
+ln -s ~/.claude/plugins/marketplaces/claude-pokemon-pet/scripts/claude-pokemon-pet /opt/homebrew/bin/claude-pokemon-pet
 ```
 
 ```tmux
 # ~/.tmux.conf
-bind P run-shell "/opt/homebrew/bin/claude-pet toggle"
+bind P run-shell "/opt/homebrew/bin/claude-pokemon-pet toggle"
 ```
 
-`claude-pet off` also disables the session autostart until you run
-`claude-pet on` (or toggle via the slash command) again.
+`claude-pokemon-pet off` also disables the session autostart until you run
+`claude-pokemon-pet on` (or toggle via the slash command) again.
 
 ### Moods
 
@@ -115,15 +115,15 @@ Tunables at the top of `scripts/pet-overlay.js`:
 
 ## Troubleshooting
 
-- **No pet after install** — run `<plugin-dir>/scripts/claude-pet status`.
+- **No pet after install** — run `<plugin-dir>/scripts/claude-pokemon-pet status`.
   Most common cause: missing `jq`/`gifsicle` (the CLI prints which).
 - **Pet on the wrong screen** — it spawns on the screen your mouse is on at
   start. Toggle it off and on with the mouse on the right screen, or ⌥-drag
   it anywhere, including across displays.
-- **Reset position** — `rm ~/.cache/claude-pet/pos`, then restart the pet.
-- **Re-download sprites** — `<plugin-dir>/scripts/claude-pet sprites`.
+- **Reset position** — `rm ~/.cache/claude-pokemon-pet/pos`, then restart the pet.
+- **Re-download sprites** — `<plugin-dir>/scripts/claude-pokemon-pet sprites`.
 - **Full reset** (level, partner, position, sprites) —
-  `rm -r ~/.cache/claude-pet`, then start a new session.
+  `rm -r ~/.cache/claude-pokemon-pet`, then start a new session.
 
 ## Uninstall
 
@@ -134,8 +134,8 @@ Tunables at the top of `scripts/pet-overlay.js`:
 then remove the runtime cache and the optional symlink:
 
 ```sh
-rm -r ~/.cache/claude-pet
-rm -f /opt/homebrew/bin/claude-pet
+rm -r ~/.cache/claude-pokemon-pet
+rm -f /opt/homebrew/bin/claude-pokemon-pet
 ```
 
 ## How it works
@@ -143,16 +143,16 @@ rm -f /opt/homebrew/bin/claude-pet
 | Piece | Role |
 |---|---|
 | `hooks/hooks.json` | registers Claude Code hooks automatically on install |
-| `scripts/pet-state.sh` | hook helper: writes session state + task counter to `~/.cache/claude-pet/` |
+| `scripts/pet-state.sh` | hook helper: writes session state + task counter to `~/.cache/claude-pokemon-pet/` |
 | `scripts/pet-overlay.js` | JXA/AppKit overlay: native GIF playback, 20 fps motion engine, battle-log captions, ⌥-drag |
-| `scripts/claude-pet` | CLI; rolls the daily gacha at overlay start |
+| `scripts/claude-pokemon-pet` | CLI; rolls the daily gacha at overlay start |
 | `scripts/get-sprites.sh` | downloads sprites, builds nearest-neighbor upscales + mirrored variants |
 | `data/chains.json` | 81 gen-1 evolution chains + primary type (drives evolution and move pool) |
 | `data/gen1.txt` | dex number ↔ name |
 
 Hook events: `UserPromptSubmit` → thinking, `PostToolUse` → working,
 `Stop` → done (+1 task), `PermissionRequest` → waiting, `SessionStart` →
-hello + overlay autostart. All state lives in `~/.cache/claude-pet/`; the
+hello + overlay autostart. All state lives in `~/.cache/claude-pokemon-pet/`; the
 plugin directory itself is never written to.
 
 ## Credits

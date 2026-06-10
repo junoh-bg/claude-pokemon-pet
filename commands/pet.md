@@ -5,7 +5,7 @@ description: Manage the Pokémon pet (toggle, random, pick one, status)
 Manage the Pokémon pet overlay by running the bundled CLI:
 
 ```
-${CLAUDE_PLUGIN_ROOT}/scripts/claude-pet <subcommand>
+${CLAUDE_PLUGIN_ROOT}/scripts/claude-pokemon-pet <subcommand>
 ```
 
 Subcommands: `toggle` | `on` | `off` | `random` | `pet <name>` | `sprites` | `status`.

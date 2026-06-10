@@ -4,7 +4,7 @@
 set -e
 export PATH="/opt/homebrew/bin:/usr/local/bin:$PATH"
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-CACHE="$HOME/.cache/claude-pet"
+CACHE="$HOME/.cache/claude-pokemon-pet"
 BASE="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated"
 mkdir -p "$CACHE/sprites" "$CACHE/sprites-big"
 
