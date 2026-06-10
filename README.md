@@ -18,9 +18,10 @@ completed task, and evolves along its real evolution chain.
 - **Daily gacha** — one of 81 gen-1 evolution chains is rolled the first time
   the overlay starts each day (Magikarp days build character). Your partner
   never changes mid-run; reroll anytime with the `pet random` command.
-- **Stays out of the way** — click-through and always-on-top, so it never
-  steals clicks or focus. Hold ⌥ (Option) and drag to reposition; the spot
-  is remembered across restarts.
+- **A system-wide companion** — the pet floats above *everything* on your
+  Mac (every app, window, and Space), not just the terminal. It is
+  click-through, so it never steals clicks or focus. Hold ⌥ (Option) and
+  drag to put it wherever you like.
 
 ## Requirements
 
@@ -91,6 +92,21 @@ bind P run-shell "/opt/homebrew/bin/claude-pokemon-pet toggle"
 
 `claude-pokemon-pet off` also disables the session autostart until you run
 `claude-pokemon-pet on` (or toggle via the slash command) again.
+
+### Positioning
+
+The overlay is **system-wide**: it stays on top of every app and Space on
+your Mac, not only the terminal — your partner keeps you company in the
+browser, editor, Slack, everywhere. Because it is click-through, it never
+interferes with whatever is underneath.
+
+To move it: **hold ⌥ (Option), then click-drag the pet** — anywhere on any
+display. Release to drop; the new spot becomes its home (saved across
+restarts). It spawns bottom-right of the screen your mouse is on the first
+time it starts.
+
+To get it out of the way entirely, toggle it off (`prefix+P` /
+`claude-pokemon-pet off` / the slash command).
 
 ### Moods
 
