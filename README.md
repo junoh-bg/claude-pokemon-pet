@@ -119,6 +119,20 @@ To get it out of the way entirely, toggle it off (`prefix+P` /
 | New session | greeting hops | `Go! PIKACHU!` |
 | Idle | breathing, dimmed | `PIKACHU is fast asleep` |
 
+### Language
+
+Names and captions follow your macOS system language — Korean systems get
+the official Korean names and battle text (`피카츄의 10만볼트!`,
+`효과는 굉장했다!`). Override anytime:
+
+```sh
+claude-pokemon-pet lang ko     # force Korean
+claude-pokemon-pet lang en     # force English
+claude-pokemon-pet lang auto   # follow the system again
+```
+
+Korean names also work when picking a partner: `pet 파이리`.
+
 ## Configuration
 
 Tunables at the top of `scripts/pet-overlay.js`:

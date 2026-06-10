@@ -1,6 +1,6 @@
 #!/bin/bash
 # claude-pokemon-pet — Pokémon pet overlay for Claude Code.
-# Usage: claude-pokemon-pet [toggle|on|off|random|pet <name>|sprites|status|autostart]
+# Usage: claude-pokemon-pet [toggle|on|off|random|pet <name>|lang <ko|en|auto>|sprites|status|autostart]
 
 # Homebrew may be missing from PATH when hooks run from GUI-launched apps
 export PATH="/opt/homebrew/bin:/usr/local/bin:$PATH"
@@ -40,13 +40,25 @@ case "${1:-toggle}" in
     autostart) [ -f "$CACHE/off" ] || [ -n "$(pid)" ] || start ;;
     random)    set_chain $(( RANDOM % $(jq length "$CHAINS") )) ;;
     pet)
+        name="${2:-}"
+        # Korean names resolve to their English slug first
+        eng=$(jq -r --arg k "$name" '.names | to_entries[] | select(.value == $k) | .key' \
+            "$ROOT/data/lang-ko.json" 2>/dev/null | head -1)
+        [ -n "$eng" ] && name="$eng"
         # Any chain containing the name; random among matches (eevee branches)
-        idxs=($(jq -r --arg m "${2:-}" 'to_entries[] | select(.value.mons | index($m)) | .key' "$CHAINS"))
+        idxs=($(jq -r --arg m "$name" 'to_entries[] | select(.value.mons | index($m)) | .key' "$CHAINS"))
         if [ ${#idxs[@]} -eq 0 ]; then
             echo "unknown gen-1 pokémon: ${2:-?}" >&2
             exit 1
         fi
         set_chain "${idxs[RANDOM % ${#idxs[@]}]}"
+        ;;
+    lang)
+        case "${2:-}" in
+            ko|en) echo "$2" > "$CACHE/lang"; echo "language: $2" ;;
+            auto)  rm -f "$CACHE/lang"; echo "language: auto (system)" ;;
+            *)     echo "usage: claude-pokemon-pet lang <ko|en|auto>" >&2; exit 1 ;;
+        esac
         ;;
     sprites)   exec "$ROOT/scripts/get-sprites.sh" ;;
     status)
@@ -57,7 +69,7 @@ case "${1:-toggle}" in
         echo "tasks:   $(cat "$CACHE/tasks" 2>/dev/null || echo '0 today')"
         ;;
     *)
-        echo "usage: claude-pokemon-pet [toggle|on|off|random|pet <name>|sprites|status]" >&2
+        echo "usage: claude-pokemon-pet [toggle|on|off|random|pet <name>|lang <ko|en|auto>|sprites|status]" >&2
         exit 1
         ;;
 esac

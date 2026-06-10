@@ -50,6 +50,24 @@ function run(argv) {
   }
 
   var chains = JSON.parse(readFile(ROOT + '/data/chains.json'));
+  var KO = {};
+  try { KO = JSON.parse(readFile(ROOT + '/data/lang-ko.json')); } catch (e) { KO = null; }
+
+  // Language: explicit override file wins, else macOS system language
+  function lang() {
+    var o = readFile(CACHE + '/lang');
+    if (o === 'ko' || o === 'en') return KO ? o : 'en';
+    var pref = ObjC.unwrap($.NSLocale.preferredLanguages.objectAtIndex(0)) || '';
+    return (KO && pref.indexOf('ko') === 0) ? 'ko' : 'en';
+  }
+  function dispName(mon) {
+    return lang() === 'ko' ? (KO.names[mon] || mon.toUpperCase()) : mon.toUpperCase();
+  }
+  function josa(w, withFinal, noFinal) { // e.g. josa(name, '은', '는')
+    var c = w.charCodeAt(w.length - 1);
+    var hasFinal = c >= 0xAC00 && c <= 0xD7A3 && (c - 0xAC00) % 28 > 0;
+    return w + (hasFinal ? withFinal : noFinal);
+  }
 
   // The partner never changes mid-run; the daily gacha roll happens in the
   // CLI when the overlay starts (claude-pokemon-pet start/autostart).
@@ -83,10 +101,22 @@ function run(argv) {
   // Battle-log captions; rotates every 7s within a state
   function pick(arr) { return arr[Math.floor(Date.now() / 7000) % arr.length]; }
   function moodText(p) {
+    var move = pick(TYPE_MOVES[p.type] || TYPE_MOVES.normal);
+    if (lang() === 'ko') {
+      var K = dispName(p.mon);
+      switch (p.state) {
+        case 'thinking': return pick([josa(K, '은', '는') + ' 기합을 넣고 있다!', josa(K, '은', '는') + ' 상황을 살피고 있다!']);
+        case 'working':  return K + '의 ' + (KO.moves[move] || move) + '!';
+        case 'done':     return pick(['효과는 굉장했다!', josa(K, '은', '는') + ' 경험치를 얻었다!']);
+        case 'waiting':  return josa(K, '은', '는') + ' 지시를 기다리고 있다';
+        case 'hello':    return '가라! ' + K + '!';
+        default:         return josa(K, '은', '는') + ' 쿨쿨 잠들어 있다';
+      }
+    }
     var N = p.mon.toUpperCase();
     switch (p.state) {
       case 'thinking': return pick([N + ' is getting pumped!', N + ' is sizing up the task!']);
-      case 'working':  return N + ' used ' + pick(TYPE_MOVES[p.type] || TYPE_MOVES.normal) + '!';
+      case 'working':  return N + ' used ' + move + '!';
       case 'done':     return pick(["It's super effective!", N + ' gained EXP. Points!']);
       case 'waiting':  return N + ' looks at you expectantly';
       case 'hello':    return 'Go! ' + N + '!';
@@ -201,13 +231,15 @@ function run(argv) {
     current.mon = p.mon;
     if (prevStage && p.stage > prevStage) {
       evolveUntil = Date.now() + 10000;
-      evolveName = p.mons[prevStage - 1].toUpperCase();
+      evolveName = p.mons[prevStage - 1];
     }
     prevStage = p.stage;
     setSprite(p.mon, p.state === 'working' ? facing : 'l');
-    nameLabel.setStringValue($(p.mon.toUpperCase() + '  Lv.' + p.tasks));
-    moodLabel.setStringValue($(Date.now() < evolveUntil
-      ? 'What? ' + evolveName + ' is evolving!' : moodText(p)));
+    nameLabel.setStringValue($(dispName(p.mon) + '  Lv.' + p.tasks));
+    var evolveMsg = lang() === 'ko'
+      ? '어라…!? ' + dispName(evolveName) + '의 모습이…!'
+      : 'What? ' + evolveName.toUpperCase() + ' is evolving!';
+    moodLabel.setStringValue($(Date.now() < evolveUntil ? evolveMsg : moodText(p)));
     setExp(p);
     win.setAlphaValue(p.state === 'idle' ? 0.55 : 1.0);
   }
