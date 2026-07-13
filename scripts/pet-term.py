@@ -161,13 +161,38 @@ def maybe_kick(root, r, last_kick, now):
     return last_kick
 
 
-# ── graphics backends (kitty / iTerm2) — filled in by the graphics task ──
+# ── graphics backends (kitty / iTerm2) ────────────────────────────
+def kitty_seq(rgba, w, h, rows, img_id):
+    payload = base64.b64encode(rgba)
+    chunks = [payload[i:i + 4096] for i in range(0, len(payload), 4096)]
+    out = bytearray()
+    for i, chunk in enumerate(chunks):
+        first, last = i == 0, i == len(chunks) - 1
+        ctrl = b""
+        if first:
+            ctrl = b"a=T,f=32,s=%d,v=%d,r=%d,i=%d,q=2," % (w, h, rows, img_id)
+        ctrl += b"m=0" if last else b"m=1"
+        out += b"\x1b_G" + ctrl + b";" + chunk + b"\x1b\\"
+    return bytes(out)
+
+
+def kitty_delete(img_id):
+    return b"\x1b_Ga=d,d=I,i=%d,q=2\x1b\\" % img_id
+
+
 def kitty_show(rgba, w, h, rows, img_id):
-    raise NotImplementedError
+    sys.stdout.buffer.write(kitty_seq(rgba, w, h, rows, img_id))
+    sys.stdout.flush()
+
+
+def iterm_seq(gif_bytes, rows):
+    return (b"\x1b]1337;File=inline=1;height=%d;preserveAspectRatio=1:" % rows +
+            base64.b64encode(gif_bytes) + b"\x07")
 
 
 def iterm_show(gif_bytes, rows):
-    raise NotImplementedError
+    sys.stdout.buffer.write(iterm_seq(gif_bytes, rows))
+    sys.stdout.flush()
 
 
 # ── UI loop ────────────────────────────────────────────────────────
@@ -180,9 +205,13 @@ class UI:
         self.facing_left = True
         self.last_kick = 0.0
         self.gif_bytes = b""
+        self._iterm_sent = None
         self.truecolor = os.environ.get("COLORTERM", "") in ("truecolor", "24bit")
 
     def load_species(self, species):
+        if self.backend == "kitty" and self.species is not None:
+            sys.stdout.buffer.write(kitty_delete(77))
+        self._iterm_sent = None
         path = os.path.join(CACHE, "sprites", species + ".gif")
         try:
             with open(path, "rb") as fh:
@@ -209,22 +238,49 @@ class UI:
         now = time.time()
         r = load_resolved(CACHE)
         self.last_kick = maybe_kick(self.root, r, self.last_kick, now)
-        out = [ESC + "[H" + ESC + "[2J"]
+        # iTerm2 animates its inline GIF itself: a full-screen clear every tick
+        # would wipe it, so clear only below the image on that backend.
+        out = [ESC + "[H" + ("" if self.backend == "iterm" else ESC + "[2J")]
         if not r:
-            out.append("waiting for pet-core... (start a Claude Code session)")
+            out.append(ESC + "[2J" + "waiting for pet-core... (start a Claude Code session)")
             sys.stdout.write("".join(out))
             sys.stdout.flush()
             return
         if r["species"] != self.species:
+            out.append(ESC + "[2J")           # species change: full clear on any backend
             self.load_species(r["species"])
         st, mood = caption(r, now)
         dim = ESC + "[2m" if st == "idle" else ""
         out.append(dim)
-        out.extend(l + "\r\n" for l in self.sprite_lines(st, now))
+        rows = 12
+        if self.backend == "kitty" and self.anim:
+            fr = self.anim.frames[self.frame_i % len(self.anim.frames)]
+            rgba = fr.rgba
+            if st == "working" and int(now / 3) % 2:
+                rgba = petgif.mirror(rgba, self.anim.width, self.anim.height)
+            sys.stdout.write("".join(out))
+            sys.stdout.flush()
+            out = []
+            kitty_show(rgba, self.anim.width, self.anim.height, rows, img_id=77)
+            out.append(ESC + "[%dB\r" % rows)
+        elif self.backend == "iterm" and self.gif_bytes:
+            if self._iterm_sent != self.species:
+                sys.stdout.write("".join(out))
+                sys.stdout.flush()
+                out = []
+                iterm_show(self.gif_bytes, rows)
+                self._iterm_sent = self.species
+                out.append("\r\n")
+            else:
+                out.append(ESC + "[%dB\r" % (rows + 1))   # skip over the live GIF
+        else:
+            out.extend(l + "\r\n" for l in self.sprite_lines(st, now))
         out.append(ESC + "[0m\r\n")
         out.append(" %s  Lv.%d   \U0001f525%dd\r\n" % (r["name"], r["tasks"], r["streak"]))
         out.append(" " + exp_bar(r["exp_pct"], r["exp_gold"]) + "\r\n")
         out.append(" " + mood + ESC + "[K\r\n")
+        if self.backend == "iterm":
+            out.append(ESC + "[0J")           # clear leftovers below without touching the GIF
         sys.stdout.write("".join(out))
         sys.stdout.flush()
         self.frame_i += 1

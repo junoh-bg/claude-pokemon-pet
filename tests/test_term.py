@@ -69,6 +69,30 @@ class TestCaption(unittest.TestCase):
         self.assertIn("리자드는", line)
 
 
+class TestGraphicsSeqs(unittest.TestCase):
+    def test_kitty_seq_chunked_and_terminated(self):
+        rgba = bytes(4) * (50 * 50)
+        seq = pet_term.kitty_seq(rgba, 50, 50, rows=12, img_id=7)
+        self.assertTrue(seq.startswith(b"\x1b_G"))
+        self.assertIn(b"f=32", seq)
+        self.assertIn(b"s=50,v=50", seq)
+        self.assertIn(b"i=7", seq)
+        self.assertIn(b"q=2", seq)
+        self.assertTrue(seq.endswith(b"\x1b\\"))
+        for chunk in seq.split(b"\x1b\\")[:-1]:
+            payload = chunk.split(b";", 1)[1] if b";" in chunk else b""
+            self.assertLessEqual(len(payload), 4096)
+
+    def test_iterm_seq_embeds_gif(self):
+        import base64 as b64
+        gif = b"GIF89a-fake-bytes"
+        seq = pet_term.iterm_seq(gif, rows=12)
+        self.assertTrue(seq.startswith(b"\x1b]1337;File=inline=1"))
+        self.assertIn(b"height=12", seq)
+        self.assertIn(b64.b64encode(gif), seq)
+        self.assertTrue(seq.endswith(b"\x07"))
+
+
 class TestResolved(unittest.TestCase):
     def test_load_missing_returns_none(self):
         self.assertIsNone(pet_term.load_resolved("/nonexistent-dir-xyz"))
