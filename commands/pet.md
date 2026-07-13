@@ -8,14 +8,16 @@ Manage the Pokémon pet overlay by running the bundled CLI:
 ${CLAUDE_PLUGIN_ROOT}/scripts/claude-pokemon-pet <subcommand>
 ```
 
-Subcommands: `toggle` | `on` | `off` | `random` | `pet <name>` | `lang <ko|en|auto>` | `sprites` | `status`.
+Subcommands: `toggle` | `on` | `off` | `random` | `pet <name>` | `lang <ko|en|auto>` | `statusline` | `sprites` | `status`.
 
 Map the user's request ("$ARGUMENTS") to the right subcommand:
 - empty or "toggle" → `toggle`
 - "random", "roll", "new pokemon" → `random`
 - a pokémon name, English or Korean (e.g. "pikachu", "파이리") → `pet <name>`
 - "korean"/"한국어" → `lang ko`; "english"/"영어" → `lang en`; "auto" → `lang auto`
+- "statusline" → `statusline` (prints setup instructions)
 - "status", "who is my pet" → `status`
+- "terminal" → do NOT run it (it is interactive); tell the user to run `claude-pokemon-pet term` in a separate terminal/tmux split
 - anything else → show usage
 
 Run it with Bash and report the output to the user in one short sentence.
