@@ -19,7 +19,9 @@ stop()  { pkill -f "pet-overlay.js" 2>/dev/null; echo "overlay: off"; }
 launch() {
     local lock="$CACHE/.launch.lock"
     if [ -d "$lock" ]; then   # clear a lock leaked by a killed process
-        local age=$(( $(date +%s) - $(stat -f %m "$lock" 2>/dev/null || echo 0) ))
+        local mtime
+        mtime=$(stat -f %m "$lock" 2>/dev/null || stat -c %Y "$lock" 2>/dev/null || echo 0)
+        local age=$(( $(date +%s) - mtime ))
         [ "$age" -gt 30 ] && rmdir "$lock" 2>/dev/null
     fi
     mkdir "$lock" 2>/dev/null || return 0   # another launch already in progress
@@ -51,12 +53,33 @@ case "${1:-toggle}" in
     pet)       "$CORE" pick "${2:-}" ;;
     lang)      "$CORE" lang "${2:-}" ;;
     sprites)   exec "$ROOT/scripts/get-sprites.sh" ;;
+    term)
+        for dep in jq python3; do
+            command -v "$dep" >/dev/null || { echo "claude-pokemon-pet term: missing dependency: $dep" >&2; exit 1; }
+        done
+        if [ ! -f "$CACHE/sprites/mew.gif" ]; then
+            command -v curl >/dev/null || { echo "claude-pokemon-pet term: need curl to fetch sprites" >&2; exit 1; }
+            "$ROOT/scripts/get-sprites.sh"
+        fi
+        "$CORE" roll-if-new-day >/dev/null
+        exec python3 "$ROOT/scripts/pet-term.py" "$ROOT"
+        ;;
+    statusline)
+        echo "Add this to ~/.claude/settings.json to put the pet in your statusline:"
+        echo ''
+        echo '  "statusLine": {'
+        echo '    "type": "command",'
+        echo "    \"command\": \"$ROOT/scripts/pet-statusline.sh\""
+        echo '  }'
+        echo ''
+        echo "Preview: $("$ROOT/scripts/pet-statusline.sh")"
+        ;;
     status)
         echo "overlay: $([ -n "$(pid)" ] && echo "on (pid $(pid))" || echo off)"
         "$CORE" status
         ;;
     *)
-        echo "usage: claude-pokemon-pet [toggle|on|off|random|pet <name>|lang <ko|en|auto>|sprites|status]" >&2
+        echo "usage: claude-pokemon-pet [toggle|on|off|random|pet <name>|lang <ko|en|auto>|term|statusline|sprites|status]" >&2
         exit 1
         ;;
 esac

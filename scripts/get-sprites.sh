@@ -22,14 +22,18 @@ wait
 rm -f "$CACHE/.sprite-ids"
 echo "sprites: $(ls "$CACHE/sprites" | wc -l | tr -d ' ')"
 
-for g in "$CACHE/sprites"/*.gif; do
-    mon=$(basename "$g" .gif)
-    [ -f "$CACHE/sprites-big/$mon.gif" ] && continue
-    dims=$(gifsicle --info "$g" | grep -m1 'logical screen' | grep -oE '[0-9]+x[0-9]+')
-    w=${dims%x*}; h=${dims#*x}
-    max=$(( w > h ? w : h ))
-    scale=$(( TARGET / max )); [ "$scale" -lt 2 ] && scale=2
-    gifsicle --resize-method sample --scale "$scale" "$g" -o "$CACHE/sprites-big/$mon.gif"
-    gifsicle --flip-horizontal "$CACHE/sprites-big/$mon.gif" -o "$CACHE/sprites-big/$mon-flip.gif"
-done
-echo "big: $(ls "$CACHE/sprites-big" | wc -l | tr -d ' ')"
+if command -v gifsicle >/dev/null; then
+    for g in "$CACHE/sprites"/*.gif; do
+        mon=$(basename "$g" .gif)
+        [ -f "$CACHE/sprites-big/$mon.gif" ] && continue
+        dims=$(gifsicle --info "$g" | grep -m1 'logical screen' | grep -oE '[0-9]+x[0-9]+')
+        w=${dims%x*}; h=${dims#*x}
+        max=$(( w > h ? w : h ))
+        scale=$(( TARGET / max )); [ "$scale" -lt 2 ] && scale=2
+        gifsicle --resize-method sample --scale "$scale" "$g" -o "$CACHE/sprites-big/$mon.gif"
+        gifsicle --flip-horizontal "$CACHE/sprites-big/$mon.gif" -o "$CACHE/sprites-big/$mon-flip.gif"
+    done
+    echo "big: $(ls "$CACHE/sprites-big" | wc -l | tr -d ' ')"
+else
+    echo "gifsicle not found — skipped overlay upscales (terminal mode doesn't need them)"
+fi
