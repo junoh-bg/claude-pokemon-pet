@@ -45,6 +45,19 @@ class TestDrawing(unittest.TestCase):
         lines = pet_term.halfblocks(rgba, 100, 10, max_cols=20, truecolor=True)
         self.assertLessEqual(max(pet_term.visible_len(l) for l in lines), 20)
 
+    def test_whitekey(self):
+        rgba = bytes([255, 255, 255, 255, 200, 10, 10, 255, 250, 250, 250, 255])
+        out = pet_term.whitekey(rgba)
+        self.assertEqual(out[3], 0)            # pure white keyed out
+        self.assertEqual(out[4:8], bytes([200, 10, 10, 255]))
+        self.assertEqual(out[11], 255)         # near-white stays (gifsicle parity)
+
+    def test_use_inline_gif(self):
+        self.assertTrue(pet_term.use_inline_gif("iterm", "pokemon"))
+        self.assertFalse(pet_term.use_inline_gif("iterm", "digimon"))
+        self.assertFalse(pet_term.use_inline_gif("kitty", "pokemon"))
+        self.assertFalse(pet_term.use_inline_gif("ansi", "digimon"))
+
     def test_exp_bar(self):
         bar = pet_term.exp_bar(50, False, width=10)
         self.assertEqual(bar.count("▰"), 5)

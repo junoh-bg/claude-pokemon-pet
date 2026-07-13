@@ -1,0 +1,1173 @@
+{
+  "franchise": "digimon",
+  "gates": [
+    0,
+    2,
+    5,
+    10,
+    18
+  ],
+  "moves_by": "stage",
+  "mistake_threshold": 3,
+  "sprites": {
+    "target_px": 180,
+    "whitekey": true
+  },
+  "lines": [
+    {
+      "version": 1,
+      "type": "vpet",
+      "mons": [
+        "botamon"
+      ],
+      "members": [
+        "botamon",
+        "koromon",
+        "agumon",
+        "betamon",
+        "greymon",
+        "tyranomon",
+        "devimon",
+        "meramon",
+        "airdramon",
+        "seadramon",
+        "numemon",
+        "metalgreymon_virus",
+        "mamemon",
+        "monzaemon"
+      ]
+    },
+    {
+      "version": 2,
+      "type": "vpet",
+      "mons": [
+        "punimon"
+      ],
+      "members": [
+        "punimon",
+        "tunomon",
+        "gabumon",
+        "elecmon",
+        "kabuterimon",
+        "garurumon",
+        "angemon",
+        "yukidarumon",
+        "birdramon",
+        "whamon",
+        "vegimon",
+        "skullgreymon",
+        "metalmamemon",
+        "vademon"
+      ]
+    },
+    {
+      "version": 3,
+      "type": "vpet",
+      "mons": [
+        "poyomon"
+      ],
+      "members": [
+        "poyomon",
+        "tokomon",
+        "patamon",
+        "kunemon",
+        "unimon",
+        "centalmon",
+        "orgemon",
+        "bakemon",
+        "shellmon",
+        "drimogemon",
+        "scumon",
+        "andromon",
+        "giromon",
+        "etemon"
+      ]
+    },
+    {
+      "version": 4,
+      "type": "vpet",
+      "mons": [
+        "yuramon"
+      ],
+      "members": [
+        "yuramon",
+        "tanemon",
+        "piyomon",
+        "palmon",
+        "monochromon",
+        "cockatrimon",
+        "leomon",
+        "kuwagamon",
+        "coelamon",
+        "mojyamon",
+        "nanimon",
+        "megadramon",
+        "piccolomon",
+        "digitamamon"
+      ]
+    },
+    {
+      "version": 5,
+      "type": "vpet",
+      "mons": [
+        "zurumon"
+      ],
+      "members": [
+        "zurumon",
+        "pagumon",
+        "gazimon",
+        "gizamon",
+        "darktyranomon",
+        "cyclomon",
+        "devidramon",
+        "tuskmon",
+        "flymon",
+        "deltamon",
+        "raremon",
+        "metaltyranomon",
+        "nanomon",
+        "extyranomon"
+      ]
+    }
+  ],
+  "species": {
+    "agumon": {
+      "names": {
+        "en": "AGUMON",
+        "ko": "아구몬"
+      },
+      "sprite_url": "https://wikimon.net/Special:FilePath/Agumon_vpet_dm.gif"
+    },
+    "airdramon": {
+      "names": {
+        "en": "AIRDRAMON",
+        "ko": "에어드라몬"
+      },
+      "sprite_url": "https://wikimon.net/Special:FilePath/Airdramon_vpet_dm.gif"
+    },
+    "andromon": {
+      "names": {
+        "en": "ANDROMON",
+        "ko": "안드로몬"
+      },
+      "sprite_url": "https://wikimon.net/Special:FilePath/Andromon_vpet_dm.gif"
+    },
+    "angemon": {
+      "names": {
+        "en": "ANGEMON",
+        "ko": "엔젤몬"
+      },
+      "sprite_url": "https://wikimon.net/Special:FilePath/Angemon_vpet_dm.gif"
+    },
+    "bakemon": {
+      "names": {
+        "en": "BAKEMON",
+        "ko": "고스몬"
+      },
+      "sprite_url": "https://wikimon.net/Special:FilePath/Bakemon_vpet_dm.gif"
+    },
+    "betamon": {
+      "names": {
+        "en": "BETAMON",
+        "ko": "베타몬"
+      },
+      "sprite_url": "https://wikimon.net/Special:FilePath/Betamon_vpet_dm.gif"
+    },
+    "birdramon": {
+      "names": {
+        "en": "BIRDRAMON",
+        "ko": null
+      },
+      "sprite_url": "https://wikimon.net/Special:FilePath/Birdramon_vpet_dm.gif"
+    },
+    "botamon": {
+      "names": {
+        "en": "BOTAMON",
+        "ko": "깜몬"
+      },
+      "sprite_url": "https://wikimon.net/Special:FilePath/Botamon_vpet_dm.gif"
+    },
+    "centalmon": {
+      "names": {
+        "en": "CENTALMON",
+        "ko": "켄터스몬"
+      },
+      "sprite_url": "https://wikimon.net/Special:FilePath/Centalmon_vpet_dm.gif"
+    },
+    "cockatrimon": {
+      "names": {
+        "en": "COCKATRIMON",
+        "ko": "꼬끼몬"
+      },
+      "sprite_url": "https://wikimon.net/Special:FilePath/Cockatrimon_vpet_dm.gif"
+    },
+    "coelamon": {
+      "names": {
+        "en": "COELAMON",
+        "ko": "실리컨몬"
+      },
+      "sprite_url": "https://wikimon.net/Special:FilePath/Coelamon_vpet_dm.gif"
+    },
+    "cyclomon": {
+      "names": {
+        "en": "CYCLOMON",
+        "ko": "사이크로몬"
+      },
+      "sprite_url": "https://wikimon.net/Special:FilePath/Cyclomon_vpet_dm.gif"
+    },
+    "darktyranomon": {
+      "names": {
+        "en": "DARK TYRANOMON",
+        "ko": "다크티라노몬"
+      },
+      "sprite_url": "https://wikimon.net/Special:FilePath/Darktyranomon_vpet_dm.gif"
+    },
+    "deltamon": {
+      "names": {
+        "en": "DELTAMON",
+        "ko": "델타몬"
+      },
+      "sprite_url": "https://wikimon.net/Special:FilePath/Deltamon_vpet_dm.gif"
+    },
+    "devidramon": {
+      "names": {
+        "en": "DEVIDRAMON",
+        "ko": "데블드라몬"
+      },
+      "sprite_url": "https://wikimon.net/Special:FilePath/Devidramon_vpet_dm.gif"
+    },
+    "devimon": {
+      "names": {
+        "en": "DEVIMON",
+        "ko": null
+      },
+      "sprite_url": "https://wikimon.net/Special:FilePath/Devimon_vpet_dm.gif"
+    },
+    "digitamamon": {
+      "names": {
+        "en": "DIGITAMAMON",
+        "ko": "디지타몬"
+      },
+      "sprite_url": "https://wikimon.net/Special:FilePath/Digitamamon_vpet_dm.gif"
+    },
+    "drimogemon": {
+      "names": {
+        "en": "DRIMOGEMON",
+        "ko": null
+      },
+      "sprite_url": "https://wikimon.net/Special:FilePath/Drimogemon_vpet_dm.gif"
+    },
+    "elecmon": {
+      "names": {
+        "en": "ELECMON",
+        "ko": "에렉몬"
+      },
+      "sprite_url": "https://wikimon.net/Special:FilePath/Elecmon_vpet_dm.gif"
+    },
+    "etemon": {
+      "names": {
+        "en": "ETEMON",
+        "ko": null
+      },
+      "sprite_url": "https://wikimon.net/Special:FilePath/Etemon_vpet_dm.gif"
+    },
+    "extyranomon": {
+      "names": {
+        "en": "EX-TYRANOMON",
+        "ko": null
+      },
+      "sprite_url": "https://wikimon.net/Special:FilePath/Ex-tyranomon_vpet_dm.gif"
+    },
+    "flymon": {
+      "names": {
+        "en": "FLYMON",
+        "ko": "플라이몬"
+      },
+      "sprite_url": "https://wikimon.net/Special:FilePath/Flymon_vpet_dm.gif"
+    },
+    "gabumon": {
+      "names": {
+        "en": "GABUMON",
+        "ko": "파피몬"
+      },
+      "sprite_url": "https://wikimon.net/Special:FilePath/Gabumon_vpet_dm.gif"
+    },
+    "garurumon": {
+      "names": {
+        "en": "GARURUMON",
+        "ko": null
+      },
+      "sprite_url": "https://wikimon.net/Special:FilePath/Garurumon_vpet_dm.gif"
+    },
+    "gazimon": {
+      "names": {
+        "en": "GAZIMON",
+        "ko": "가지몬"
+      },
+      "sprite_url": "https://wikimon.net/Special:FilePath/Gazimon_vpet_dm.gif"
+    },
+    "giromon": {
+      "names": {
+        "en": "GIROMON",
+        "ko": "째리몬"
+      },
+      "sprite_url": "https://wikimon.net/Special:FilePath/Giromon_vpet_dm.gif"
+    },
+    "gizamon": {
+      "names": {
+        "en": "GIZAMON",
+        "ko": "기자몬"
+      },
+      "sprite_url": "https://wikimon.net/Special:FilePath/Gizamon_vpet_dm.gif"
+    },
+    "greymon": {
+      "names": {
+        "en": "GREYMON",
+        "ko": null
+      },
+      "sprite_url": "https://wikimon.net/Special:FilePath/Greymon_vpet_dm.gif"
+    },
+    "kabuterimon": {
+      "names": {
+        "en": "KABUTERIMON",
+        "ko": null
+      },
+      "sprite_url": "https://wikimon.net/Special:FilePath/Kabuterimon_vpet_dm.gif"
+    },
+    "koromon": {
+      "names": {
+        "en": "KOROMON",
+        "ko": "코로몬"
+      },
+      "sprite_url": "https://wikimon.net/Special:FilePath/Koromon_vpet_dm.gif"
+    },
+    "kunemon": {
+      "names": {
+        "en": "KUNEMON",
+        "ko": "쿠네몬"
+      },
+      "sprite_url": "https://wikimon.net/Special:FilePath/Kunemon_vpet_dm.gif"
+    },
+    "kuwagamon": {
+      "names": {
+        "en": "KUWAGAMON",
+        "ko": null
+      },
+      "sprite_url": "https://wikimon.net/Special:FilePath/Kuwagamon_vpet_dm.gif"
+    },
+    "leomon": {
+      "names": {
+        "en": "LEOMON",
+        "ko": "레오몬"
+      },
+      "sprite_url": "https://wikimon.net/Special:FilePath/Leomon_vpet_dm.gif"
+    },
+    "mamemon": {
+      "names": {
+        "en": "MAMEMON",
+        "ko": null
+      },
+      "sprite_url": "https://wikimon.net/Special:FilePath/Mamemon_vpet_dm.gif"
+    },
+    "megadramon": {
+      "names": {
+        "en": "MEGADRAMON",
+        "ko": "메가드라몬"
+      },
+      "sprite_url": "https://wikimon.net/Special:FilePath/Megadramon_vpet_dm.gif"
+    },
+    "meramon": {
+      "names": {
+        "en": "MERAMON",
+        "ko": null
+      },
+      "sprite_url": "https://wikimon.net/Special:FilePath/Meramon_vpet_dm.gif"
+    },
+    "metalgreymon_virus": {
+      "names": {
+        "en": "METALGREYMON",
+        "ko": null
+      },
+      "sprite_url": "https://wikimon.net/Special:FilePath/Metalgreymon_vpet_dm.gif"
+    },
+    "metalmamemon": {
+      "names": {
+        "en": "METALMAMEMON",
+        "ko": null
+      },
+      "sprite_url": "https://wikimon.net/Special:FilePath/Metalmamemon_vpet_dm.gif"
+    },
+    "metaltyranomon": {
+      "names": {
+        "en": "METALTYRANOMON",
+        "ko": null
+      },
+      "sprite_url": "https://wikimon.net/Special:FilePath/Metaltyranomon_vpet_dm.gif"
+    },
+    "mojyamon": {
+      "names": {
+        "en": "MOJYAMON",
+        "ko": "모털몬"
+      },
+      "sprite_url": "https://wikimon.net/Special:FilePath/Mojyamon_vpet_dm.gif"
+    },
+    "monochromon": {
+      "names": {
+        "en": "MONOCHROMON",
+        "ko": null
+      },
+      "sprite_url": "https://wikimon.net/Special:FilePath/Monochromon_vpet_dm.gif"
+    },
+    "monzaemon": {
+      "names": {
+        "en": "MONZAEMON",
+        "ko": null
+      },
+      "sprite_url": "https://wikimon.net/Special:FilePath/Monzaemon_vpet_dm.gif"
+    },
+    "nanimon": {
+      "names": {
+        "en": "NANIMON",
+        "ko": "모야몬"
+      },
+      "sprite_url": "https://wikimon.net/Special:FilePath/Nanimon_vpet_dm.gif"
+    },
+    "nanomon": {
+      "names": {
+        "en": "NANOMON",
+        "ko": null
+      },
+      "sprite_url": "https://wikimon.net/Special:FilePath/Nanomon_vpet_dm.gif"
+    },
+    "numemon": {
+      "names": {
+        "en": "NUMEMON",
+        "ko": null
+      },
+      "sprite_url": "https://wikimon.net/Special:FilePath/Numemon_vpet_dm.gif"
+    },
+    "orgemon": {
+      "names": {
+        "en": "ORGEMON",
+        "ko": null
+      },
+      "sprite_url": "https://wikimon.net/Special:FilePath/Orgemon_vpet_dm.gif"
+    },
+    "pagumon": {
+      "names": {
+        "en": "PAGUMON",
+        "ko": "퍼그몬"
+      },
+      "sprite_url": "https://wikimon.net/Special:FilePath/Pagumon_vpet_dm.gif"
+    },
+    "palmon": {
+      "names": {
+        "en": "PALMON",
+        "ko": "팔몬"
+      },
+      "sprite_url": "https://wikimon.net/Special:FilePath/Palmon_vpet_dm.gif"
+    },
+    "patamon": {
+      "names": {
+        "en": "PATAMON",
+        "ko": "파닥몬"
+      },
+      "sprite_url": "https://wikimon.net/Special:FilePath/Patamon_vpet_dm.gif"
+    },
+    "piccolomon": {
+      "names": {
+        "en": "PICCOLOMON",
+        "ko": "피콜몬"
+      },
+      "sprite_url": "https://wikimon.net/Special:FilePath/Piccolomon_vpet_dm.gif"
+    },
+    "piyomon": {
+      "names": {
+        "en": "PIYOMON",
+        "ko": "피요몬"
+      },
+      "sprite_url": "https://wikimon.net/Special:FilePath/Piyomon_vpet_dm.gif"
+    },
+    "poyomon": {
+      "names": {
+        "en": "POYOMON",
+        "ko": "포요몬"
+      },
+      "sprite_url": "https://wikimon.net/Special:FilePath/Poyomon_vpet_dm.gif"
+    },
+    "punimon": {
+      "names": {
+        "en": "PUNIMON",
+        "ko": "푸니몬"
+      },
+      "sprite_url": "https://wikimon.net/Special:FilePath/Punimon_vpet_dm.gif"
+    },
+    "raremon": {
+      "names": {
+        "en": "RAREMON",
+        "ko": "레어몬"
+      },
+      "sprite_url": "https://wikimon.net/Special:FilePath/Raremon_vpet_dm.gif"
+    },
+    "scumon": {
+      "names": {
+        "en": "SCUMON",
+        "ko": null
+      },
+      "sprite_url": "https://wikimon.net/Special:FilePath/Scumon_vpet_dm.gif"
+    },
+    "seadramon": {
+      "names": {
+        "en": "SEADRAMON",
+        "ko": null
+      },
+      "sprite_url": "https://wikimon.net/Special:FilePath/Seadramon_vpet_dm.gif"
+    },
+    "shellmon": {
+      "names": {
+        "en": "SHELLMON",
+        "ko": "쉘몬"
+      },
+      "sprite_url": "https://wikimon.net/Special:FilePath/Shellmon_vpet_dm.gif"
+    },
+    "skullgreymon": {
+      "names": {
+        "en": "SKULLGREYMON",
+        "ko": "스컬그레이몬"
+      },
+      "sprite_url": "https://wikimon.net/Special:FilePath/Skullgreymon_vpet_dm.gif"
+    },
+    "tanemon": {
+      "names": {
+        "en": "TANEMON",
+        "ko": "시드몬"
+      },
+      "sprite_url": "https://wikimon.net/Special:FilePath/Tanemon_vpet_dm.gif"
+    },
+    "tokomon": {
+      "names": {
+        "en": "TOKOMON",
+        "ko": "토코몬"
+      },
+      "sprite_url": "https://wikimon.net/Special:FilePath/Tokomon_vpet_dm.gif"
+    },
+    "tunomon": {
+      "names": {
+        "en": "TUNOMON",
+        "ko": "뿔몬"
+      },
+      "sprite_url": "https://wikimon.net/Special:FilePath/Tunomon_vpet_dm.gif"
+    },
+    "tuskmon": {
+      "names": {
+        "en": "TUSKMON",
+        "ko": "태스크몬"
+      },
+      "sprite_url": "https://wikimon.net/Special:FilePath/Tuskmon_vpet_dm.gif"
+    },
+    "tyranomon": {
+      "names": {
+        "en": "TYRANOMON",
+        "ko": "티라노몬"
+      },
+      "sprite_url": "https://wikimon.net/Special:FilePath/Tyranomon_vpet_dm.gif"
+    },
+    "unimon": {
+      "names": {
+        "en": "UNIMON",
+        "ko": null
+      },
+      "sprite_url": "https://wikimon.net/Special:FilePath/Unimon_vpet_dm.gif"
+    },
+    "vademon": {
+      "names": {
+        "en": "VADEMON",
+        "ko": null
+      },
+      "sprite_url": "https://wikimon.net/Special:FilePath/Vademon_vpet_dm.gif"
+    },
+    "vegimon": {
+      "names": {
+        "en": "VEGIMON",
+        "ko": "베지몬"
+      },
+      "sprite_url": "https://wikimon.net/Special:FilePath/Vegimon_vpet_dm.gif"
+    },
+    "whamon": {
+      "names": {
+        "en": "WHAMON",
+        "ko": null
+      },
+      "sprite_url": "https://wikimon.net/Special:FilePath/Whamon_vpet_dm.gif"
+    },
+    "yukidarumon": {
+      "names": {
+        "en": "YUKIDARUMON",
+        "ko": "프리지몬"
+      },
+      "sprite_url": "https://wikimon.net/Special:FilePath/Yukidarumon_vpet_dm.gif"
+    },
+    "yuramon": {
+      "names": {
+        "en": "YURAMON",
+        "ko": null
+      },
+      "sprite_url": "https://wikimon.net/Special:FilePath/Yuramon_vpet_dm.gif"
+    },
+    "zurumon": {
+      "names": {
+        "en": "ZURUMON",
+        "ko": null
+      },
+      "sprite_url": "https://wikimon.net/Special:FilePath/Zurumon_vpet_dm.gif"
+    }
+  },
+  "edges": {
+    "agumon": [
+      {
+        "to": "greymon",
+        "quality": "normal"
+      },
+      {
+        "to": "tyranomon",
+        "quality": "normal"
+      },
+      {
+        "to": "devimon",
+        "quality": "normal"
+      },
+      {
+        "to": "meramon",
+        "quality": "normal"
+      },
+      {
+        "to": "numemon",
+        "quality": "reject"
+      }
+    ],
+    "airdramon": [
+      {
+        "to": "metalgreymon_virus",
+        "quality": "normal"
+      }
+    ],
+    "angemon": [
+      {
+        "to": "skullgreymon",
+        "quality": "normal"
+      }
+    ],
+    "bakemon": [
+      {
+        "to": "giromon",
+        "quality": "normal"
+      }
+    ],
+    "betamon": [
+      {
+        "to": "devimon",
+        "quality": "normal"
+      },
+      {
+        "to": "meramon",
+        "quality": "normal"
+      },
+      {
+        "to": "airdramon",
+        "quality": "normal"
+      },
+      {
+        "to": "seadramon",
+        "quality": "normal"
+      },
+      {
+        "to": "numemon",
+        "quality": "reject"
+      }
+    ],
+    "birdramon": [
+      {
+        "to": "skullgreymon",
+        "quality": "normal"
+      }
+    ],
+    "botamon": [
+      {
+        "to": "koromon",
+        "quality": "normal"
+      }
+    ],
+    "centalmon": [
+      {
+        "to": "giromon",
+        "quality": "normal"
+      }
+    ],
+    "cockatrimon": [
+      {
+        "to": "piccolomon",
+        "quality": "normal"
+      }
+    ],
+    "coelamon": [
+      {
+        "to": "megadramon",
+        "quality": "normal"
+      }
+    ],
+    "cyclomon": [
+      {
+        "to": "nanomon",
+        "quality": "normal"
+      }
+    ],
+    "darktyranomon": [
+      {
+        "to": "metaltyranomon",
+        "quality": "normal"
+      }
+    ],
+    "deltamon": [
+      {
+        "to": "nanomon",
+        "quality": "normal"
+      }
+    ],
+    "devidramon": [
+      {
+        "to": "metaltyranomon",
+        "quality": "normal"
+      }
+    ],
+    "devimon": [
+      {
+        "to": "metalgreymon_virus",
+        "quality": "normal"
+      }
+    ],
+    "drimogemon": [
+      {
+        "to": "giromon",
+        "quality": "normal"
+      }
+    ],
+    "elecmon": [
+      {
+        "to": "angemon",
+        "quality": "normal"
+      },
+      {
+        "to": "yukidarumon",
+        "quality": "normal"
+      },
+      {
+        "to": "birdramon",
+        "quality": "normal"
+      },
+      {
+        "to": "whamon",
+        "quality": "normal"
+      },
+      {
+        "to": "vegimon",
+        "quality": "reject"
+      }
+    ],
+    "flymon": [
+      {
+        "to": "metaltyranomon",
+        "quality": "normal"
+      }
+    ],
+    "gabumon": [
+      {
+        "to": "kabuterimon",
+        "quality": "normal"
+      },
+      {
+        "to": "garurumon",
+        "quality": "normal"
+      },
+      {
+        "to": "angemon",
+        "quality": "normal"
+      },
+      {
+        "to": "yukidarumon",
+        "quality": "normal"
+      },
+      {
+        "to": "vegimon",
+        "quality": "reject"
+      }
+    ],
+    "garurumon": [
+      {
+        "to": "metalmamemon",
+        "quality": "normal"
+      }
+    ],
+    "gazimon": [
+      {
+        "to": "darktyranomon",
+        "quality": "normal"
+      },
+      {
+        "to": "cyclomon",
+        "quality": "normal"
+      },
+      {
+        "to": "devidramon",
+        "quality": "normal"
+      },
+      {
+        "to": "tuskmon",
+        "quality": "normal"
+      },
+      {
+        "to": "raremon",
+        "quality": "reject"
+      }
+    ],
+    "gizamon": [
+      {
+        "to": "devidramon",
+        "quality": "normal"
+      },
+      {
+        "to": "tuskmon",
+        "quality": "normal"
+      },
+      {
+        "to": "flymon",
+        "quality": "normal"
+      },
+      {
+        "to": "deltamon",
+        "quality": "normal"
+      },
+      {
+        "to": "raremon",
+        "quality": "reject"
+      }
+    ],
+    "greymon": [
+      {
+        "to": "metalgreymon_virus",
+        "quality": "normal"
+      }
+    ],
+    "kabuterimon": [
+      {
+        "to": "skullgreymon",
+        "quality": "normal"
+      }
+    ],
+    "koromon": [
+      {
+        "to": "agumon",
+        "quality": "normal"
+      },
+      {
+        "to": "betamon",
+        "quality": "normal"
+      }
+    ],
+    "kunemon": [
+      {
+        "to": "orgemon",
+        "quality": "normal"
+      },
+      {
+        "to": "bakemon",
+        "quality": "normal"
+      },
+      {
+        "to": "shellmon",
+        "quality": "normal"
+      },
+      {
+        "to": "drimogemon",
+        "quality": "normal"
+      },
+      {
+        "to": "scumon",
+        "quality": "reject"
+      }
+    ],
+    "kuwagamon": [
+      {
+        "to": "piccolomon",
+        "quality": "normal"
+      }
+    ],
+    "leomon": [
+      {
+        "to": "megadramon",
+        "quality": "normal"
+      }
+    ],
+    "meramon": [
+      {
+        "to": "mamemon",
+        "quality": "normal"
+      }
+    ],
+    "mojyamon": [
+      {
+        "to": "piccolomon",
+        "quality": "normal"
+      }
+    ],
+    "monochromon": [
+      {
+        "to": "megadramon",
+        "quality": "normal"
+      }
+    ],
+    "nanimon": [
+      {
+        "to": "digitamamon",
+        "quality": "reject"
+      }
+    ],
+    "numemon": [
+      {
+        "to": "monzaemon",
+        "quality": "reject"
+      }
+    ],
+    "orgemon": [
+      {
+        "to": "andromon",
+        "quality": "normal"
+      }
+    ],
+    "pagumon": [
+      {
+        "to": "gazimon",
+        "quality": "normal"
+      },
+      {
+        "to": "gizamon",
+        "quality": "normal"
+      }
+    ],
+    "palmon": [
+      {
+        "to": "leomon",
+        "quality": "normal"
+      },
+      {
+        "to": "kuwagamon",
+        "quality": "normal"
+      },
+      {
+        "to": "coelamon",
+        "quality": "normal"
+      },
+      {
+        "to": "mojyamon",
+        "quality": "normal"
+      },
+      {
+        "to": "nanimon",
+        "quality": "reject"
+      }
+    ],
+    "patamon": [
+      {
+        "to": "unimon",
+        "quality": "normal"
+      },
+      {
+        "to": "centalmon",
+        "quality": "normal"
+      },
+      {
+        "to": "orgemon",
+        "quality": "normal"
+      },
+      {
+        "to": "bakemon",
+        "quality": "normal"
+      },
+      {
+        "to": "scumon",
+        "quality": "reject"
+      }
+    ],
+    "piyomon": [
+      {
+        "to": "monochromon",
+        "quality": "normal"
+      },
+      {
+        "to": "cockatrimon",
+        "quality": "normal"
+      },
+      {
+        "to": "leomon",
+        "quality": "normal"
+      },
+      {
+        "to": "kuwagamon",
+        "quality": "normal"
+      },
+      {
+        "to": "nanimon",
+        "quality": "reject"
+      }
+    ],
+    "poyomon": [
+      {
+        "to": "tokomon",
+        "quality": "normal"
+      }
+    ],
+    "punimon": [
+      {
+        "to": "tunomon",
+        "quality": "normal"
+      }
+    ],
+    "raremon": [
+      {
+        "to": "extyranomon",
+        "quality": "reject"
+      }
+    ],
+    "scumon": [
+      {
+        "to": "etemon",
+        "quality": "reject"
+      }
+    ],
+    "seadramon": [
+      {
+        "to": "mamemon",
+        "quality": "normal"
+      }
+    ],
+    "shellmon": [
+      {
+        "to": "andromon",
+        "quality": "normal"
+      }
+    ],
+    "tanemon": [
+      {
+        "to": "piyomon",
+        "quality": "normal"
+      },
+      {
+        "to": "palmon",
+        "quality": "normal"
+      }
+    ],
+    "tokomon": [
+      {
+        "to": "patamon",
+        "quality": "normal"
+      },
+      {
+        "to": "kunemon",
+        "quality": "normal"
+      }
+    ],
+    "tunomon": [
+      {
+        "to": "gabumon",
+        "quality": "normal"
+      },
+      {
+        "to": "elecmon",
+        "quality": "normal"
+      }
+    ],
+    "tuskmon": [
+      {
+        "to": "nanomon",
+        "quality": "normal"
+      }
+    ],
+    "tyranomon": [
+      {
+        "to": "mamemon",
+        "quality": "normal"
+      }
+    ],
+    "unimon": [
+      {
+        "to": "andromon",
+        "quality": "normal"
+      }
+    ],
+    "vegimon": [
+      {
+        "to": "vademon",
+        "quality": "reject"
+      }
+    ],
+    "whamon": [
+      {
+        "to": "metalmamemon",
+        "quality": "normal"
+      }
+    ],
+    "yukidarumon": [
+      {
+        "to": "metalmamemon",
+        "quality": "normal"
+      }
+    ],
+    "yuramon": [
+      {
+        "to": "tanemon",
+        "quality": "normal"
+      }
+    ],
+    "zurumon": [
+      {
+        "to": "pagumon",
+        "quality": "normal"
+      }
+    ]
+  },
+  "moves": {
+    "1": [
+      "BUBBLE"
+    ],
+    "2": [
+      "ACID BUBBLE"
+    ],
+    "3": [
+      "SPIT SHOT",
+      "SCRATCH",
+      "HEADBUTT"
+    ],
+    "4": [
+      "HEAVY SHOT",
+      "FIERCE BITE",
+      "POWER SLAM"
+    ],
+    "5": [
+      "GIGA BLAST",
+      "FINAL STRIKE",
+      "FULL POWER SHOT"
+    ]
+  },
+  "moves_ko": {
+    "BUBBLE": "거품 공격",
+    "ACID BUBBLE": "산성 거품",
+    "SPIT SHOT": "발사 공격",
+    "SCRATCH": "할퀴기",
+    "HEADBUTT": "박치기",
+    "HEAVY SHOT": "강력 발사",
+    "FIERCE BITE": "물어뜯기",
+    "POWER SLAM": "몸통 부딪히기",
+    "GIGA BLAST": "기가 블래스트",
+    "FINAL STRIKE": "필살 일격",
+    "FULL POWER SHOT": "전력 발사"
+  }
+}

@@ -44,6 +44,15 @@ assert_eq "bare mistake event still counts" "2026-07-13 2" "$(cat "$CACHE/mistak
 assert_eq "garbage payload still counts" "2026-07-13 3" "$(cat "$CACHE/mistakes")"
 teardown
 
+setup  # concurrent done events must not lose task increments (reviewed race)
+for i in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20; do "$CORE" event done </dev/null >/dev/null & done
+wait
+assert_eq "20 concurrent dones all counted" "2026-07-13 20" "$(cat "$CACHE/tasks")"
+for i in 1 2 3 4 5; do "$CORE" event mistake < "$ROOT/tests/fixtures/posttoolusefailure-error.json" >/dev/null & done
+wait
+assert_eq "5 concurrent mistakes all counted" "2026-07-13 5" "$(cat "$CACHE/mistakes")"
+teardown
+
 setup  # the hook path must never fail or emit noise, whatever the state
 echo 'not json' > "$CACHE/partner"
 err="$("$CORE" event thinking </dev/null 2>&1 >/dev/null)"; rc=$?

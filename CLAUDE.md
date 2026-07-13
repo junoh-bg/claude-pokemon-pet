@@ -57,11 +57,26 @@ never make the core depend on a renderer. Franchise data lives in JSON packs
   renderer must do the same stale check.
 - pgrep/pkill on `pet-overlay.js` hits the *installed* plugin's overlay too —
   mind the running instance when testing locally.
+- **`extend_line` invariant** (Phase 3): digimon evolution choices are
+  recorded in the partner file at the gate crossing and never re-evaluated.
+  The seeded pick indexes into pack edge order — `gen-digimon-pack.sh` must
+  preserve curation-file edge order (jq `group_by` is stable; don't replace it
+  with something that isn't).
+- **Hooks run concurrently** (`"async": true`): any read-modify-write of
+  cache state needs the mkdir-lock pattern (`clear_stale_lock` + `mkdir`,
+  wall-clock staleness — never `PET_NOW`). Counter bumps use a bounded-wait
+  lock (losing an increment is data loss); `extend_line` uses skip-on-busy
+  (the next event catches up). Reviews of Phase 3 found BOTH races live —
+  assume any new mutation has this bug until proven otherwise. Known accepted
+  residual: timeout-based stale reclamation can, in a sub-ms window, rmdir a
+  fresh lock if a live owner held one >10s (pathological); fencing tokens are
+  disproportionate here. Measured worst-case hook latency under a held
+  counter lock: ~2.7s (bounded, inside the 5s hook timeout).
 
 ## Phase status
 
 1. ✅ Shared core refactor (PR #1)
 2. ✅ Terminal renderer + statusline (Linux/SSH/RunPod)
-3. ⬜ Digimon pack + V-pet branching (sprite-source research first)
+3. ✅ Digimon pack + V-pet branching
 4. ⬜ Shinies, dex command, HUD, battle FX, evo cinematics
 5. ⬜ Trainer card
