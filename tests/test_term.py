@@ -77,6 +77,7 @@ class TestGraphicsSeqs(unittest.TestCase):
         self.assertIn(b"f=32", seq)
         self.assertIn(b"s=50,v=50", seq)
         self.assertIn(b"i=7", seq)
+        self.assertIn(b"C=1", seq)   # no cursor auto-advance; draw() moves it
         self.assertIn(b"q=2", seq)
         self.assertTrue(seq.endswith(b"\x1b\\"))
         for chunk in seq.split(b"\x1b\\")[:-1]:

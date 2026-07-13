@@ -73,6 +73,15 @@ def _deinterlace(indices, w, h):
 
 
 def decode(data):
+    """Decode a GIF; raises ValueError on any malformed input (never
+    IndexError/struct.error — callers rely on catching ValueError)."""
+    try:
+        return _decode(data)
+    except (IndexError, struct.error) as e:
+        raise ValueError("malformed GIF: %s" % e)
+
+
+def _decode(data):
     if data[:6] not in (b"GIF89a", b"GIF87a"):
         raise ValueError("not a GIF")
     w, h = struct.unpack("<HH", data[6:10])

@@ -170,7 +170,9 @@ def kitty_seq(rgba, w, h, rows, img_id):
         first, last = i == 0, i == len(chunks) - 1
         ctrl = b""
         if first:
-            ctrl = b"a=T,f=32,s=%d,v=%d,r=%d,i=%d,q=2," % (w, h, rows, img_id)
+            # C=1: don't let the terminal auto-advance the cursor after
+            # placement — draw() moves it below the image itself
+            ctrl = b"a=T,f=32,s=%d,v=%d,r=%d,i=%d,C=1,q=2," % (w, h, rows, img_id)
         ctrl += b"m=0" if last else b"m=1"
         out += b"\x1b_G" + ctrl + b";" + chunk + b"\x1b\\"
     return bytes(out)
@@ -217,7 +219,7 @@ class UI:
             with open(path, "rb") as fh:
                 self.gif_bytes = fh.read()
             self.anim = petgif.decode(self.gif_bytes)
-        except (OSError, ValueError):
+        except Exception:            # any decode failure degrades to placeholder text
             self.anim = None
         self.species, self.frame_i = species, 0
 
@@ -243,6 +245,7 @@ class UI:
         out = [ESC + "[H" + ("" if self.backend == "iterm" else ESC + "[2J")]
         if not r:
             out.append(ESC + "[2J" + "waiting for pet-core... (start a Claude Code session)")
+            self._iterm_sent = None       # full clear wiped any inline GIF
             sys.stdout.write("".join(out))
             sys.stdout.flush()
             return
@@ -286,19 +289,23 @@ class UI:
         self.frame_i += 1
 
 
+def restore_terminal():
+    sys.stdout.write(ESC + "[?25h" + ESC + "[?1049l")   # show cursor, leave alt screen
+    sys.stdout.flush()
+
+
 def main(argv):
     root = argv[1] if len(argv) > 1 else os.path.expanduser(
         "~/.claude/plugins/marketplaces/claude-pokemon-pet")
     backend = pick_backend(os.environ)
     ui = UI(root, backend)
 
-    def restore(*_):
-        sys.stdout.write(ESC + "[?25h" + ESC + "[?1049l")
-        sys.stdout.flush()
+    def on_signal(*_):
+        restore_terminal()
         sys.exit(0)
 
-    signal.signal(signal.SIGINT, restore)
-    signal.signal(signal.SIGTERM, restore)
+    signal.signal(signal.SIGINT, on_signal)
+    signal.signal(signal.SIGTERM, on_signal)
     sys.stdout.write(ESC + "[?1049h" + ESC + "[?25l")   # alt screen, hide cursor
     try:
         while True:
@@ -307,7 +314,9 @@ def main(argv):
     except SystemExit:
         raise
     except BaseException:
-        restore()
+        # restore the terminal FIRST, then let the traceback reach stderr —
+        # a crash must be loud and exit non-zero, never a silent clean exit
+        restore_terminal()
         raise
 
 

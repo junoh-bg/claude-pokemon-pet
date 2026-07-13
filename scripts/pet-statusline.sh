@@ -8,7 +8,7 @@ CACHE="$HOME/.cache/claude-pokemon-pet"
 R="$CACHE/resolved.json"
 TODAY="${PET_TODAY:-$(date +%F)}"
 
-command -v jq >/dev/null 2>&1 || exit 0
+command -v jq >/dev/null 2>&1 || { echo "🥚 no pet yet"; exit 0; }
 [ "$(jq -r '.date // empty' "$R" 2>/dev/null)" = "$TODAY" ] || "$ROOT/scripts/pet-core.sh" resolve 2>/dev/null
 [ -f "$R" ] || { echo "🥚 no pet yet"; exit 0; }
 

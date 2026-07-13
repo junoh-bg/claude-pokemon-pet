@@ -12,10 +12,14 @@ TARGET="$(jq -r '.sprites.target_px' "$PACK")"
 mkdir -p "$CACHE/sprites" "$CACHE/sprites-big"
 
 jq -r '.species | to_entries[] | "\(.value.id) \(.key)"' "$PACK" > "$CACHE/.sprite-ids"
+rm -f "$CACHE/sprites"/.*.tmp 2>/dev/null
 i=0
 while read -r id name; do
     [ -f "$CACHE/sprites/$name.gif" ] && continue
-    curl -sfL "$BASE/$id.gif" -o "$CACHE/sprites/$name.gif" &
+    # download to a temp name and mv on success: an interrupted transfer must
+    # never leave a truncated .gif at the final path (it would not be retried)
+    ( curl -sfL "$BASE/$id.gif" -o "$CACHE/sprites/.$name.tmp" &&
+      mv "$CACHE/sprites/.$name.tmp" "$CACHE/sprites/$name.gif" ) &
     i=$((i + 1)); [ $((i % 10)) -eq 0 ] && wait
 done < "$CACHE/.sprite-ids"
 wait
