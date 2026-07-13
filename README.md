@@ -1,8 +1,10 @@
 # claude-pokemon-pet
 
-A floating Pokémon companion for Claude Code (macOS). A random gen-1 Pokémon
-appears on your screen, reacts to what Claude is doing, levels up with every
-completed task, and evolves along its real evolution chain.
+A Pokémon companion for Claude Code. A random gen-1 Pokémon appears, reacts
+to what Claude is doing, levels up with every completed task, and evolves
+along its real evolution chain. On macOS it floats over your screen as a
+native overlay; on Linux, over SSH, or on a headless RunPod it lives inside
+your terminal (`claude-pokemon-pet term`) or your statusline.
 
 <p align="center">
   <img src="assets/demo.gif" width="720" alt="claude-pokemon-pet — a Charizard reacting to a Claude Code session">
@@ -29,19 +31,18 @@ completed task, and evolves along its real evolution chain.
 
 ## Requirements
 
-| Requirement | Why |
-|---|---|
-| macOS | the overlay is a native AppKit window (JXA) |
-| Claude Code with plugin support | hooks + `/claude-pokemon-pet:pet` command register via the plugin system |
-| [`jq`](https://jqlang.github.io/jq/) | the CLI reads the evolution-chain data (JSON) from shell |
-| [`gifsicle`](https://www.lcdf.org/gifsicle/) | upscales sprites pixel-perfect (nearest-neighbor) and builds mirrored walking frames |
+Everyone needs Claude Code with plugin support and
+[`jq`](https://jqlang.github.io/jq/) (the game core is bash + jq).
+Per mode:
 
-`jq` and `gifsicle` are the only things to install — everything else
-(`curl`, `osascript`) ships with macOS:
+| Mode | Needs | Notes |
+|---|---|---|
+| Floating overlay | macOS + [`gifsicle`](https://www.lcdf.org/gifsicle/) | native AppKit window (JXA); `curl`/`osascript` ship with macOS |
+| Terminal pet (`term`) | any OS + `python3` (≥3.8, stdlib only) + `curl` | works on Linux, over SSH, in devcontainers and RunPods |
+| Statusline | just `jq` | one line in any terminal |
 
-```sh
-brew install jq gifsicle
-```
+macOS: `brew install jq gifsicle` · Debian/Ubuntu: `apt install jq` (python3
+and curl are usually present)
 
 ## Install
 
@@ -74,6 +75,40 @@ The command is namespaced by plugin name: `/claude-pokemon-pet:pet`. Type
 /claude-pokemon-pet:pet lang ko    switch language (ko | en | auto)
 /claude-pokemon-pet:pet status     show partner, state, and today's task count
 ```
+
+### Terminal mode (Linux / SSH / RunPod)
+
+No display? The pet renders *inside* a terminal — including over SSH to a
+headless box, because the graphics stream as ordinary terminal output:
+
+```sh
+claude-pokemon-pet term
+```
+
+Run it in a tmux split or a second SSH session **on the same machine where
+Claude Code runs** (the hooks and cache live there). Graphics are picked
+automatically:
+
+| Tier | Terminals | Look |
+|---|---|---|
+| Kitty graphics protocol | kitty, WezTerm, Ghostty | pixel-perfect animated sprite |
+| iTerm2 inline images | iTerm2 | native animated GIF |
+| ANSI half-blocks | anything 256-color (incl. inside tmux) | chunky pixel art |
+
+Force a tier with `PET_TERM_MODE=kitty|iterm|ansi` (inside tmux the default
+is half-blocks; graphics protocols need tmux `allow-passthrough`). Ctrl-C
+quits and restores your terminal.
+
+### Statusline pet
+
+A one-line pet for Claude Code's statusline — works absolutely everywhere:
+
+```
+🔥 CHARMELEON Lv.12 ▰▰▰▱▱ ⚔️
+```
+
+Run `claude-pokemon-pet statusline` to print the one-line `settings.json`
+snippet (we never edit your settings for you) and a live preview.
 
 ### CLI
 
@@ -194,6 +229,8 @@ rm -f /opt/homebrew/bin/claude-pokemon-pet
 | `scripts/pet-core.sh` | the game core: reduces hook events to `resolved.json` — the single file every renderer reads (species, level, EXP, localized names/moves) |
 | `scripts/pet-overlay.js` | JXA/AppKit overlay, a pure view of `resolved.json`: native GIF playback, 20 fps motion engine, battle-log captions, ⌥-drag |
 | `scripts/claude-pokemon-pet` | CLI: overlay process management; delegates game ops to the core |
+| `scripts/pet-term.py` + `scripts/petgif.py` | terminal renderer (pure-stdlib Python): GIF decode, kitty/iTerm2/ANSI backends |
+| `scripts/pet-statusline.sh` | one-line statusline renderer |
 | `scripts/get-sprites.sh` | downloads sprites, builds nearest-neighbor upscales + mirrored variants |
 | `data/pokemon/pack.json` | the franchise pack: 81 evolution lines, 151 species with English/Korean names, move pools, sprite source |
 
