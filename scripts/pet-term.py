@@ -96,6 +96,15 @@ def exp_bar(pct, gold, width=10):
             ESC + "[38;5;240m" + "▱" * (width - filled) + ESC + "[0m")
 
 
+def whitekey(rgba):
+    """V-pet sprites ship on an opaque white background: key it out."""
+    out = bytearray(rgba)
+    for o in range(0, len(out), 4):
+        if out[o] >= 250 and out[o + 1] >= 250 and out[o + 2] >= 250 and out[o + 3] == 255:
+            out[o + 3] = 0
+    return bytes(out)
+
+
 # ── captions (presentation; name/moves arrive localized) ──────────
 def josa(w, with_final, no_final):
     c = ord(w[-1])
@@ -210,7 +219,7 @@ class UI:
         self._iterm_sent = None
         self.truecolor = os.environ.get("COLORTERM", "") in ("truecolor", "24bit")
 
-    def load_species(self, species):
+    def load_species(self, species, franchise=None):
         if self.backend == "kitty" and self.species is not None:
             sys.stdout.buffer.write(kitty_delete(77))
         self._iterm_sent = None
@@ -219,6 +228,10 @@ class UI:
             with open(path, "rb") as fh:
                 self.gif_bytes = fh.read()
             self.anim = petgif.decode(self.gif_bytes)
+            if franchise == "digimon":       # v-pet sprites: white background → transparent
+                self.anim = petgif.Anim(self.anim.width, self.anim.height,
+                                        [petgif.Frame(whitekey(f.rgba), f.delay_ms)
+                                         for f in self.anim.frames])
         except Exception:            # any decode failure degrades to placeholder text
             self.anim = None
         self.species, self.frame_i = species, 0
@@ -251,7 +264,7 @@ class UI:
             return
         if r["species"] != self.species:
             out.append(ESC + "[2J")           # species change: full clear on any backend
-            self.load_species(r["species"])
+            self.load_species(r["species"], r.get("franchise"))
         st, mood = caption(r, now)
         dim = ESC + "[2m" if st == "idle" else ""
         out.append(dim)

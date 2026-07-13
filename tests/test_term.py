@@ -45,6 +45,12 @@ class TestDrawing(unittest.TestCase):
         lines = pet_term.halfblocks(rgba, 100, 10, max_cols=20, truecolor=True)
         self.assertLessEqual(max(pet_term.visible_len(l) for l in lines), 20)
 
+    def test_whitekey(self):
+        rgba = bytes([255, 255, 255, 255, 200, 10, 10, 255])
+        out = pet_term.whitekey(rgba)
+        self.assertEqual(out[3], 0)            # white pixel keyed out
+        self.assertEqual(out[4:8], bytes([200, 10, 10, 255]))
+
     def test_exp_bar(self):
         bar = pet_term.exp_bar(50, False, width=10)
         self.assertEqual(bar.count("▰"), 5)
