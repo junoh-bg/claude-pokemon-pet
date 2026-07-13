@@ -9,7 +9,7 @@ export PATH="/opt/homebrew/bin:/usr/local/bin:$PATH"
 SELF="$(readlink -f "$0" 2>/dev/null || echo "$0")"
 ROOT="$(cd "$(dirname "$SELF")/.." && pwd)"
 CACHE="$HOME/.cache/claude-pokemon-pet"
-mkdir -p "$CACHE"
+mkdir -p "$CACHE" 2>/dev/null   # runs before the event-path guard; must stay silent
 
 TODAY="${PET_TODAY:-$(date +%F)}"
 NOW="${PET_NOW:-$(date +%s)}"
