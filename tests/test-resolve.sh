@@ -98,4 +98,27 @@ case "$out" in *CHARMELEON*) ok=yes ;; *) ok=no ;; esac
 assert_eq "status mentions current form" "yes" "$ok"
 teardown
 
+setup  # resolved.json is stamped with its resolve date
+charmander_partner
+set_tasks 0; "$CORE" resolve
+assert_eq "resolved date stamped" "2026-07-13" "$(R .date)"
+teardown
+
+setup  # day rollover: status re-resolves stale resolved.json
+charmander_partner
+echo "2026-07-13 7" > "$CACHE/tasks"
+"$CORE" resolve
+assert_eq "pre-rollover species" "charmeleon" "$(R .species)"
+out="$(PET_TODAY=2026-07-14 "$CORE" status)"
+assert_eq "post-rollover resolved date" "2026-07-14" "$(R .date)"
+assert_eq "post-rollover tasks reset"   "0"          "$(R .tasks)"
+assert_eq "post-rollover devolves"      "charmander" "$(R .species)"
+teardown
+
+setup  # corrupt partner file self-heals to the fallback line
+echo 'not json' > "$CACHE/partner"
+set_tasks 0; "$CORE" resolve
+assert_eq "corrupt partner self-heals" "charmander" "$(R .species)"
+teardown
+
 report

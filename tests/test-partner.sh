@@ -44,8 +44,10 @@ teardown
 setup  # lang override + auto
 "$CORE" lang ko >/dev/null
 assert_eq "lang file written" "ko" "$(cat "$CACHE/lang")"
+assert_json "lang ko resolves ko" "$CACHE/resolved.json" '.lang' "ko"
 "$CORE" lang auto >/dev/null
 assert_eq "lang file removed" "no" "$([ -f "$CACHE/lang" ] && echo yes || echo no)"
+assert_json "lang auto hermetic via PET_LANG" "$CACHE/resolved.json" '.lang' "en"
 if "$CORE" lang xx >/dev/null 2>&1; then rc=0; else rc=1; fi
 assert_eq "bad lang exits 1" "1" "$rc"
 teardown

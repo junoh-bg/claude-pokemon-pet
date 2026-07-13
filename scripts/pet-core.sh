@@ -80,6 +80,7 @@ RESOLVE_JQ='
   (if $lang == "ko" then ($spec.names.ko // $spec.names.en) else $spec.names.en end) as $name |
   ($pack.moves[$p.type] // $pack.moves.normal) as $mv |
   {
+    date: $today,
     franchise: $p.franchise, species: $sp, name: $name, type: $p.type,
     stage: $stage, stages: $len, final: $final,
     tasks: $tasks, mistakes: $mistakes, streak: $streak, shiny: false,
@@ -104,7 +105,8 @@ update_dex() {
 }
 
 cmd_resolve() {
-    [ -f "$CACHE/partner" ] || default_partner
+    command -v jq >/dev/null 2>&1 || return 0   # hook path must survive a bare PATH
+    jq -e . "$CACHE/partner" >/dev/null 2>&1 || default_partner   # missing or corrupt: self-heal
     local pack tasks mistakes streak lang state ts tmp
     pack="$(pack_file "$(active_franchise)")"
     tasks="$(read_daily tasks)"
@@ -116,13 +118,17 @@ cmd_resolve() {
     tmp="$(mktemp)"
     jq -n --slurpfile pk "$pack" --slurpfile pt "$CACHE/partner" \
        --argjson tasks "$tasks" --argjson mistakes "$mistakes" --argjson streak "$streak" \
-       --arg lang "$lang" --arg state "$state" --argjson ts "${ts:-0}" \
+       --arg lang "$lang" --arg state "$state" --argjson ts "${ts:-0}" --arg today "$TODAY" \
        "$RESOLVE_JQ" > "$tmp" && mv "$tmp" "$CACHE/resolved.json"
     update_dex
 }
 
 cmd_status() {
-    [ -f "$CACHE/resolved.json" ] || cmd_resolve
+    # resolved.json is only rewritten on events; re-resolve if absent or stale
+    # (e.g. first status of a new day — counters reset at midnight)
+    if [ "$(jq -r '.date // empty' "$CACHE/resolved.json" 2>/dev/null)" != "$TODAY" ]; then
+        cmd_resolve
+    fi
     jq -r '"partner: \(.line | join(" → "))",
            "now:     \(.name) (stage \(.stage)/\(.stages))",
            "state:   \(.state)",
@@ -161,7 +167,7 @@ cmd_roll_if_new_day() {
 }
 
 cmd_pick() {
-    local name="${1:-}" pack eng
+    local name="${1:-}" pack eng idxs
     pack="$(pack_file pokemon)"
     # korean names resolve to their english slug first
     eng="$(jq -r --arg k "$name" \
@@ -177,11 +183,12 @@ cmd_pick() {
     write_partner "$pack" "${idxs[RANDOM % ${#idxs[@]}]}"
 }
 
-# ── language: override file wins, else system ──
+# ── language: override file wins, then PET_LANG (test seam), else system ──
 cur_lang() {
     local o
     o="$(cat "$CACHE/lang" 2>/dev/null)"
     case "$o" in ko|en) echo "$o"; return ;; esac
+    case "${PET_LANG:-}" in ko|en) echo "$PET_LANG"; return ;; esac
     case "${LC_ALL:-${LANG:-}}" in ko*) echo ko; return ;; esac
     if defaults read -g AppleLanguages 2>/dev/null | sed -n 2p | grep -q ko; then
         echo ko
@@ -200,7 +207,9 @@ cmd_lang() {
 }
 
 case "${1:-}" in
-    event)           cmd_event "${2:-idle}" ;;
+    # The event path runs on every hook of every session: it must never exit
+    # non-zero or emit noise, whatever the state of PATH or the cache.
+    event)           cmd_event "${2:-idle}" 2>/dev/null; exit 0 ;;
     roll)            cmd_roll ;;
     roll-if-new-day) cmd_roll_if_new_day ;;
     pick)            cmd_pick "${2:-}" ;;

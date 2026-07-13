@@ -11,6 +11,7 @@ ObjC.import('QuartzCore');
 
 function run(argv) {
   var HOME = ObjC.unwrap($.NSHomeDirectory());
+  var ROOT = (argv && argv[0]) || HOME + '/.claude/plugins/marketplaces/claude-pokemon-pet';
   var CACHE = HOME + '/.cache/claude-pokemon-pet';
   var SPRITES = CACHE + '/sprites-big';
   var POSF = CACHE + '/pos';
@@ -30,12 +31,37 @@ function run(argv) {
     return w + (hasFinal ? withFinal : noFinal);
   }
 
+  function todayStr() {
+    var d = new Date();
+    return d.getFullYear() + '-' +
+      ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2);
+  }
+
+  // resolved.json is only rewritten on session events, so after midnight it
+  // holds yesterday's level/stage until something fires. When the stamp goes
+  // stale, ask the core to re-resolve (at most once a minute) — the game
+  // logic stays in pet-core.sh; the overlay just picks up the fresh file.
+  var lastKick = 0;
+  function kickResolve() {
+    if (Date.now() - lastKick < 60000) return;
+    lastKick = Date.now();
+    try {
+      var t = $.NSTask.alloc.init;
+      t.setLaunchPath('/bin/bash');
+      t.setArguments($([ROOT + '/scripts/pet-core.sh', 'resolve']));
+      t.setStandardOutput($.NSFileHandle.fileHandleWithNullDevice);
+      t.setStandardError($.NSFileHandle.fileHandleWithNullDevice);
+      t.launch;
+    } catch (e) {}
+  }
+
   // Pure view of resolved.json (written by pet-core.sh). The only session
   // logic kept here is presentation: mood decay by age of the last event.
   function petState() {
     var r;
     try { r = JSON.parse(readFile(CACHE + '/resolved.json')); } catch (e) { return null; }
     if (!r || !r.species) return null;
+    if (r.date && r.date !== todayStr()) kickResolve();
     var age = Math.floor(Date.now() / 1000) - (r.state_ts || 0);
     var state = r.state || 'idle';
     if ((state === 'done' || state === 'hello') && age > 45) state = 'idle';

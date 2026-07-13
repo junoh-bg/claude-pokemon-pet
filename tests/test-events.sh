@@ -44,4 +44,12 @@ assert_eq "bare mistake event still counts" "2026-07-13 2" "$(cat "$CACHE/mistak
 assert_eq "garbage payload still counts" "2026-07-13 3" "$(cat "$CACHE/mistakes")"
 teardown
 
+setup  # the hook path must never fail or emit noise, whatever the state
+echo 'not json' > "$CACHE/partner"
+err="$("$CORE" event thinking </dev/null 2>&1 >/dev/null)"; rc=$?
+assert_eq "event exits 0 despite broken cache" "0" "$rc"
+assert_eq "event emits no stderr noise" "" "$err"
+assert_eq "state still written" "thinking 1789300000" "$(cat "$CACHE/state")"
+teardown
+
 report
