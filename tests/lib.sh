@@ -12,6 +12,7 @@ setup() {
     mkdir -p "$CACHE"
     export PET_TODAY="2026-07-13" PET_YESTERDAY="2026-07-12" PET_NOW="1789300000"
     unset PET_SEED 2>/dev/null || true
+    echo en > "$CACHE/lang"   # hermetic: don't let the host system language leak in
 }
 teardown() { rm -rf "$HOME"; }
 

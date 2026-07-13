@@ -63,7 +63,72 @@ cmd_event() {
     cmd_resolve
 }
 
-cmd_resolve() { :; }   # stub — implemented in a later task
+# ── resolve: reduce pack + partner + counters to resolved.json ──
+RESOLVE_JQ='
+  ($pk[0]) as $pack | ($pt[0]) as $p |
+  ($pack.gates) as $g |
+  ($p.line) as $line | ($line | length) as $len |
+  ([$g[] | select(. <= $tasks)] | length) as $reach |
+  ([([$reach, 1] | max), $len] | min) as $stage |
+  $line[$stage - 1] as $sp |
+  ($stage == $len) as $final |
+  ($g[$stage - 1] // 0) as $base |
+  (if $final then ((($tasks - $base) % 10) * 10)
+   else ((($tasks - $base) * 100 / ($g[$stage] - $base)) | floor)
+   end) as $pct |
+  ($pack.species[$sp]) as $spec |
+  (if $lang == "ko" then ($spec.names.ko // $spec.names.en) else $spec.names.en end) as $name |
+  ($pack.moves[$p.type] // $pack.moves.normal) as $mv |
+  {
+    franchise: $p.franchise, species: $sp, name: $name, type: $p.type,
+    stage: $stage, stages: $len, final: $final,
+    tasks: $tasks, mistakes: $mistakes, streak: $streak, shiny: false,
+    exp_pct: $pct, exp_gold: $final,
+    line: $line,
+    line_names: ($line | map($pack.species[.] as $s |
+        if $lang == "ko" then ($s.names.ko // $s.names.en) else $s.names.en end)),
+    moves: (if $lang == "ko" then ($mv | map($pack.moves_ko[.] // .)) else $mv end),
+    lang: $lang, state: $state, state_ts: $ts
+  }'
+
+update_dex() {
+    [ -f "$CACHE/dex.json" ] || echo '[]' > "$CACHE/dex.json"
+    local sp fr tmp
+    sp="$(jq -r '.species' "$CACHE/resolved.json")"
+    fr="$(jq -r '.franchise' "$CACHE/resolved.json")"
+    tmp="$(mktemp)"
+    jq --arg s "$sp" --arg f "$fr" --arg d "$TODAY" \
+       'if any(.[]; .species == $s and .franchise == $f) then .
+        else . + [{species: $s, franchise: $f, date: $d, shiny: false}] end' \
+       "$CACHE/dex.json" > "$tmp" && mv "$tmp" "$CACHE/dex.json"
+}
+
+cmd_resolve() {
+    [ -f "$CACHE/partner" ] || default_partner
+    local pack tasks mistakes streak lang state ts tmp
+    pack="$(pack_file "$(active_franchise)")"
+    tasks="$(read_daily tasks)"
+    mistakes="$(read_daily mistakes)"
+    streak="$(read_streak)"
+    lang="$(cur_lang)"
+    state=idle; ts="$NOW"
+    [ -f "$CACHE/state" ] && read -r state ts < "$CACHE/state"
+    tmp="$(mktemp)"
+    jq -n --slurpfile pk "$pack" --slurpfile pt "$CACHE/partner" \
+       --argjson tasks "$tasks" --argjson mistakes "$mistakes" --argjson streak "$streak" \
+       --arg lang "$lang" --arg state "$state" --argjson ts "${ts:-0}" \
+       "$RESOLVE_JQ" > "$tmp" && mv "$tmp" "$CACHE/resolved.json"
+    update_dex
+}
+
+cmd_status() {
+    [ -f "$CACHE/resolved.json" ] || cmd_resolve
+    jq -r '"partner: \(.line | join(" → "))",
+           "now:     \(.name) (stage \(.stage)/\(.stages))",
+           "state:   \(.state)",
+           "tasks:   \(.tasks) today · mistakes: \(.mistakes) · streak: \(.streak)d",
+           "lang:    \(.lang)"' "$CACHE/resolved.json"
+}
 
 # ── partner (the rolled line) ──
 pack_file() { echo "$ROOT/data/${1:-pokemon}/pack.json"; }
@@ -141,5 +206,6 @@ case "${1:-}" in
     pick)            cmd_pick "${2:-}" ;;
     lang)            cmd_lang "${2:-}" ;;
     resolve)         cmd_resolve ;;
+    status)          cmd_status ;;
     *) echo "usage: pet-core.sh <event <state>|roll|roll-if-new-day|pick <name>|lang <ko|en|auto>|resolve>" >&2; exit 1 ;;
 esac
