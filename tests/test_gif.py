@@ -110,6 +110,16 @@ class TestDecode(unittest.TestCase):
         with self.assertRaises(ValueError):
             petgif.decode(b"not a gif at all")
 
+    def test_invalid_lzw_code_raises_valueerror(self):
+        # first LZW code out of range (6 with min_code 2: not base/clear/eoi)
+        g = bytearray(b"GIF89a")
+        g += struct.pack("<HH", 2, 2) + bytes([0x80 | 0x01, 0, 0])
+        g += bytes([0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255])
+        g += b"\x2c" + struct.pack("<HHHH", 0, 0, 2, 2) + b"\x00"
+        g += bytes([2]) + b"\x01\x06\x00" + b"\x3b"
+        with self.assertRaises(ValueError):
+            petgif.decode(bytes(g))
+
     def test_disposal_restore_previous(self):
         # frame2 has disposal 3: after it, the canvas reverts to frame1's
         # state, so an all-transparent frame3 shows frame1 again

@@ -77,7 +77,7 @@ def decode(data):
     IndexError/struct.error — callers rely on catching ValueError)."""
     try:
         return _decode(data)
-    except (IndexError, struct.error) as e:
+    except (IndexError, KeyError, struct.error) as e:   # KeyError: invalid LZW code
         raise ValueError("malformed GIF: %s" % e)
 
 
