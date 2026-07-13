@@ -20,6 +20,10 @@ assert_json "en name override" "$DPACK" '.species.metalgreymon_virus.names.en' "
 assert_json "ko name kept" "$DPACK" '.species.botamon.names.ko' "깜몬"
 assert_json "missing ko is null" "$DPACK" '.species.greymon.names.ko' "null"
 assert_json "5 move stages" "$DPACK" '.moves | length' "5"
+# guard against future curation regressions: a non-ultimate species with no
+# outgoing edges would silently stop that day's evolution forever
+assert_json "every non-ultimate species has outgoing edges" "$DPACK" \
+    '. as $p | [.lines[].members[:-3][]] | unique | map(select(($p.edges[.] // []) | length == 0)) | length' "0"
 
 # ── evolution engine ──
 digimon_partner() {  # seed 0 → deterministic branch picks
@@ -75,6 +79,20 @@ PET_SEED=3 "$CORE" franchise pokemon >/dev/null
 assert_json "switched back" "$CACHE/partner" '.franchise' "pokemon"
 if "$CORE" franchise dragonball >/dev/null 2>&1; then rc=0; else rc=1; fi
 assert_eq "unknown franchise exits 1" "1" "$rc"
+teardown
+
+setup  # concurrent hooks must not corrupt the evolution line (reviewed race)
+digimon_partner; set_tasks 2
+for i in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20; do "$CORE" resolve & done
+wait
+assert_json "concurrent resolves keep line consistent" "$CACHE/partner" '.line | join(",")' "botamon,koromon"
+teardown
+
+setup  # day rollover: stage recomputes from the new day's zero tasks
+digimon_partner; set_tasks 18; "$CORE" resolve
+assert_eq "grown to ultimate" "mamemon" "$(R .species)"
+PET_TODAY=2026-07-14 "$CORE" status >/dev/null
+assert_eq "midnight devolves to the egg" "botamon" "$(R .species)"
 teardown
 
 setup  # cross-franchise pick: a digimon name starts that line's egg

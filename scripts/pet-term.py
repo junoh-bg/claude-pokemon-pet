@@ -97,12 +97,20 @@ def exp_bar(pct, gold, width=10):
 
 
 def whitekey(rgba):
-    """V-pet sprites ship on an opaque white background: key it out."""
+    """V-pet sprites ship on an opaque white background: key it out.
+    Exact pure white only — matches gifsicle --transparent='#FFFFFF' in
+    get-sprites.sh so both renderers produce the same mask."""
     out = bytearray(rgba)
     for o in range(0, len(out), 4):
-        if out[o] >= 250 and out[o + 1] >= 250 and out[o + 2] >= 250 and out[o + 3] == 255:
+        if out[o] == 255 and out[o + 1] == 255 and out[o + 2] == 255 and out[o + 3] == 255:
             out[o + 3] = 0
     return bytes(out)
+
+
+def use_inline_gif(backend, franchise):
+    """iTerm2's inline-image path sends the raw GIF bytes, which cannot be
+    white-keyed — digimon sprites there fall back to half-blocks."""
+    return backend == "iterm" and franchise != "digimon"
 
 
 # ── captions (presentation; name/moves arrive localized) ──────────
@@ -253,9 +261,10 @@ class UI:
         now = time.time()
         r = load_resolved(CACHE)
         self.last_kick = maybe_kick(self.root, r, self.last_kick, now)
+        inline = use_inline_gif(self.backend, (r or {}).get("franchise"))
         # iTerm2 animates its inline GIF itself: a full-screen clear every tick
-        # would wipe it, so clear only below the image on that backend.
-        out = [ESC + "[H" + ("" if self.backend == "iterm" else ESC + "[2J")]
+        # would wipe it, so clear only below the image when one is in use.
+        out = [ESC + "[H" + ("" if inline else ESC + "[2J")]
         if not r:
             out.append(ESC + "[2J" + "waiting for pet-core... (start a Claude Code session)")
             self._iterm_sent = None       # full clear wiped any inline GIF
@@ -279,7 +288,7 @@ class UI:
             out = []
             kitty_show(rgba, self.anim.width, self.anim.height, rows, img_id=77)
             out.append(ESC + "[%dB\r" % rows)
-        elif self.backend == "iterm" and self.gif_bytes:
+        elif inline and self.gif_bytes:
             if self._iterm_sent != self.species:
                 sys.stdout.write("".join(out))
                 sys.stdout.flush()
@@ -295,7 +304,7 @@ class UI:
         out.append(" %s  Lv.%d   \U0001f525%dd\r\n" % (r["name"], r["tasks"], r["streak"]))
         out.append(" " + exp_bar(r["exp_pct"], r["exp_gold"]) + "\r\n")
         out.append(" " + mood + ESC + "[K\r\n")
-        if self.backend == "iterm":
+        if inline:
             out.append(ESC + "[0J")           # clear leftovers below without touching the GIF
         sys.stdout.write("".join(out))
         sys.stdout.flush()

@@ -75,7 +75,7 @@ RESOLVE_JQ='
   (($stage == $len) and (($out | length) == 0)) as $final |
   ($g[$stage - 1] // 0) as $base |
   (if $final then ((($tasks - $base) % 10) * 10)
-   else ((($tasks - $base) * 100 / ($g[$stage] - $base)) | floor)
+   else ((($tasks - $base) * 100 / ((($g[$stage] // ($base + 10)) - $base))) | floor)
    end) as $pct |
   ($pack.species[$sp]) as $spec |
   (if $lang == "ko" then ($spec.names.ko // $spec.names.en) else $spec.names.en end) as $name |
@@ -112,6 +112,15 @@ update_dex() {
 # choice is recorded in the partner file — permanent for the day.
 extend_line() { # <pack-file>
     local pack="$1" tasks mistakes len reach next tmp
+    # Hooks run concurrently (async): without mutual exclusion, two resolvers
+    # interleave read-decide-append and corrupt the line (duplicate/overshot
+    # stages). mkdir is atomic; the loser skips — the next event catches up.
+    local lock="$CACHE/.extend.lock" mtime
+    if [ -d "$lock" ]; then   # clear a lock leaked by a killed process
+        mtime=$(stat -f %m "$lock" 2>/dev/null || stat -c %Y "$lock" 2>/dev/null || echo 0)
+        [ $(( $(date +%s) - mtime )) -gt 10 ] && rmdir "$lock" 2>/dev/null
+    fi
+    mkdir "$lock" 2>/dev/null || return 0
     tasks="$(read_daily tasks)"; mistakes="$(read_daily mistakes)"
     while :; do
         len="$(jq '.line | length' "$CACHE/partner")"
@@ -128,10 +137,11 @@ extend_line() { # <pack-file>
                else $rej end) as $pool |
               $pool[(($p.seed + ($p.line | length)) % ($pool | length))].to
             end' "$pack")"
-        [ -n "$next" ] || break
+        [ -n "$next" ] || break   # species with no outgoing edges: growth simply stops
         tmp="$(mktemp)"
         jq --arg n "$next" '.line += [$n]' "$CACHE/partner" > "$tmp" && mv "$tmp" "$CACHE/partner"
     done
+    rmdir "$lock" 2>/dev/null
 }
 
 cmd_resolve() {
