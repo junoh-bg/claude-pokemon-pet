@@ -23,6 +23,15 @@ case "$out" in *"Lv.0"*) ok=yes ;; *) ok=no ;; esac
 assert_eq "statusline re-resolves on rollover" "yes" "$ok"
 teardown
 
+setup  # shiny partner gets the sparkle
+printf '{"franchise":"pokemon","line":["charmander","charmeleon","charizard"],"type":"fire","date":"2026-07-13","seed":0,"shiny":true}' > "$CACHE/partner"
+echo "2026-07-13 3" > "$CACHE/tasks"
+"$CORE" resolve
+out="$("$SL")"
+case "$out" in *"✨CHARMANDER"*) ok=yes ;; *) ok=no ;; esac
+assert_eq "statusline shows shiny sparkle" "yes" "$ok"
+teardown
+
 setup  # no resolved.json and no partner: still exits 0 with a friendly line
 out="$("$SL")"; rc=$?
 assert_eq "empty cache exits 0" "0" "$rc"

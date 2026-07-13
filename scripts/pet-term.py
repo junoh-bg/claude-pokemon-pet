@@ -96,6 +96,17 @@ def exp_bar(pct, gold, width=10):
             ESC + "[38;5;240m" + "▱" * (width - filled) + ESC + "[0m")
 
 
+def hp_bar(pct, width=10):
+    filled = max(0, min(width, round(pct * width / 100)))
+    color = "38;5;46" if pct > 60 else "38;5;226" if pct > 30 else "38;5;196"
+    return (ESC + "[" + color + "m" + "▰" * filled +
+            ESC + "[38;5;240m" + "▱" * (width - filled) + ESC + "[0m")
+
+
+def sprite_file(species, shiny):
+    return species + ("-shiny" if shiny else "") + ".gif"
+
+
 def whitekey(rgba):
     """V-pet sprites ship on an opaque white background: key it out.
     Exact pure white only — matches gifsicle --transparent='#FFFFFF' in
@@ -118,6 +129,23 @@ def josa(w, with_final, no_final):
     c = ord(w[-1])
     has = 0xAC00 <= c <= 0xD7A3 and (c - 0xAC00) % 28 > 0
     return w + (with_final if has else no_final)
+
+
+def ro_josa(w):
+    """(으)로 by final consonant; ㄹ counts as none."""
+    c = ord(w[-1])
+    fin = (c - 0xAC00) % 28
+    return w + ("으로" if 0xAC00 <= c <= 0xD7A3 and fin > 0 and fin != 8 else "로")
+
+
+def evo_caption(old, new, lang, evo_age):
+    """Evolution cinematic caption; mirrors the overlay's two phases."""
+    if evo_age < 2.5:
+        return ("어라…!? " + old + "의 모습이…!") if lang == "ko" \
+            else ("What? " + old + " is evolving!")
+    if lang == "ko":
+        return "축하합니다! " + josa(old, "은", "는") + " " + ro_josa(new) + " 진화했다!"
+    return "Congratulations! Your " + old + " evolved into " + new + "!"
 
 
 def pick(arr, now):
@@ -225,13 +253,17 @@ class UI:
         self.last_kick = 0.0
         self.gif_bytes = b""
         self._iterm_sent = None
+        self.prev_stage, self.prev_name = 0, ""
+        self.evolve_start, self.evolve_old, self.evolve_new = 0.0, "", ""
         self.truecolor = os.environ.get("COLORTERM", "") in ("truecolor", "24bit")
 
-    def load_species(self, species, franchise=None):
+    def load_species(self, species, franchise=None, shiny=False):
         if self.backend == "kitty" and self.species is not None:
             sys.stdout.buffer.write(kitty_delete(77))
         self._iterm_sent = None
-        path = os.path.join(CACHE, "sprites", species + ".gif")
+        path = os.path.join(CACHE, "sprites", sprite_file(species, shiny))
+        if shiny and not os.path.exists(path):    # shiny variant not cached yet
+            path = os.path.join(CACHE, "sprites", sprite_file(species, False))
         try:
             with open(path, "rb") as fh:
                 self.gif_bytes = fh.read()
@@ -273,8 +305,15 @@ class UI:
             return
         if r["species"] != self.species:
             out.append(ESC + "[2J")           # species change: full clear on any backend
-            self.load_species(r["species"], r.get("franchise"))
+            if self.prev_stage and r.get("stage", 0) > self.prev_stage:
+                self.evolve_start = now
+                self.evolve_old, self.evolve_new = self.prev_name, r["name"]
+            self.load_species(r["species"], r.get("franchise"), bool(r.get("shiny")))
+        self.prev_stage, self.prev_name = r.get("stage", 0), r["name"]
         st, mood = caption(r, now)
+        evo_age = now - self.evolve_start if self.evolve_start else 99
+        if evo_age < 10:
+            mood = evo_caption(self.evolve_old, self.evolve_new, r.get("lang", "en"), evo_age)
         dim = ESC + "[2m" if st == "idle" else ""
         out.append(dim)
         rows = 12
@@ -299,10 +338,17 @@ class UI:
             else:
                 out.append(ESC + "[%dB\r" % (rows + 1))   # skip over the live GIF
         else:
-            out.extend(l + "\r\n" for l in self.sprite_lines(st, now))
+            invert = evo_age < 2 and int(now * 4) % 2 == 0   # evolution flash
+            for l in self.sprite_lines(st, now):
+                if invert:
+                    out.append(ESC + "[7m" + l + ESC + "[27m\r\n")
+                else:
+                    out.append(l + "\r\n")
         out.append(ESC + "[0m\r\n")
-        out.append(" %s  Lv.%d   \U0001f525%dd\r\n" % (r["name"], r["tasks"], r["streak"]))
-        out.append(" " + exp_bar(r["exp_pct"], r["exp_gold"]) + "\r\n")
+        out.append(" %s%s  Lv.%d   \U0001f525%dd\r\n" %
+                   ("✨ " if r.get("shiny") else "", r["name"], r["tasks"], r["streak"]))
+        out.append(" " + exp_bar(r["exp_pct"], r["exp_gold"]) +
+                   "  " + hp_bar(r.get("hp_pct", 100), width=5) + "\r\n")
         out.append(" " + mood + ESC + "[K\r\n")
         if inline:
             out.append(ESC + "[0J")           # clear leftovers below without touching the GIF
