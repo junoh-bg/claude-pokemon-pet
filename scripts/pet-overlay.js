@@ -1,8 +1,9 @@
 #!/usr/bin/env osascript -l JavaScript
 // claude-pokemon-pet overlay: a borderless, click-through, always-on-top
-// window with an animated Pokémon that reacts to Claude Code session state
-// (written by pet-state.sh hooks). A new random gen-1 Pokémon is rolled each
-// day; it levels with completed tasks and evolves along its chain.
+// window with an animated Pokémon that reacts to Claude Code session state.
+// A pure view: all game state (species, level, EXP, localized names/moves)
+// comes from resolved.json, written by pet-core.sh. The overlay keeps only
+// presentation logic: animation, mood decay by age, evolution cutscene.
 // ⌥-drag to move. Usage: pet-overlay.js <plugin-root>
 
 ObjC.import('Cocoa');
@@ -10,31 +11,11 @@ ObjC.import('QuartzCore');
 
 function run(argv) {
   var HOME = ObjC.unwrap($.NSHomeDirectory());
-  var ROOT = (argv && argv[0]) || HOME + '/.claude/plugins/marketplaces/claude-pokemon-pet';
   var CACHE = HOME + '/.cache/claude-pokemon-pet';
   var SPRITES = CACHE + '/sprites-big';
   var POSF = CACHE + '/pos';
-  var EVO2 = 6, EVO3 = 16;       // tasks/day needed for stage 2 / 3
   var BOTTOM_OFFSET = 30;        // default home: just above the tmux bar
   var ROAM = 240;                // wander range while working (px)
-
-  var TYPE_MOVES = {
-    normal:   ['TACKLE', 'BODY SLAM', 'HYPER BEAM'],
-    fire:     ['EMBER', 'FLAMETHROWER', 'FIRE BLAST'],
-    water:    ['WATER GUN', 'SURF', 'HYDRO PUMP'],
-    grass:    ['VINE WHIP', 'RAZOR LEAF', 'SOLAR BEAM'],
-    electric: ['THUNDER SHOCK', 'THUNDERBOLT', 'THUNDER'],
-    psychic:  ['CONFUSION', 'PSYBEAM', 'PSYCHIC'],
-    fighting: ['KARATE CHOP', 'SEISMIC TOSS', 'SUBMISSION'],
-    rock:     ['ROCK THROW', 'ROCK SLIDE', 'EARTHQUAKE'],
-    ground:   ['DIG', 'BONE CLUB', 'EARTHQUAKE'],
-    poison:   ['POISON STING', 'ACID', 'SLUDGE'],
-    bug:      ['LEECH LIFE', 'PIN MISSILE', 'TWINEEDLE'],
-    flying:   ['GUST', 'WING ATTACK', 'DRILL PECK'],
-    ghost:    ['LICK', 'NIGHT SHADE', 'DREAM EATER'],
-    ice:      ['AURORA BEAM', 'ICE BEAM', 'BLIZZARD'],
-    dragon:   ['DRAGON RAGE', 'SLAM', 'HYPER BEAM']
-  };
 
   function readFile(p) {
     var s = $.NSString.stringWithContentsOfFileEncodingError($(p), $.NSUTF8StringEncoding, null);
@@ -43,77 +24,43 @@ function run(argv) {
   function writeFile(p, text) {
     $(text).writeToFileAtomicallyEncodingError($(p), true, $.NSUTF8StringEncoding, null);
   }
-  function today() {
-    var d = new Date();
-    return d.getFullYear() + '-' +
-      ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2);
-  }
-
-  var chains = JSON.parse(readFile(ROOT + '/data/chains.json'));
-  var KO = {};
-  try { KO = JSON.parse(readFile(ROOT + '/data/lang-ko.json')); } catch (e) { KO = null; }
-
-  // Language: explicit override file wins, else macOS system language
-  function lang() {
-    var o = readFile(CACHE + '/lang');
-    if (o === 'ko' || o === 'en') return KO ? o : 'en';
-    var pref = ObjC.unwrap($.NSLocale.preferredLanguages.objectAtIndex(0)) || '';
-    return (KO && pref.indexOf('ko') === 0) ? 'ko' : 'en';
-  }
-  function dispName(mon) {
-    return lang() === 'ko' ? (KO.names[mon] || mon.toUpperCase()) : mon.toUpperCase();
-  }
   function josa(w, withFinal, noFinal) { // e.g. josa(name, '은', '는')
     var c = w.charCodeAt(w.length - 1);
     var hasFinal = c >= 0xAC00 && c <= 0xD7A3 && (c - 0xAC00) % 28 > 0;
     return w + (hasFinal ? withFinal : noFinal);
   }
 
-  // The partner never changes mid-run; the daily gacha roll happens in the
-  // CLI when the overlay starts (claude-pokemon-pet start/autostart).
-  function currentChain() {
-    var idx = parseInt(readFile(CACHE + '/pet'), 10);
-    if (isNaN(idx) || idx < 0 || idx >= chains.length) idx = 1; // charmander
-    return chains[idx];
-  }
-
+  // Pure view of resolved.json (written by pet-core.sh). The only session
+  // logic kept here is presentation: mood decay by age of the last event.
   function petState() {
-    var chain = currentChain();
-    var tasks = 0;
-    var t = readFile(CACHE + '/tasks').split(/\s+/);
-    if (t.length === 2 && t[0] === today()) tasks = parseInt(t[1], 10) || 0;
-
-    var stage = Math.min(1 + (tasks >= EVO2 ? 1 : 0) + (tasks >= EVO3 ? 1 : 0), chain.mons.length);
-
-    var st = readFile(CACHE + '/state').split(/\s+/);
-    var state = st[0] || 'idle';
-    var age = Math.floor(Date.now() / 1000) - (parseInt(st[1], 10) || 0);
+    var r;
+    try { r = JSON.parse(readFile(CACHE + '/resolved.json')); } catch (e) { return null; }
+    if (!r || !r.species) return null;
+    var age = Math.floor(Date.now() / 1000) - (r.state_ts || 0);
+    var state = r.state || 'idle';
     if ((state === 'done' || state === 'hello') && age > 45) state = 'idle';
     if ((state === 'thinking' || state === 'working' || state === 'waiting') && age > 600) state = 'idle';
-
-    return {
-      mons: chain.mons, type: chain.type, mon: chain.mons[stage - 1],
-      stage: stage, final: stage === chain.mons.length,
-      state: state, age: age, tasks: tasks
-    };
+    r.state = state;
+    r.age = age;
+    return r;
   }
 
-  // Battle-log captions; rotates every 7s within a state
+  // Battle-log captions; rotates every 7s within a state. Templates are
+  // presentation; p.name and p.moves arrive already localized from the core.
   function pick(arr) { return arr[Math.floor(Date.now() / 7000) % arr.length]; }
   function moodText(p) {
-    var move = pick(TYPE_MOVES[p.type] || TYPE_MOVES.normal);
-    if (lang() === 'ko') {
-      var K = dispName(p.mon);
+    var move = pick(p.moves && p.moves.length ? p.moves : ['TACKLE']);
+    var N = p.name;
+    if (p.lang === 'ko') {
       switch (p.state) {
-        case 'thinking': return pick([josa(K, '은', '는') + ' 기합을 넣고 있다!', josa(K, '은', '는') + ' 상황을 살피고 있다!']);
-        case 'working':  return K + '의 ' + (KO.moves[move] || move) + '!';
-        case 'done':     return pick(['효과는 굉장했다!', josa(K, '은', '는') + ' 경험치를 얻었다!']);
-        case 'waiting':  return josa(K, '은', '는') + ' 지시를 기다리고 있다';
-        case 'hello':    return '가라! ' + K + '!';
-        default:         return josa(K, '은', '는') + ' 쿨쿨 잠들어 있다';
+        case 'thinking': return pick([josa(N, '은', '는') + ' 기합을 넣고 있다!', josa(N, '은', '는') + ' 상황을 살피고 있다!']);
+        case 'working':  return N + '의 ' + move + '!';
+        case 'done':     return pick(['효과는 굉장했다!', josa(N, '은', '는') + ' 경험치를 얻었다!']);
+        case 'waiting':  return josa(N, '은', '는') + ' 지시를 기다리고 있다';
+        case 'hello':    return '가라! ' + N + '!';
+        default:         return josa(N, '은', '는') + ' 쿨쿨 잠들어 있다';
       }
     }
-    var N = p.mon.toUpperCase();
     switch (p.state) {
       case 'thinking': return pick([N + ' is getting pumped!', N + ' is sizing up the task!']);
       case 'working':  return N + ' used ' + move + '!';
@@ -223,16 +170,8 @@ function run(argv) {
   expFill.setFillColor(cg(0.49, 0.81, 1.0, 0.95));
   win.contentView.layer.addSublayer(expFill);
   function setExp(p) {
-    var frac;
-    if (p.final) {
-      // Fully evolved: EXP keeps gathering — gold bar refills every 10 levels
-      var base = p.mons.length === 3 ? EVO3 : p.mons.length === 2 ? EVO2 : 0;
-      frac = ((p.tasks - base) % 10) / 10;
-    } else {
-      frac = p.stage === 2 ? (p.tasks - EVO2) / (EVO3 - EVO2) : p.tasks / EVO2;
-    }
-    frac = Math.max(0.02, Math.min(1, frac));
-    expFill.setFillColor(p.final ? cg(1.0, 0.82, 0.25, 0.95) : cg(0.49, 0.81, 1.0, 0.95));
+    var frac = Math.max(0.02, Math.min(1, (p.exp_pct || 0) / 100));
+    expFill.setFillColor(p.exp_gold ? cg(1.0, 0.82, 0.25, 0.95) : cg(0.49, 0.81, 1.0, 0.95));
     expFill.setPath($.CGPathCreateWithRoundedRect(
       $.CGRectMake(expX, expY, EXPW * frac, EXPH), 2, 2, null));
   }
@@ -247,22 +186,24 @@ function run(argv) {
       $(SPRITES + '/' + mon + (dir === 'r' ? '-flip' : '') + '.gif'));
     if (img && !img.isNil()) { imageView.setImage(img); current.key = key; }
   }
-  var evolveUntil = 0, evolveName = '', prevStage = 0;
+  var evolveUntil = 0, evolveName = '', prevStage = 0, prevName = '';
   function refresh() {
     var p = petState();
+    if (!p) return;                        // core hasn't resolved yet
     current.state = p.state;
     current.age = p.age;
-    current.mon = p.mon;
+    current.mon = p.species;
     if (prevStage && p.stage > prevStage) {
       evolveUntil = Date.now() + 10000;
-      evolveName = p.mons[prevStage - 1];
+      evolveName = prevName;
     }
     prevStage = p.stage;
-    setSprite(p.mon, p.state === 'working' ? facing : 'l');
-    nameLabel.setStringValue($(dispName(p.mon) + '  Lv.' + p.tasks));
-    var evolveMsg = lang() === 'ko'
-      ? '어라…!? ' + dispName(evolveName) + '의 모습이…!'
-      : 'What? ' + evolveName.toUpperCase() + ' is evolving!';
+    prevName = p.name;
+    setSprite(p.species, p.state === 'working' ? facing : 'l');
+    nameLabel.setStringValue($(p.name + '  Lv.' + p.tasks));
+    var evolveMsg = p.lang === 'ko'
+      ? '어라…!? ' + evolveName + '의 모습이…!'
+      : 'What? ' + evolveName + ' is evolving!';
     moodLabel.setStringValue($(Date.now() < evolveUntil ? evolveMsg : moodText(p)));
     centerLabel(nameLabel);
     centerLabel(moodLabel);
