@@ -10,7 +10,10 @@ mkdir -p "$CACHE/sprites" "$CACHE/sprites-big"
 rm -f "$CACHE/sprites"/.*.tmp 2>/dev/null
 
 for PACK in "$ROOT"/data/*/pack.json; do
-    jq -r '.species | to_entries[] | "\(.key) \(.value.sprite_url)"' "$PACK" > "$CACHE/.sprite-urls"
+    jq -r '.species | to_entries[]
+           | ("\(.key) \(.value.sprite_url)"),
+             (if .value.sprite_shiny_url then "\(.key)-shiny \(.value.sprite_shiny_url)" else empty end)' \
+        "$PACK" > "$CACHE/.sprite-urls"
     i=0
     while read -r name url; do
         [ -f "$CACHE/sprites/$name.gif" ] && continue
@@ -29,7 +32,9 @@ if command -v gifsicle >/dev/null; then
     for PACK in "$ROOT"/data/*/pack.json; do
         TARGET=$(jq -r '.sprites.target_px // 190' "$PACK")
         WHITEKEY=$(jq -r '.sprites.whitekey // false' "$PACK")
-        jq -r '.species | keys[]' "$PACK" | while read -r mon; do
+        jq -r '.species | to_entries[]
+               | .key, (if .value.sprite_shiny_url then "\(.key)-shiny" else empty end)' \
+            "$PACK" | while read -r mon; do
             g="$CACHE/sprites/$mon.gif"
             [ -f "$g" ] || continue
             [ -f "$CACHE/sprites-big/$mon.gif" ] && continue
