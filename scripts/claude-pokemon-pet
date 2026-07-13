@@ -19,10 +19,11 @@ stop()  { pkill -f "pet-overlay.js" 2>/dev/null; echo "overlay: off"; }
 launch() {
     local lock="$CACHE/.launch.lock"
     if [ -d "$lock" ]; then   # clear a lock leaked by a killed process
+        # (a failed stat means the lock vanished mid-check — not staleness)
         local mtime
-        mtime=$(stat -f %m "$lock" 2>/dev/null || stat -c %Y "$lock" 2>/dev/null || echo 0)
-        local age=$(( $(date +%s) - mtime ))
-        [ "$age" -gt 30 ] && rmdir "$lock" 2>/dev/null
+        if mtime=$(stat -f %m "$lock" 2>/dev/null || stat -c %Y "$lock" 2>/dev/null) && [ -n "$mtime" ]; then
+            [ $(( $(date +%s) - mtime )) -gt 30 ] && rmdir "$lock" 2>/dev/null
+        fi
     fi
     mkdir "$lock" 2>/dev/null || return 0   # another launch already in progress
     if [ -z "$(pid)" ]; then

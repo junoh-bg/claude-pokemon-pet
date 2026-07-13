@@ -55,7 +55,21 @@ it**.
 
 ## Review loop
 
-(filled in after the loop completes)
+Three rounds. Round 1 found a **reproduced Critical**: `extend_line`'s
+read-decide-append loop corrupted the evolution line under concurrent hooks
+(30 parallel resolves at 2 tasks produced a 10-species line including a
+champion) — fixed with an mkdir lock (losers skip; next event catches up).
+Also: iTerm2 rendered digimon on a white box (raw GIF bytes can't be keyed →
+falls back to whitekeyed half-blocks), an EXP gate out-of-bounds guard,
+whitekey/gifsicle threshold parity, and coverage additions (race stress,
+digimon day-rollover, pack-integrity guard). Round 2 verified all fixes but
+surfaced the deeper root cause as a **second Critical**: `bump_daily`'s
+unlocked read-modify-write silently lost counter increments under concurrent
+hooks (3 simultaneous `done` events → tasks 1–2 instead of 3) — the inputs
+that gate permanent evolution. Fixed with a bounded-wait counter lock; EXP
+percent clamped 0–100. The mkdir-lock pattern and the "assume any new cache
+mutation races until proven otherwise" rule are now in CLAUDE.md.
+(test-digimon.sh: 44 assertions.)
 
 ## Next: Phase 4
 

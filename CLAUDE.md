@@ -62,6 +62,12 @@ never make the core depend on a renderer. Franchise data lives in JSON packs
   The seeded pick indexes into pack edge order — `gen-digimon-pack.sh` must
   preserve curation-file edge order (jq `group_by` is stable; don't replace it
   with something that isn't).
+- **Hooks run concurrently** (`"async": true`): any read-modify-write of
+  cache state needs the mkdir-lock pattern (`clear_stale_lock` + `mkdir`,
+  wall-clock staleness — never `PET_NOW`). Counter bumps use a bounded-wait
+  lock (losing an increment is data loss); `extend_line` uses skip-on-busy
+  (the next event catches up). Reviews of Phase 3 found BOTH races live —
+  assume any new mutation has this bug until proven otherwise.
 
 ## Phase status
 

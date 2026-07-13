@@ -15,6 +15,34 @@ TODAY="${PET_TODAY:-$(date +%F)}"
 NOW="${PET_NOW:-$(date +%s)}"
 [ -n "${PET_SEED:-}" ] && RANDOM="$PET_SEED"
 
+# ── tiny mkdir locks: hooks run concurrently ("async": true) ──
+clear_stale_lock() { # <path> — clear a lock leaked by a killed process
+    [ -d "$1" ] || return 0
+    local mtime
+    # a failed stat means the lock vanished mid-check (someone else's cycle):
+    # that is NOT staleness — treating it as age-infinity would rmdir a lock
+    # another process just acquired (empty dirs rmdir fine) and let two
+    # holders into the critical section
+    mtime=$(stat -f %m "$1" 2>/dev/null || stat -c %Y "$1" 2>/dev/null) || return 0
+    [ -n "$mtime" ] || return 0
+    [ $(( $(date +%s) - mtime )) -gt 10 ] && rmdir "$1" 2>/dev/null
+    return 0
+}
+# Serialize counter read-modify-writes: an unlocked bump loses increments
+# under concurrent hooks, which silently miscounts tasks/mistakes — the
+# inputs that gate (permanent) evolution. Bounded wait ≈1s, never fails.
+counter_lock() {
+    local lock="$CACHE/.counter.lock" i=0
+    while [ "$i" -lt 100 ]; do
+        mkdir "$lock" 2>/dev/null && return 0
+        clear_stale_lock "$lock"
+        sleep 0.01
+        i=$((i + 1))
+    done
+    return 0   # last resort: proceed unlocked rather than drop the event
+}
+counter_unlock() { rmdir "$CACHE/.counter.lock" 2>/dev/null; }
+
 # ── daily counters: files hold "<date> <n>"; other days read as 0 ──
 read_daily() {
     local d c
@@ -55,9 +83,12 @@ is_interrupt() {
 cmd_event() {
     local ev="${1:-idle}"
     case "$ev" in
-        done)    printf 'done %s\n' "$NOW" > "$CACHE/state"; update_streak; bump_daily tasks ;;
-        mistake) is_interrupt || bump_daily mistakes
-                 printf 'working %s\n' "$NOW" > "$CACHE/state" ;;
+        done)    printf 'done %s\n' "$NOW" > "$CACHE/state"
+                 counter_lock; update_streak; bump_daily tasks; counter_unlock ;;
+        mistake) printf 'working %s\n' "$NOW" > "$CACHE/state"
+                 if ! is_interrupt; then
+                     counter_lock; bump_daily mistakes; counter_unlock
+                 fi ;;
         *)       printf '%s %s\n' "$ev" "$NOW" > "$CACHE/state" ;;
     esac
     cmd_resolve
@@ -75,7 +106,7 @@ RESOLVE_JQ='
   (($stage == $len) and (($out | length) == 0)) as $final |
   ($g[$stage - 1] // 0) as $base |
   (if $final then ((($tasks - $base) % 10) * 10)
-   else ((($tasks - $base) * 100 / ((($g[$stage] // ($base + 10)) - $base))) | floor)
+   else ([([((($tasks - $base) * 100 / ((($g[$stage] // ($base + 10)) - $base))) | floor), 100] | min), 0] | max)
    end) as $pct |
   ($pack.species[$sp]) as $spec |
   (if $lang == "ko" then ($spec.names.ko // $spec.names.en) else $spec.names.en end) as $name |
@@ -115,11 +146,8 @@ extend_line() { # <pack-file>
     # Hooks run concurrently (async): without mutual exclusion, two resolvers
     # interleave read-decide-append and corrupt the line (duplicate/overshot
     # stages). mkdir is atomic; the loser skips — the next event catches up.
-    local lock="$CACHE/.extend.lock" mtime
-    if [ -d "$lock" ]; then   # clear a lock leaked by a killed process
-        mtime=$(stat -f %m "$lock" 2>/dev/null || stat -c %Y "$lock" 2>/dev/null || echo 0)
-        [ $(( $(date +%s) - mtime )) -gt 10 ] && rmdir "$lock" 2>/dev/null
-    fi
+    local lock="$CACHE/.extend.lock"
+    clear_stale_lock "$lock"
     mkdir "$lock" 2>/dev/null || return 0
     tasks="$(read_daily tasks)"; mistakes="$(read_daily mistakes)"
     while :; do
