@@ -1,9 +1,9 @@
 {
   "name": "claude-pokemon-pet",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "A floating Pokémon companion for Claude Code — a random gen-1 partner appears daily, reacts to your session, and evolves as you complete tasks.",
   "author": { "name": "junoh-bg", "url": "https://github.com/junoh-bg" },
   "homepage": "https://github.com/junoh-bg/claude-pokemon-pet",
   "license": "MIT",
-  "keywords": ["pokemon", "pet", "overlay", "fun", "macos", "linux", "terminal"]
+  "keywords": ["pokemon", "digimon", "pet", "overlay", "fun", "macos", "linux", "terminal"]
 }

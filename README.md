@@ -1,10 +1,10 @@
 # claude-pokemon-pet
 
-A Pokémon companion for Claude Code. A random gen-1 Pokémon appears, reacts
-to what Claude is doing, levels up with every completed task, and evolves
-along its real evolution chain. On macOS it floats over your screen as a
-native overlay; on Linux, over SSH, or on a headless RunPod it lives inside
-your terminal (`claude-pokemon-pet term`) or your statusline.
+A Pokémon (or Digimon!) companion for Claude Code. A random partner appears,
+reacts to what Claude is doing, levels up with every completed task, and
+evolves along its real evolution chain. On macOS it floats over your screen
+as a native overlay; on Linux, over SSH, or on a headless RunPod it lives
+inside your terminal (`claude-pokemon-pet term`) or your statusline.
 
 <p align="center">
   <img src="assets/demo.gif" width="720" alt="claude-pokemon-pet — a Charizard reacting to a Claude Code session">
@@ -98,6 +98,27 @@ automatically:
 Force a tier with `PET_TERM_MODE=kitty|iterm|ansi` (inside tmux the default
 is half-blocks; graphics protocols need tmux `allow-passthrough`). Ctrl-C
 quits and restores your terminal.
+
+### Digimon mode
+
+```
+claude-pokemon-pet digimon      # or: /claude-pokemon-pet:pet digimon
+```
+
+Your partner becomes one of the five original 1997 **Digital Monster V-pet**
+lines (Ver.1–Ver.5), drawn with the authentic LCD sprites. Five stages, gated
+by tasks completed today: Baby → In-Training (2) → Rookie (5) → Champion (10)
+→ Ultimate (18) — then the gold EXP bar takes over.
+
+Unlike Pokémon mode, evolution **branches** — and it watches how your session
+is going. Each failing tool call counts as a *care mistake* (user interrupts
+don't count; `pet status` shows today's tally). If you have **3+ care
+mistakes at the moment an evolution triggers**, your partner takes the
+canonical joke path (Numemon and friends await the sloppy). Each evolution
+choice is locked in for the day, exactly like the real V-pet.
+
+`claude-pokemon-pet pokemon` switches back; `pet agumon` (or `pet 파피몬`)
+jumps straight to a specific line — you start from its egg, V-pet style.
 
 ### Statusline pet
 
@@ -232,7 +253,8 @@ rm -f /opt/homebrew/bin/claude-pokemon-pet
 | `scripts/pet-term.py` + `scripts/petgif.py` | terminal renderer (pure-stdlib Python): GIF decode, kitty/iTerm2/ANSI backends |
 | `scripts/pet-statusline.sh` | one-line statusline renderer |
 | `scripts/get-sprites.sh` | downloads sprites, builds nearest-neighbor upscales + mirrored variants |
-| `data/pokemon/pack.json` | the franchise pack: 81 evolution lines, 151 species with English/Korean names, move pools, sprite source |
+| `data/pokemon/pack.json` | franchise pack: 81 evolution lines, 151 species with English/Korean names, move pools, sprite source |
+| `data/digimon/pack.json` | franchise pack: the five 1997 V-pet versions — 70 species, branching evolution graph with care-mistake reject paths |
 
 Hook events: `UserPromptSubmit` → thinking, `PostToolUse` → working,
 `PostToolUseFailure` → a "care mistake" (daily counter, drives upcoming
@@ -253,10 +275,11 @@ you can read in `scripts/`.
 
 ## Credits
 
-Sprites are fetched at install time from
-[PokeAPI/sprites](https://github.com/PokeAPI/sprites) (gen-5 Black/White
-animated set) and are not redistributed with this repo. Pokémon is © Nintendo
-/ Creatures Inc. / GAME FREAK inc. This is a fan-made tool, not affiliated
-with or endorsed by them.
+Sprites are fetched at install time and are not redistributed with this
+repo: Pokémon from [PokeAPI/sprites](https://github.com/PokeAPI/sprites)
+(gen-5 Black/White animated set), Digimon V-pet sprites from
+[Wikimon](https://wikimon.net). Pokémon is © Nintendo / Creatures Inc. /
+GAME FREAK inc.; Digimon is © Bandai. This is a fan-made tool, not
+affiliated with or endorsed by them.
 
 MIT licensed — see [LICENSE](LICENSE).

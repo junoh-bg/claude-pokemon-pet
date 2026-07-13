@@ -57,11 +57,16 @@ never make the core depend on a renderer. Franchise data lives in JSON packs
   renderer must do the same stale check.
 - pgrep/pkill on `pet-overlay.js` hits the *installed* plugin's overlay too —
   mind the running instance when testing locally.
+- **`extend_line` invariant** (Phase 3): digimon evolution choices are
+  recorded in the partner file at the gate crossing and never re-evaluated.
+  The seeded pick indexes into pack edge order — `gen-digimon-pack.sh` must
+  preserve curation-file edge order (jq `group_by` is stable; don't replace it
+  with something that isn't).
 
 ## Phase status
 
 1. ✅ Shared core refactor (PR #1)
 2. ✅ Terminal renderer + statusline (Linux/SSH/RunPod)
-3. ⬜ Digimon pack + V-pet branching (sprite-source research first)
+3. ✅ Digimon pack + V-pet branching
 4. ⬜ Shinies, dex command, HUD, battle FX, evo cinematics
 5. ⬜ Trainer card
