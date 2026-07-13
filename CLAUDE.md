@@ -67,7 +67,11 @@ never make the core depend on a renderer. Franchise data lives in JSON packs
   wall-clock staleness — never `PET_NOW`). Counter bumps use a bounded-wait
   lock (losing an increment is data loss); `extend_line` uses skip-on-busy
   (the next event catches up). Reviews of Phase 3 found BOTH races live —
-  assume any new mutation has this bug until proven otherwise.
+  assume any new mutation has this bug until proven otherwise. Known accepted
+  residual: timeout-based stale reclamation can, in a sub-ms window, rmdir a
+  fresh lock if a live owner held one >10s (pathological); fencing tokens are
+  disproportionate here. Measured worst-case hook latency under a held
+  counter lock: ~2.7s (bounded, inside the 5s hook timeout).
 
 ## Phase status
 
