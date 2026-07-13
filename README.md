@@ -141,13 +141,11 @@ captions shown elsewhere in this README appear in Korean when `lang` is `ko`.)
 
 ## Configuration
 
-Tunables at the top of `scripts/pet-overlay.js`:
-
-| Constant | Default | Meaning |
-|---|---|---|
-| `EVO2` / `EVO3` | 6 / 16 | tasks per day to reach stage 2 / 3 |
-| `BOTTOM_OFFSET` | 30 | default distance from the bottom screen edge (px) |
-| `ROAM` | 240 | how far it wanders while working (px) |
+| Tunable | Where | Default | Meaning |
+|---|---|---|---|
+| `gates` | `data/pokemon/pack.json` | `[0, 6, 16]` | tasks per day to reach each stage |
+| `BOTTOM_OFFSET` | `scripts/pet-overlay.js` | 30 | default distance from the bottom screen edge (px) |
+| `ROAM` | `scripts/pet-overlay.js` | 240 | how far it wanders while working (px) |
 
 ## Updating
 
@@ -193,18 +191,19 @@ rm -f /opt/homebrew/bin/claude-pokemon-pet
 | Piece | Role |
 |---|---|
 | `hooks/hooks.json` | registers Claude Code hooks automatically on install |
-| `scripts/pet-state.sh` | hook helper: writes session state + task counter to `~/.cache/claude-pokemon-pet/` |
-| `scripts/pet-overlay.js` | JXA/AppKit overlay: native GIF playback, 20 fps motion engine, battle-log captions, ⌥-drag |
-| `scripts/claude-pokemon-pet` | CLI; rolls the daily gacha at overlay start |
+| `scripts/pet-core.sh` | the game core: reduces hook events to `resolved.json` — the single file every renderer reads (species, level, EXP, localized names/moves) |
+| `scripts/pet-overlay.js` | JXA/AppKit overlay, a pure view of `resolved.json`: native GIF playback, 20 fps motion engine, battle-log captions, ⌥-drag |
+| `scripts/claude-pokemon-pet` | CLI: overlay process management; delegates game ops to the core |
 | `scripts/get-sprites.sh` | downloads sprites, builds nearest-neighbor upscales + mirrored variants |
-| `data/chains.json` | 81 gen-1 evolution chains + primary type (drives evolution and move pool) |
-| `data/gen1.txt` | dex number ↔ name |
-| `data/lang-ko.json` | official Korean names + move translations |
+| `data/pokemon/pack.json` | the franchise pack: 81 evolution lines, 151 species with English/Korean names, move pools, sprite source |
 
 Hook events: `UserPromptSubmit` → thinking, `PostToolUse` → working,
-`Stop` → done (+1 task), `PermissionRequest` → waiting, `SessionStart` →
-hello + overlay autostart. All state lives in `~/.cache/claude-pokemon-pet/`; the
-plugin directory itself is never written to.
+`PostToolUseFailure` → a "care mistake" (daily counter, drives upcoming
+features), `Stop` → done (+1 task), `PermissionRequest` → waiting,
+`SessionStart` → hello + overlay autostart. All state lives in
+`~/.cache/claude-pokemon-pet/` (including your `dex.json` — every partner
+you've ever had — and daily streak); the plugin directory itself is never
+written to.
 
 ## Privacy & security
 

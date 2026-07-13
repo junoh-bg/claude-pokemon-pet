@@ -1,6 +1,8 @@
 #!/bin/bash
 # Dev-time only: regenerates data/pokemon/pack.json from the v1 data files
-# (data/chains.json, data/gen1.txt, data/lang-ko.json). Kept for provenance.
+# (data/chains.json, data/gen1.txt, data/lang-ko.json). Kept for provenance;
+# the v1 files were deleted in v0.4.0 — restore them from git history first:
+#   git show v0.3.3:data/chains.json > data/chains.json   (etc.)
 set -e
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 cd "$ROOT"
