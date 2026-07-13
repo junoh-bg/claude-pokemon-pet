@@ -8,7 +8,7 @@ export PATH="/opt/homebrew/bin:/usr/local/bin:$PATH"
 SELF="$(readlink -f "$0" 2>/dev/null || echo "$0")"
 ROOT="$(cd "$(dirname "$SELF")/.." && pwd)"
 CACHE="$HOME/.cache/claude-pokemon-pet"
-CHAINS="$ROOT/data/chains.json"
+CORE="$ROOT/scripts/pet-core.sh"
 mkdir -p "$CACHE"
 
 pid()   { pgrep -f "pet-overlay.js" | head -1; }
@@ -37,17 +37,9 @@ start() {
     [ -f "$CACHE/sprites-big/mew.gif" ] || "$ROOT/scripts/get-sprites.sh"
     # Daily gacha: roll a new partner on the first start of the day.
     # The partner never changes while the overlay is running.
-    if [ "$(cat "$CACHE/pet-date" 2>/dev/null)" != "$(date +%F)" ]; then
-        set_chain $(( RANDOM % $(jq length "$CHAINS") )) >/dev/null
-    fi
+    "$CORE" roll-if-new-day
     launch
     echo "overlay: on"
-}
-
-set_chain() {
-    echo "$1" > "$CACHE/pet"
-    date +%F > "$CACHE/pet-date"
-    echo "pet: $(jq -r ".[$1].mons | join(\" → \")" "$CHAINS")"
 }
 
 case "${1:-toggle}" in
@@ -55,35 +47,13 @@ case "${1:-toggle}" in
     on)        rm -f "$CACHE/off"; [ -n "$(pid)" ] || start ;;
     off)       touch "$CACHE/off"; stop ;;
     autostart) [ -f "$CACHE/off" ] || [ -n "$(pid)" ] || start ;;
-    random)    set_chain $(( RANDOM % $(jq length "$CHAINS") )) ;;
-    pet)
-        name="${2:-}"
-        # Korean names resolve to their English slug first
-        eng=$(jq -r --arg k "$name" '.names | to_entries[] | select(.value == $k) | .key' \
-            "$ROOT/data/lang-ko.json" 2>/dev/null | head -1)
-        [ -n "$eng" ] && name="$eng"
-        # Any chain containing the name; random among matches (eevee branches)
-        idxs=($(jq -r --arg m "$name" 'to_entries[] | select(.value.mons | index($m)) | .key' "$CHAINS"))
-        if [ ${#idxs[@]} -eq 0 ]; then
-            echo "unknown gen-1 pokémon: ${2:-?}" >&2
-            exit 1
-        fi
-        set_chain "${idxs[RANDOM % ${#idxs[@]}]}"
-        ;;
-    lang)
-        case "${2:-}" in
-            ko|en) echo "$2" > "$CACHE/lang"; echo "language: $2" ;;
-            auto)  rm -f "$CACHE/lang"; echo "language: auto (system)" ;;
-            *)     echo "usage: claude-pokemon-pet lang <ko|en|auto>" >&2; exit 1 ;;
-        esac
-        ;;
+    random)    "$CORE" roll ;;
+    pet)       "$CORE" pick "${2:-}" ;;
+    lang)      "$CORE" lang "${2:-}" ;;
     sprites)   exec "$ROOT/scripts/get-sprites.sh" ;;
     status)
         echo "overlay: $([ -n "$(pid)" ] && echo "on (pid $(pid))" || echo off)"
-        i=$(cat "$CACHE/pet" 2>/dev/null); i=${i:-1}
-        echo "chain:   $(jq -r ".[$i].mons | join(\" → \")" "$CHAINS" 2>/dev/null)"
-        echo "state:   $(cat "$CACHE/state" 2>/dev/null || echo none)"
-        echo "tasks:   $(cat "$CACHE/tasks" 2>/dev/null || echo '0 today')"
+        "$CORE" status
         ;;
     *)
         echo "usage: claude-pokemon-pet [toggle|on|off|random|pet <name>|lang <ko|en|auto>|sprites|status]" >&2

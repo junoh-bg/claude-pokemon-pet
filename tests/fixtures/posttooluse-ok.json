@@ -1,0 +1,25 @@
+{
+  "session_id": "94565f09-21ec-4e78-94ae-a35176451b35",
+  "transcript_path": "/Users/bg/.claude/projects/-Users-bg--claude-jobs-76de2bfb-tmp-hookprobe/94565f09-21ec-4e78-94ae-a35176451b35.jsonl",
+  "cwd": "/Users/bg/.claude/jobs/76de2bfb/tmp/hookprobe",
+  "prompt_id": "e20fa41b-805d-42a7-bb1a-939601db647f",
+  "permission_mode": "default",
+  "effort": {
+    "level": "xhigh"
+  },
+  "hook_event_name": "PostToolUse",
+  "tool_name": "Bash",
+  "tool_input": {
+    "command": "echo probe-ok",
+    "description": "Echo probe-ok"
+  },
+  "tool_response": {
+    "stdout": "probe-ok",
+    "stderr": "",
+    "interrupted": false,
+    "isImage": false,
+    "noOutputExpected": false
+  },
+  "tool_use_id": "toolu_012HAHLXdPMEjeAr2YNHuLTT",
+  "duration_ms": 12
+}

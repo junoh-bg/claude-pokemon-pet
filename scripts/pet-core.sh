@@ -1,0 +1,220 @@
+#!/bin/bash
+# pet-core.sh — the game core. Hooks and the CLI write events through here;
+# after every mutation it re-resolves the pet into resolved.json, which every
+# renderer (overlay, terminal, statusline) reads as a pure view.
+# Usage: pet-core.sh <event <state>|roll|roll-if-new-day|pick <name>|lang <ko|en|auto>|resolve|status>
+# Test overrides: PET_TODAY, PET_YESTERDAY, PET_NOW, PET_SEED.
+
+export PATH="/opt/homebrew/bin:/usr/local/bin:$PATH"
+SELF="$(readlink -f "$0" 2>/dev/null || echo "$0")"
+ROOT="$(cd "$(dirname "$SELF")/.." && pwd)"
+CACHE="$HOME/.cache/claude-pokemon-pet"
+mkdir -p "$CACHE" 2>/dev/null   # runs before the event-path guard; must stay silent
+
+TODAY="${PET_TODAY:-$(date +%F)}"
+NOW="${PET_NOW:-$(date +%s)}"
+[ -n "${PET_SEED:-}" ] && RANDOM="$PET_SEED"
+
+# ── daily counters: files hold "<date> <n>"; other days read as 0 ──
+read_daily() {
+    local d c
+    if [ -f "$CACHE/$1" ]; then
+        read -r d c < "$CACHE/$1"
+        [ "$d" = "$TODAY" ] && { echo "${c:-0}"; return; }
+    fi
+    echo 0
+}
+bump_daily() { printf '%s %s\n' "$TODAY" "$(( $(read_daily "$1") + 1 ))" > "$CACHE/$1"; }
+
+# ── streak: consecutive days with ≥1 completed task ──
+yesterday() { echo "${PET_YESTERDAY:-$(date -v-1d +%F 2>/dev/null || date -d yesterday +%F)}"; }
+update_streak() {
+    local d="" c=0
+    [ -f "$CACHE/streak" ] && read -r d c < "$CACHE/streak"
+    if [ "$d" = "$TODAY" ]; then return 0
+    elif [ "$d" = "$(yesterday)" ]; then printf '%s %s\n' "$TODAY" "$(( ${c:-0} + 1 ))" > "$CACHE/streak"
+    else printf '%s 1\n' "$TODAY" > "$CACHE/streak"; fi
+}
+read_streak() {
+    local d c
+    [ -f "$CACHE/streak" ] || { echo 0; return; }
+    read -r d c < "$CACHE/streak"
+    if [ "$d" = "$TODAY" ] || [ "$d" = "$(yesterday)" ]; then echo "${c:-0}"; else echo 0; fi
+}
+
+# ── care mistakes: PostToolUseFailure events, except user interrupts.
+# Payload shape verified in docs/notes/2026-07-13-posttooluse-payload.md.
+is_interrupt() {
+    [ -t 0 ] && return 1
+    local payload
+    payload="$(cat 2>/dev/null)" || return 1
+    [ -n "$payload" ] || return 1
+    printf '%s' "$payload" | jq -e '.is_interrupt == true' >/dev/null 2>&1
+}
+
+cmd_event() {
+    local ev="${1:-idle}"
+    case "$ev" in
+        done)    printf 'done %s\n' "$NOW" > "$CACHE/state"; update_streak; bump_daily tasks ;;
+        mistake) is_interrupt || bump_daily mistakes
+                 printf 'working %s\n' "$NOW" > "$CACHE/state" ;;
+        *)       printf '%s %s\n' "$ev" "$NOW" > "$CACHE/state" ;;
+    esac
+    cmd_resolve
+}
+
+# ── resolve: reduce pack + partner + counters to resolved.json ──
+RESOLVE_JQ='
+  ($pk[0]) as $pack | ($pt[0]) as $p |
+  ($pack.gates) as $g |
+  ($p.line) as $line | ($line | length) as $len |
+  ([$g[] | select(. <= $tasks)] | length) as $reach |
+  ([([$reach, 1] | max), $len] | min) as $stage |
+  $line[$stage - 1] as $sp |
+  ($stage == $len) as $final |
+  ($g[$stage - 1] // 0) as $base |
+  (if $final then ((($tasks - $base) % 10) * 10)
+   else ((($tasks - $base) * 100 / ($g[$stage] - $base)) | floor)
+   end) as $pct |
+  ($pack.species[$sp]) as $spec |
+  (if $lang == "ko" then ($spec.names.ko // $spec.names.en) else $spec.names.en end) as $name |
+  ($pack.moves[$p.type] // $pack.moves.normal) as $mv |
+  {
+    date: $today,
+    franchise: $p.franchise, species: $sp, name: $name, type: $p.type,
+    stage: $stage, stages: $len, final: $final,
+    tasks: $tasks, mistakes: $mistakes, streak: $streak, shiny: false,
+    exp_pct: $pct, exp_gold: $final,
+    line: $line,
+    line_names: ($line | map($pack.species[.] as $s |
+        if $lang == "ko" then ($s.names.ko // $s.names.en) else $s.names.en end)),
+    moves: (if $lang == "ko" then ($mv | map($pack.moves_ko[.] // .)) else $mv end),
+    lang: $lang, state: $state, state_ts: $ts
+  }'
+
+update_dex() {
+    [ -f "$CACHE/dex.json" ] || echo '[]' > "$CACHE/dex.json"
+    local sp fr tmp
+    sp="$(jq -r '.species' "$CACHE/resolved.json")"
+    fr="$(jq -r '.franchise' "$CACHE/resolved.json")"
+    tmp="$(mktemp)"
+    jq --arg s "$sp" --arg f "$fr" --arg d "$TODAY" \
+       'if any(.[]; .species == $s and .franchise == $f) then .
+        else . + [{species: $s, franchise: $f, date: $d, shiny: false}] end' \
+       "$CACHE/dex.json" > "$tmp" && mv "$tmp" "$CACHE/dex.json"
+}
+
+cmd_resolve() {
+    command -v jq >/dev/null 2>&1 || return 0   # hook path must survive a bare PATH
+    jq -e . "$CACHE/partner" >/dev/null 2>&1 || default_partner   # missing or corrupt: self-heal
+    local pack tasks mistakes streak lang state ts tmp
+    pack="$(pack_file "$(active_franchise)")"
+    tasks="$(read_daily tasks)"
+    mistakes="$(read_daily mistakes)"
+    streak="$(read_streak)"
+    lang="$(cur_lang)"
+    state=idle; ts="$NOW"
+    [ -f "$CACHE/state" ] && read -r state ts < "$CACHE/state"
+    tmp="$(mktemp)"
+    jq -n --slurpfile pk "$pack" --slurpfile pt "$CACHE/partner" \
+       --argjson tasks "$tasks" --argjson mistakes "$mistakes" --argjson streak "$streak" \
+       --arg lang "$lang" --arg state "$state" --argjson ts "${ts:-0}" --arg today "$TODAY" \
+       "$RESOLVE_JQ" > "$tmp" && mv "$tmp" "$CACHE/resolved.json"
+    update_dex
+}
+
+cmd_status() {
+    # resolved.json is only rewritten on events; re-resolve if absent or stale
+    # (e.g. first status of a new day — counters reset at midnight)
+    if [ "$(jq -r '.date // empty' "$CACHE/resolved.json" 2>/dev/null)" != "$TODAY" ]; then
+        cmd_resolve
+    fi
+    jq -r '"partner: \(.line | join(" → "))",
+           "now:     \(.name) (stage \(.stage)/\(.stages))",
+           "state:   \(.state)",
+           "tasks:   \(.tasks) today · mistakes: \(.mistakes) · streak: \(.streak)d",
+           "lang:    \(.lang)"' "$CACHE/resolved.json"
+}
+
+# ── partner (the rolled line) ──
+pack_file() { echo "$ROOT/data/${1:-pokemon}/pack.json"; }
+active_franchise() { jq -r '.franchise // "pokemon"' "$CACHE/partner" 2>/dev/null || echo pokemon; }
+
+default_partner() {   # safe fallback, mirrors v1's chains[1] = charmander
+    jq -n --arg d "$TODAY" \
+      '{franchise: "pokemon", line: ["charmander","charmeleon","charizard"], type: "fire", date: $d, seed: 0}' \
+      > "$CACHE/partner"
+}
+
+write_partner() { # <pack-file> <line-index>
+    local tmp; tmp="$(mktemp)"
+    jq --argjson i "$2" --arg d "$TODAY" --argjson s "$RANDOM" \
+       '{franchise: .franchise, line: .lines[$i].mons, type: .lines[$i].type, date: $d, seed: $s}' \
+       "$1" > "$tmp" && mv "$tmp" "$CACHE/partner"
+    cmd_resolve
+    echo "pet: $(jq -r '.line | join(" → ")' "$CACHE/partner")"
+}
+
+cmd_roll() {
+    local pack n
+    pack="$(pack_file "$(active_franchise)")"
+    n="$(jq '.lines | length' "$pack")"
+    write_partner "$pack" $(( RANDOM % n ))
+}
+
+cmd_roll_if_new_day() {
+    [ "$(jq -r '.date // empty' "$CACHE/partner" 2>/dev/null)" = "$TODAY" ] || cmd_roll
+}
+
+cmd_pick() {
+    local name="${1:-}" pack eng idxs
+    pack="$(pack_file pokemon)"
+    # korean names resolve to their english slug first
+    eng="$(jq -r --arg k "$name" \
+        '.species | to_entries[] | select(.value.names.ko == $k) | .key' "$pack" | head -1)"
+    [ -n "$eng" ] && name="$eng"
+    # any line containing the name; random among matches (eevee branches)
+    idxs=($(jq -r --arg m "$name" \
+        '.lines | to_entries[] | select(.value.mons | index($m)) | .key' "$pack"))
+    if [ ${#idxs[@]} -eq 0 ]; then
+        echo "unknown gen-1 pokémon: ${1:-?}" >&2
+        exit 1
+    fi
+    write_partner "$pack" "${idxs[RANDOM % ${#idxs[@]}]}"
+}
+
+# ── language: override file wins, then PET_LANG (test seam), else system ──
+cur_lang() {
+    local o
+    o="$(cat "$CACHE/lang" 2>/dev/null)"
+    case "$o" in ko|en) echo "$o"; return ;; esac
+    case "${PET_LANG:-}" in ko|en) echo "$PET_LANG"; return ;; esac
+    case "${LC_ALL:-${LANG:-}}" in ko*) echo ko; return ;; esac
+    if defaults read -g AppleLanguages 2>/dev/null | sed -n 2p | grep -q ko; then
+        echo ko
+    else
+        echo en
+    fi
+}
+
+cmd_lang() {
+    case "${1:-}" in
+        ko|en) echo "$1" > "$CACHE/lang"; echo "language: $1" ;;
+        auto)  rm -f "$CACHE/lang"; echo "language: auto (system)" ;;
+        *)     echo "usage: pet-core.sh lang <ko|en|auto>" >&2; exit 1 ;;
+    esac
+    cmd_resolve
+}
+
+case "${1:-}" in
+    # The event path runs on every hook of every session: it must never exit
+    # non-zero or emit noise, whatever the state of PATH or the cache.
+    event)           cmd_event "${2:-idle}" 2>/dev/null; exit 0 ;;
+    roll)            cmd_roll ;;
+    roll-if-new-day) cmd_roll_if_new_day ;;
+    pick)            cmd_pick "${2:-}" ;;
+    lang)            cmd_lang "${2:-}" ;;
+    resolve)         cmd_resolve ;;
+    status)          cmd_status ;;
+    *) echo "usage: pet-core.sh <event <state>|roll|roll-if-new-day|pick <name>|lang <ko|en|auto>|resolve>" >&2; exit 1 ;;
+esac

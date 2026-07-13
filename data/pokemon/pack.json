@@ -1,0 +1,1753 @@
+{
+  "franchise": "pokemon",
+  "gates": [
+    0,
+    6,
+    16
+  ],
+  "sprites": {
+    "base_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated",
+    "target_px": 190
+  },
+  "lines": [
+    {
+      "type": "grass",
+      "mons": [
+        "bulbasaur",
+        "ivysaur",
+        "venusaur"
+      ]
+    },
+    {
+      "type": "fire",
+      "mons": [
+        "charmander",
+        "charmeleon",
+        "charizard"
+      ]
+    },
+    {
+      "type": "water",
+      "mons": [
+        "squirtle",
+        "wartortle",
+        "blastoise"
+      ]
+    },
+    {
+      "type": "bug",
+      "mons": [
+        "caterpie",
+        "metapod",
+        "butterfree"
+      ]
+    },
+    {
+      "type": "bug",
+      "mons": [
+        "weedle",
+        "kakuna",
+        "beedrill"
+      ]
+    },
+    {
+      "type": "flying",
+      "mons": [
+        "pidgey",
+        "pidgeotto",
+        "pidgeot"
+      ]
+    },
+    {
+      "type": "normal",
+      "mons": [
+        "rattata",
+        "raticate"
+      ]
+    },
+    {
+      "type": "flying",
+      "mons": [
+        "spearow",
+        "fearow"
+      ]
+    },
+    {
+      "type": "poison",
+      "mons": [
+        "ekans",
+        "arbok"
+      ]
+    },
+    {
+      "type": "electric",
+      "mons": [
+        "pikachu",
+        "raichu"
+      ]
+    },
+    {
+      "type": "ground",
+      "mons": [
+        "sandshrew",
+        "sandslash"
+      ]
+    },
+    {
+      "type": "poison",
+      "mons": [
+        "nidoran-f",
+        "nidorina",
+        "nidoqueen"
+      ]
+    },
+    {
+      "type": "poison",
+      "mons": [
+        "nidoran-m",
+        "nidorino",
+        "nidoking"
+      ]
+    },
+    {
+      "type": "normal",
+      "mons": [
+        "clefairy",
+        "clefable"
+      ]
+    },
+    {
+      "type": "fire",
+      "mons": [
+        "vulpix",
+        "ninetales"
+      ]
+    },
+    {
+      "type": "normal",
+      "mons": [
+        "jigglypuff",
+        "wigglytuff"
+      ]
+    },
+    {
+      "type": "poison",
+      "mons": [
+        "zubat",
+        "golbat"
+      ]
+    },
+    {
+      "type": "grass",
+      "mons": [
+        "oddish",
+        "gloom",
+        "vileplume"
+      ]
+    },
+    {
+      "type": "bug",
+      "mons": [
+        "paras",
+        "parasect"
+      ]
+    },
+    {
+      "type": "bug",
+      "mons": [
+        "venonat",
+        "venomoth"
+      ]
+    },
+    {
+      "type": "ground",
+      "mons": [
+        "diglett",
+        "dugtrio"
+      ]
+    },
+    {
+      "type": "normal",
+      "mons": [
+        "meowth",
+        "persian"
+      ]
+    },
+    {
+      "type": "water",
+      "mons": [
+        "psyduck",
+        "golduck"
+      ]
+    },
+    {
+      "type": "fighting",
+      "mons": [
+        "mankey",
+        "primeape"
+      ]
+    },
+    {
+      "type": "fire",
+      "mons": [
+        "growlithe",
+        "arcanine"
+      ]
+    },
+    {
+      "type": "water",
+      "mons": [
+        "poliwag",
+        "poliwhirl",
+        "poliwrath"
+      ]
+    },
+    {
+      "type": "psychic",
+      "mons": [
+        "abra",
+        "kadabra",
+        "alakazam"
+      ]
+    },
+    {
+      "type": "fighting",
+      "mons": [
+        "machop",
+        "machoke",
+        "machamp"
+      ]
+    },
+    {
+      "type": "grass",
+      "mons": [
+        "bellsprout",
+        "weepinbell",
+        "victreebel"
+      ]
+    },
+    {
+      "type": "water",
+      "mons": [
+        "tentacool",
+        "tentacruel"
+      ]
+    },
+    {
+      "type": "rock",
+      "mons": [
+        "geodude",
+        "graveler",
+        "golem"
+      ]
+    },
+    {
+      "type": "fire",
+      "mons": [
+        "ponyta",
+        "rapidash"
+      ]
+    },
+    {
+      "type": "psychic",
+      "mons": [
+        "slowpoke",
+        "slowbro"
+      ]
+    },
+    {
+      "type": "electric",
+      "mons": [
+        "magnemite",
+        "magneton"
+      ]
+    },
+    {
+      "type": "flying",
+      "mons": [
+        "farfetchd"
+      ]
+    },
+    {
+      "type": "flying",
+      "mons": [
+        "doduo",
+        "dodrio"
+      ]
+    },
+    {
+      "type": "water",
+      "mons": [
+        "seel",
+        "dewgong"
+      ]
+    },
+    {
+      "type": "poison",
+      "mons": [
+        "grimer",
+        "muk"
+      ]
+    },
+    {
+      "type": "water",
+      "mons": [
+        "shellder",
+        "cloyster"
+      ]
+    },
+    {
+      "type": "ghost",
+      "mons": [
+        "gastly",
+        "haunter",
+        "gengar"
+      ]
+    },
+    {
+      "type": "rock",
+      "mons": [
+        "onix"
+      ]
+    },
+    {
+      "type": "psychic",
+      "mons": [
+        "drowzee",
+        "hypno"
+      ]
+    },
+    {
+      "type": "water",
+      "mons": [
+        "krabby",
+        "kingler"
+      ]
+    },
+    {
+      "type": "electric",
+      "mons": [
+        "voltorb",
+        "electrode"
+      ]
+    },
+    {
+      "type": "grass",
+      "mons": [
+        "exeggcute",
+        "exeggutor"
+      ]
+    },
+    {
+      "type": "ground",
+      "mons": [
+        "cubone",
+        "marowak"
+      ]
+    },
+    {
+      "type": "fighting",
+      "mons": [
+        "hitmonlee"
+      ]
+    },
+    {
+      "type": "fighting",
+      "mons": [
+        "hitmonchan"
+      ]
+    },
+    {
+      "type": "normal",
+      "mons": [
+        "lickitung"
+      ]
+    },
+    {
+      "type": "poison",
+      "mons": [
+        "koffing",
+        "weezing"
+      ]
+    },
+    {
+      "type": "ground",
+      "mons": [
+        "rhyhorn",
+        "rhydon"
+      ]
+    },
+    {
+      "type": "normal",
+      "mons": [
+        "chansey"
+      ]
+    },
+    {
+      "type": "grass",
+      "mons": [
+        "tangela"
+      ]
+    },
+    {
+      "type": "normal",
+      "mons": [
+        "kangaskhan"
+      ]
+    },
+    {
+      "type": "water",
+      "mons": [
+        "horsea",
+        "seadra"
+      ]
+    },
+    {
+      "type": "water",
+      "mons": [
+        "goldeen",
+        "seaking"
+      ]
+    },
+    {
+      "type": "water",
+      "mons": [
+        "staryu",
+        "starmie"
+      ]
+    },
+    {
+      "type": "psychic",
+      "mons": [
+        "mr-mime"
+      ]
+    },
+    {
+      "type": "bug",
+      "mons": [
+        "scyther"
+      ]
+    },
+    {
+      "type": "ice",
+      "mons": [
+        "jynx"
+      ]
+    },
+    {
+      "type": "electric",
+      "mons": [
+        "electabuzz"
+      ]
+    },
+    {
+      "type": "fire",
+      "mons": [
+        "magmar"
+      ]
+    },
+    {
+      "type": "bug",
+      "mons": [
+        "pinsir"
+      ]
+    },
+    {
+      "type": "normal",
+      "mons": [
+        "tauros"
+      ]
+    },
+    {
+      "type": "water",
+      "mons": [
+        "magikarp",
+        "gyarados"
+      ]
+    },
+    {
+      "type": "ice",
+      "mons": [
+        "lapras"
+      ]
+    },
+    {
+      "type": "normal",
+      "mons": [
+        "ditto"
+      ]
+    },
+    {
+      "type": "water",
+      "mons": [
+        "eevee",
+        "vaporeon"
+      ]
+    },
+    {
+      "type": "electric",
+      "mons": [
+        "eevee",
+        "jolteon"
+      ]
+    },
+    {
+      "type": "fire",
+      "mons": [
+        "eevee",
+        "flareon"
+      ]
+    },
+    {
+      "type": "normal",
+      "mons": [
+        "porygon"
+      ]
+    },
+    {
+      "type": "rock",
+      "mons": [
+        "omanyte",
+        "omastar"
+      ]
+    },
+    {
+      "type": "rock",
+      "mons": [
+        "kabuto",
+        "kabutops"
+      ]
+    },
+    {
+      "type": "flying",
+      "mons": [
+        "aerodactyl"
+      ]
+    },
+    {
+      "type": "normal",
+      "mons": [
+        "snorlax"
+      ]
+    },
+    {
+      "type": "ice",
+      "mons": [
+        "articuno"
+      ]
+    },
+    {
+      "type": "electric",
+      "mons": [
+        "zapdos"
+      ]
+    },
+    {
+      "type": "fire",
+      "mons": [
+        "moltres"
+      ]
+    },
+    {
+      "type": "dragon",
+      "mons": [
+        "dratini",
+        "dragonair",
+        "dragonite"
+      ]
+    },
+    {
+      "type": "psychic",
+      "mons": [
+        "mewtwo"
+      ]
+    },
+    {
+      "type": "psychic",
+      "mons": [
+        "mew"
+      ]
+    }
+  ],
+  "species": {
+    "bulbasaur": {
+      "id": 1,
+      "names": {
+        "en": "BULBASAUR",
+        "ko": "이상해씨"
+      }
+    },
+    "ivysaur": {
+      "id": 2,
+      "names": {
+        "en": "IVYSAUR",
+        "ko": "이상해풀"
+      }
+    },
+    "venusaur": {
+      "id": 3,
+      "names": {
+        "en": "VENUSAUR",
+        "ko": "이상해꽃"
+      }
+    },
+    "charmander": {
+      "id": 4,
+      "names": {
+        "en": "CHARMANDER",
+        "ko": "파이리"
+      }
+    },
+    "charmeleon": {
+      "id": 5,
+      "names": {
+        "en": "CHARMELEON",
+        "ko": "리자드"
+      }
+    },
+    "charizard": {
+      "id": 6,
+      "names": {
+        "en": "CHARIZARD",
+        "ko": "리자몽"
+      }
+    },
+    "squirtle": {
+      "id": 7,
+      "names": {
+        "en": "SQUIRTLE",
+        "ko": "꼬부기"
+      }
+    },
+    "wartortle": {
+      "id": 8,
+      "names": {
+        "en": "WARTORTLE",
+        "ko": "어니부기"
+      }
+    },
+    "blastoise": {
+      "id": 9,
+      "names": {
+        "en": "BLASTOISE",
+        "ko": "거북왕"
+      }
+    },
+    "caterpie": {
+      "id": 10,
+      "names": {
+        "en": "CATERPIE",
+        "ko": "캐터피"
+      }
+    },
+    "metapod": {
+      "id": 11,
+      "names": {
+        "en": "METAPOD",
+        "ko": "단데기"
+      }
+    },
+    "butterfree": {
+      "id": 12,
+      "names": {
+        "en": "BUTTERFREE",
+        "ko": "버터플"
+      }
+    },
+    "weedle": {
+      "id": 13,
+      "names": {
+        "en": "WEEDLE",
+        "ko": "뿔충이"
+      }
+    },
+    "kakuna": {
+      "id": 14,
+      "names": {
+        "en": "KAKUNA",
+        "ko": "딱충이"
+      }
+    },
+    "beedrill": {
+      "id": 15,
+      "names": {
+        "en": "BEEDRILL",
+        "ko": "독침붕"
+      }
+    },
+    "pidgey": {
+      "id": 16,
+      "names": {
+        "en": "PIDGEY",
+        "ko": "구구"
+      }
+    },
+    "pidgeotto": {
+      "id": 17,
+      "names": {
+        "en": "PIDGEOTTO",
+        "ko": "피죤"
+      }
+    },
+    "pidgeot": {
+      "id": 18,
+      "names": {
+        "en": "PIDGEOT",
+        "ko": "피죤투"
+      }
+    },
+    "rattata": {
+      "id": 19,
+      "names": {
+        "en": "RATTATA",
+        "ko": "꼬렛"
+      }
+    },
+    "raticate": {
+      "id": 20,
+      "names": {
+        "en": "RATICATE",
+        "ko": "레트라"
+      }
+    },
+    "spearow": {
+      "id": 21,
+      "names": {
+        "en": "SPEAROW",
+        "ko": "깨비참"
+      }
+    },
+    "fearow": {
+      "id": 22,
+      "names": {
+        "en": "FEAROW",
+        "ko": "깨비드릴조"
+      }
+    },
+    "ekans": {
+      "id": 23,
+      "names": {
+        "en": "EKANS",
+        "ko": "아보"
+      }
+    },
+    "arbok": {
+      "id": 24,
+      "names": {
+        "en": "ARBOK",
+        "ko": "아보크"
+      }
+    },
+    "pikachu": {
+      "id": 25,
+      "names": {
+        "en": "PIKACHU",
+        "ko": "피카츄"
+      }
+    },
+    "raichu": {
+      "id": 26,
+      "names": {
+        "en": "RAICHU",
+        "ko": "라이츄"
+      }
+    },
+    "sandshrew": {
+      "id": 27,
+      "names": {
+        "en": "SANDSHREW",
+        "ko": "모래두지"
+      }
+    },
+    "sandslash": {
+      "id": 28,
+      "names": {
+        "en": "SANDSLASH",
+        "ko": "고지"
+      }
+    },
+    "nidoran-f": {
+      "id": 29,
+      "names": {
+        "en": "NIDORAN-F",
+        "ko": "니드런♀"
+      }
+    },
+    "nidorina": {
+      "id": 30,
+      "names": {
+        "en": "NIDORINA",
+        "ko": "니드리나"
+      }
+    },
+    "nidoqueen": {
+      "id": 31,
+      "names": {
+        "en": "NIDOQUEEN",
+        "ko": "니드퀸"
+      }
+    },
+    "nidoran-m": {
+      "id": 32,
+      "names": {
+        "en": "NIDORAN-M",
+        "ko": "니드런♂"
+      }
+    },
+    "nidorino": {
+      "id": 33,
+      "names": {
+        "en": "NIDORINO",
+        "ko": "니드리노"
+      }
+    },
+    "nidoking": {
+      "id": 34,
+      "names": {
+        "en": "NIDOKING",
+        "ko": "니드킹"
+      }
+    },
+    "clefairy": {
+      "id": 35,
+      "names": {
+        "en": "CLEFAIRY",
+        "ko": "삐삐"
+      }
+    },
+    "clefable": {
+      "id": 36,
+      "names": {
+        "en": "CLEFABLE",
+        "ko": "픽시"
+      }
+    },
+    "vulpix": {
+      "id": 37,
+      "names": {
+        "en": "VULPIX",
+        "ko": "식스테일"
+      }
+    },
+    "ninetales": {
+      "id": 38,
+      "names": {
+        "en": "NINETALES",
+        "ko": "나인테일"
+      }
+    },
+    "jigglypuff": {
+      "id": 39,
+      "names": {
+        "en": "JIGGLYPUFF",
+        "ko": "푸린"
+      }
+    },
+    "wigglytuff": {
+      "id": 40,
+      "names": {
+        "en": "WIGGLYTUFF",
+        "ko": "푸크린"
+      }
+    },
+    "zubat": {
+      "id": 41,
+      "names": {
+        "en": "ZUBAT",
+        "ko": "주뱃"
+      }
+    },
+    "golbat": {
+      "id": 42,
+      "names": {
+        "en": "GOLBAT",
+        "ko": "골뱃"
+      }
+    },
+    "oddish": {
+      "id": 43,
+      "names": {
+        "en": "ODDISH",
+        "ko": "뚜벅쵸"
+      }
+    },
+    "gloom": {
+      "id": 44,
+      "names": {
+        "en": "GLOOM",
+        "ko": "냄새꼬"
+      }
+    },
+    "vileplume": {
+      "id": 45,
+      "names": {
+        "en": "VILEPLUME",
+        "ko": "라플레시아"
+      }
+    },
+    "paras": {
+      "id": 46,
+      "names": {
+        "en": "PARAS",
+        "ko": "파라스"
+      }
+    },
+    "parasect": {
+      "id": 47,
+      "names": {
+        "en": "PARASECT",
+        "ko": "파라섹트"
+      }
+    },
+    "venonat": {
+      "id": 48,
+      "names": {
+        "en": "VENONAT",
+        "ko": "콘팡"
+      }
+    },
+    "venomoth": {
+      "id": 49,
+      "names": {
+        "en": "VENOMOTH",
+        "ko": "도나리"
+      }
+    },
+    "diglett": {
+      "id": 50,
+      "names": {
+        "en": "DIGLETT",
+        "ko": "디그다"
+      }
+    },
+    "dugtrio": {
+      "id": 51,
+      "names": {
+        "en": "DUGTRIO",
+        "ko": "닥트리오"
+      }
+    },
+    "meowth": {
+      "id": 52,
+      "names": {
+        "en": "MEOWTH",
+        "ko": "나옹"
+      }
+    },
+    "persian": {
+      "id": 53,
+      "names": {
+        "en": "PERSIAN",
+        "ko": "페르시온"
+      }
+    },
+    "psyduck": {
+      "id": 54,
+      "names": {
+        "en": "PSYDUCK",
+        "ko": "고라파덕"
+      }
+    },
+    "golduck": {
+      "id": 55,
+      "names": {
+        "en": "GOLDUCK",
+        "ko": "골덕"
+      }
+    },
+    "mankey": {
+      "id": 56,
+      "names": {
+        "en": "MANKEY",
+        "ko": "망키"
+      }
+    },
+    "primeape": {
+      "id": 57,
+      "names": {
+        "en": "PRIMEAPE",
+        "ko": "성원숭"
+      }
+    },
+    "growlithe": {
+      "id": 58,
+      "names": {
+        "en": "GROWLITHE",
+        "ko": "가디"
+      }
+    },
+    "arcanine": {
+      "id": 59,
+      "names": {
+        "en": "ARCANINE",
+        "ko": "윈디"
+      }
+    },
+    "poliwag": {
+      "id": 60,
+      "names": {
+        "en": "POLIWAG",
+        "ko": "발챙이"
+      }
+    },
+    "poliwhirl": {
+      "id": 61,
+      "names": {
+        "en": "POLIWHIRL",
+        "ko": "슈륙챙이"
+      }
+    },
+    "poliwrath": {
+      "id": 62,
+      "names": {
+        "en": "POLIWRATH",
+        "ko": "강챙이"
+      }
+    },
+    "abra": {
+      "id": 63,
+      "names": {
+        "en": "ABRA",
+        "ko": "캐이시"
+      }
+    },
+    "kadabra": {
+      "id": 64,
+      "names": {
+        "en": "KADABRA",
+        "ko": "윤겔라"
+      }
+    },
+    "alakazam": {
+      "id": 65,
+      "names": {
+        "en": "ALAKAZAM",
+        "ko": "후딘"
+      }
+    },
+    "machop": {
+      "id": 66,
+      "names": {
+        "en": "MACHOP",
+        "ko": "알통몬"
+      }
+    },
+    "machoke": {
+      "id": 67,
+      "names": {
+        "en": "MACHOKE",
+        "ko": "근육몬"
+      }
+    },
+    "machamp": {
+      "id": 68,
+      "names": {
+        "en": "MACHAMP",
+        "ko": "괴력몬"
+      }
+    },
+    "bellsprout": {
+      "id": 69,
+      "names": {
+        "en": "BELLSPROUT",
+        "ko": "모다피"
+      }
+    },
+    "weepinbell": {
+      "id": 70,
+      "names": {
+        "en": "WEEPINBELL",
+        "ko": "우츠동"
+      }
+    },
+    "victreebel": {
+      "id": 71,
+      "names": {
+        "en": "VICTREEBEL",
+        "ko": "우츠보트"
+      }
+    },
+    "tentacool": {
+      "id": 72,
+      "names": {
+        "en": "TENTACOOL",
+        "ko": "왕눈해"
+      }
+    },
+    "tentacruel": {
+      "id": 73,
+      "names": {
+        "en": "TENTACRUEL",
+        "ko": "독파리"
+      }
+    },
+    "geodude": {
+      "id": 74,
+      "names": {
+        "en": "GEODUDE",
+        "ko": "꼬마돌"
+      }
+    },
+    "graveler": {
+      "id": 75,
+      "names": {
+        "en": "GRAVELER",
+        "ko": "데구리"
+      }
+    },
+    "golem": {
+      "id": 76,
+      "names": {
+        "en": "GOLEM",
+        "ko": "딱구리"
+      }
+    },
+    "ponyta": {
+      "id": 77,
+      "names": {
+        "en": "PONYTA",
+        "ko": "포니타"
+      }
+    },
+    "rapidash": {
+      "id": 78,
+      "names": {
+        "en": "RAPIDASH",
+        "ko": "날쌩마"
+      }
+    },
+    "slowpoke": {
+      "id": 79,
+      "names": {
+        "en": "SLOWPOKE",
+        "ko": "야돈"
+      }
+    },
+    "slowbro": {
+      "id": 80,
+      "names": {
+        "en": "SLOWBRO",
+        "ko": "야도란"
+      }
+    },
+    "magnemite": {
+      "id": 81,
+      "names": {
+        "en": "MAGNEMITE",
+        "ko": "코일"
+      }
+    },
+    "magneton": {
+      "id": 82,
+      "names": {
+        "en": "MAGNETON",
+        "ko": "레어코일"
+      }
+    },
+    "farfetchd": {
+      "id": 83,
+      "names": {
+        "en": "FARFETCHD",
+        "ko": "파오리"
+      }
+    },
+    "doduo": {
+      "id": 84,
+      "names": {
+        "en": "DODUO",
+        "ko": "두두"
+      }
+    },
+    "dodrio": {
+      "id": 85,
+      "names": {
+        "en": "DODRIO",
+        "ko": "두트리오"
+      }
+    },
+    "seel": {
+      "id": 86,
+      "names": {
+        "en": "SEEL",
+        "ko": "쥬쥬"
+      }
+    },
+    "dewgong": {
+      "id": 87,
+      "names": {
+        "en": "DEWGONG",
+        "ko": "쥬레곤"
+      }
+    },
+    "grimer": {
+      "id": 88,
+      "names": {
+        "en": "GRIMER",
+        "ko": "질퍽이"
+      }
+    },
+    "muk": {
+      "id": 89,
+      "names": {
+        "en": "MUK",
+        "ko": "질뻐기"
+      }
+    },
+    "shellder": {
+      "id": 90,
+      "names": {
+        "en": "SHELLDER",
+        "ko": "셀러"
+      }
+    },
+    "cloyster": {
+      "id": 91,
+      "names": {
+        "en": "CLOYSTER",
+        "ko": "파르셀"
+      }
+    },
+    "gastly": {
+      "id": 92,
+      "names": {
+        "en": "GASTLY",
+        "ko": "고오스"
+      }
+    },
+    "haunter": {
+      "id": 93,
+      "names": {
+        "en": "HAUNTER",
+        "ko": "고우스트"
+      }
+    },
+    "gengar": {
+      "id": 94,
+      "names": {
+        "en": "GENGAR",
+        "ko": "팬텀"
+      }
+    },
+    "onix": {
+      "id": 95,
+      "names": {
+        "en": "ONIX",
+        "ko": "롱스톤"
+      }
+    },
+    "drowzee": {
+      "id": 96,
+      "names": {
+        "en": "DROWZEE",
+        "ko": "슬리프"
+      }
+    },
+    "hypno": {
+      "id": 97,
+      "names": {
+        "en": "HYPNO",
+        "ko": "슬리퍼"
+      }
+    },
+    "krabby": {
+      "id": 98,
+      "names": {
+        "en": "KRABBY",
+        "ko": "크랩"
+      }
+    },
+    "kingler": {
+      "id": 99,
+      "names": {
+        "en": "KINGLER",
+        "ko": "킹크랩"
+      }
+    },
+    "voltorb": {
+      "id": 100,
+      "names": {
+        "en": "VOLTORB",
+        "ko": "찌리리공"
+      }
+    },
+    "electrode": {
+      "id": 101,
+      "names": {
+        "en": "ELECTRODE",
+        "ko": "붐볼"
+      }
+    },
+    "exeggcute": {
+      "id": 102,
+      "names": {
+        "en": "EXEGGCUTE",
+        "ko": "아라리"
+      }
+    },
+    "exeggutor": {
+      "id": 103,
+      "names": {
+        "en": "EXEGGUTOR",
+        "ko": "나시"
+      }
+    },
+    "cubone": {
+      "id": 104,
+      "names": {
+        "en": "CUBONE",
+        "ko": "탕구리"
+      }
+    },
+    "marowak": {
+      "id": 105,
+      "names": {
+        "en": "MAROWAK",
+        "ko": "텅구리"
+      }
+    },
+    "hitmonlee": {
+      "id": 106,
+      "names": {
+        "en": "HITMONLEE",
+        "ko": "시라소몬"
+      }
+    },
+    "hitmonchan": {
+      "id": 107,
+      "names": {
+        "en": "HITMONCHAN",
+        "ko": "홍수몬"
+      }
+    },
+    "lickitung": {
+      "id": 108,
+      "names": {
+        "en": "LICKITUNG",
+        "ko": "내루미"
+      }
+    },
+    "koffing": {
+      "id": 109,
+      "names": {
+        "en": "KOFFING",
+        "ko": "또가스"
+      }
+    },
+    "weezing": {
+      "id": 110,
+      "names": {
+        "en": "WEEZING",
+        "ko": "또도가스"
+      }
+    },
+    "rhyhorn": {
+      "id": 111,
+      "names": {
+        "en": "RHYHORN",
+        "ko": "뿔카노"
+      }
+    },
+    "rhydon": {
+      "id": 112,
+      "names": {
+        "en": "RHYDON",
+        "ko": "코뿌리"
+      }
+    },
+    "chansey": {
+      "id": 113,
+      "names": {
+        "en": "CHANSEY",
+        "ko": "럭키"
+      }
+    },
+    "tangela": {
+      "id": 114,
+      "names": {
+        "en": "TANGELA",
+        "ko": "덩쿠리"
+      }
+    },
+    "kangaskhan": {
+      "id": 115,
+      "names": {
+        "en": "KANGASKHAN",
+        "ko": "캥카"
+      }
+    },
+    "horsea": {
+      "id": 116,
+      "names": {
+        "en": "HORSEA",
+        "ko": "쏘드라"
+      }
+    },
+    "seadra": {
+      "id": 117,
+      "names": {
+        "en": "SEADRA",
+        "ko": "시드라"
+      }
+    },
+    "goldeen": {
+      "id": 118,
+      "names": {
+        "en": "GOLDEEN",
+        "ko": "콘치"
+      }
+    },
+    "seaking": {
+      "id": 119,
+      "names": {
+        "en": "SEAKING",
+        "ko": "왕콘치"
+      }
+    },
+    "staryu": {
+      "id": 120,
+      "names": {
+        "en": "STARYU",
+        "ko": "별가사리"
+      }
+    },
+    "starmie": {
+      "id": 121,
+      "names": {
+        "en": "STARMIE",
+        "ko": "아쿠스타"
+      }
+    },
+    "mr-mime": {
+      "id": 122,
+      "names": {
+        "en": "MR-MIME",
+        "ko": "마임맨"
+      }
+    },
+    "scyther": {
+      "id": 123,
+      "names": {
+        "en": "SCYTHER",
+        "ko": "스라크"
+      }
+    },
+    "jynx": {
+      "id": 124,
+      "names": {
+        "en": "JYNX",
+        "ko": "루주라"
+      }
+    },
+    "electabuzz": {
+      "id": 125,
+      "names": {
+        "en": "ELECTABUZZ",
+        "ko": "에레브"
+      }
+    },
+    "magmar": {
+      "id": 126,
+      "names": {
+        "en": "MAGMAR",
+        "ko": "마그마"
+      }
+    },
+    "pinsir": {
+      "id": 127,
+      "names": {
+        "en": "PINSIR",
+        "ko": "쁘사이저"
+      }
+    },
+    "tauros": {
+      "id": 128,
+      "names": {
+        "en": "TAUROS",
+        "ko": "켄타로스"
+      }
+    },
+    "magikarp": {
+      "id": 129,
+      "names": {
+        "en": "MAGIKARP",
+        "ko": "잉어킹"
+      }
+    },
+    "gyarados": {
+      "id": 130,
+      "names": {
+        "en": "GYARADOS",
+        "ko": "갸라도스"
+      }
+    },
+    "lapras": {
+      "id": 131,
+      "names": {
+        "en": "LAPRAS",
+        "ko": "라프라스"
+      }
+    },
+    "ditto": {
+      "id": 132,
+      "names": {
+        "en": "DITTO",
+        "ko": "메타몽"
+      }
+    },
+    "eevee": {
+      "id": 133,
+      "names": {
+        "en": "EEVEE",
+        "ko": "이브이"
+      }
+    },
+    "vaporeon": {
+      "id": 134,
+      "names": {
+        "en": "VAPOREON",
+        "ko": "샤미드"
+      }
+    },
+    "jolteon": {
+      "id": 135,
+      "names": {
+        "en": "JOLTEON",
+        "ko": "쥬피썬더"
+      }
+    },
+    "flareon": {
+      "id": 136,
+      "names": {
+        "en": "FLAREON",
+        "ko": "부스터"
+      }
+    },
+    "porygon": {
+      "id": 137,
+      "names": {
+        "en": "PORYGON",
+        "ko": "폴리곤"
+      }
+    },
+    "omanyte": {
+      "id": 138,
+      "names": {
+        "en": "OMANYTE",
+        "ko": "암나이트"
+      }
+    },
+    "omastar": {
+      "id": 139,
+      "names": {
+        "en": "OMASTAR",
+        "ko": "암스타"
+      }
+    },
+    "kabuto": {
+      "id": 140,
+      "names": {
+        "en": "KABUTO",
+        "ko": "투구"
+      }
+    },
+    "kabutops": {
+      "id": 141,
+      "names": {
+        "en": "KABUTOPS",
+        "ko": "투구푸스"
+      }
+    },
+    "aerodactyl": {
+      "id": 142,
+      "names": {
+        "en": "AERODACTYL",
+        "ko": "프테라"
+      }
+    },
+    "snorlax": {
+      "id": 143,
+      "names": {
+        "en": "SNORLAX",
+        "ko": "잠만보"
+      }
+    },
+    "articuno": {
+      "id": 144,
+      "names": {
+        "en": "ARTICUNO",
+        "ko": "프리져"
+      }
+    },
+    "zapdos": {
+      "id": 145,
+      "names": {
+        "en": "ZAPDOS",
+        "ko": "썬더"
+      }
+    },
+    "moltres": {
+      "id": 146,
+      "names": {
+        "en": "MOLTRES",
+        "ko": "파이어"
+      }
+    },
+    "dratini": {
+      "id": 147,
+      "names": {
+        "en": "DRATINI",
+        "ko": "미뇽"
+      }
+    },
+    "dragonair": {
+      "id": 148,
+      "names": {
+        "en": "DRAGONAIR",
+        "ko": "신뇽"
+      }
+    },
+    "dragonite": {
+      "id": 149,
+      "names": {
+        "en": "DRAGONITE",
+        "ko": "망나뇽"
+      }
+    },
+    "mewtwo": {
+      "id": 150,
+      "names": {
+        "en": "MEWTWO",
+        "ko": "뮤츠"
+      }
+    },
+    "mew": {
+      "id": 151,
+      "names": {
+        "en": "MEW",
+        "ko": "뮤"
+      }
+    }
+  },
+  "moves": {
+    "normal": [
+      "TACKLE",
+      "BODY SLAM",
+      "HYPER BEAM"
+    ],
+    "fire": [
+      "EMBER",
+      "FLAMETHROWER",
+      "FIRE BLAST"
+    ],
+    "water": [
+      "WATER GUN",
+      "SURF",
+      "HYDRO PUMP"
+    ],
+    "grass": [
+      "VINE WHIP",
+      "RAZOR LEAF",
+      "SOLAR BEAM"
+    ],
+    "electric": [
+      "THUNDER SHOCK",
+      "THUNDERBOLT",
+      "THUNDER"
+    ],
+    "psychic": [
+      "CONFUSION",
+      "PSYBEAM",
+      "PSYCHIC"
+    ],
+    "fighting": [
+      "KARATE CHOP",
+      "SEISMIC TOSS",
+      "SUBMISSION"
+    ],
+    "rock": [
+      "ROCK THROW",
+      "ROCK SLIDE",
+      "EARTHQUAKE"
+    ],
+    "ground": [
+      "DIG",
+      "BONE CLUB",
+      "EARTHQUAKE"
+    ],
+    "poison": [
+      "POISON STING",
+      "ACID",
+      "SLUDGE"
+    ],
+    "bug": [
+      "LEECH LIFE",
+      "PIN MISSILE",
+      "TWINEEDLE"
+    ],
+    "flying": [
+      "GUST",
+      "WING ATTACK",
+      "DRILL PECK"
+    ],
+    "ghost": [
+      "LICK",
+      "NIGHT SHADE",
+      "DREAM EATER"
+    ],
+    "ice": [
+      "AURORA BEAM",
+      "ICE BEAM",
+      "BLIZZARD"
+    ],
+    "dragon": [
+      "DRAGON RAGE",
+      "SLAM",
+      "HYPER BEAM"
+    ]
+  },
+  "moves_ko": {
+    "TACKLE": "몸통박치기",
+    "BODY SLAM": "누르기",
+    "HYPER BEAM": "파괴광선",
+    "EMBER": "불꽃세례",
+    "FLAMETHROWER": "화염방사",
+    "FIRE BLAST": "불대문자",
+    "WATER GUN": "물대포",
+    "SURF": "파도타기",
+    "HYDRO PUMP": "하이드로펌프",
+    "VINE WHIP": "덩굴채찍",
+    "RAZOR LEAF": "잎날가르기",
+    "SOLAR BEAM": "솔라빔",
+    "THUNDER SHOCK": "전기쇼크",
+    "THUNDERBOLT": "10만볼트",
+    "THUNDER": "번개",
+    "CONFUSION": "염동력",
+    "PSYBEAM": "사이케광선",
+    "PSYCHIC": "사이코키네시스",
+    "KARATE CHOP": "태권당수",
+    "SEISMIC TOSS": "지구던지기",
+    "SUBMISSION": "서브미션",
+    "ROCK THROW": "돌떨구기",
+    "ROCK SLIDE": "스톤샤워",
+    "EARTHQUAKE": "지진",
+    "DIG": "구멍파기",
+    "BONE CLUB": "뼈다귀치기",
+    "POISON STING": "독침",
+    "ACID": "용해액",
+    "SLUDGE": "오물공격",
+    "LEECH LIFE": "흡혈",
+    "PIN MISSILE": "미사일바늘",
+    "TWINEEDLE": "더블니들",
+    "GUST": "회오리바람",
+    "WING ATTACK": "날개치기",
+    "DRILL PECK": "회전부리",
+    "LICK": "핥기",
+    "NIGHT SHADE": "나이트헤드",
+    "DREAM EATER": "꿈먹기",
+    "AURORA BEAM": "오로라빔",
+    "ICE BEAM": "냉동빔",
+    "BLIZZARD": "눈보라",
+    "DRAGON RAGE": "용의분노",
+    "SLAM": "후려치기"
+  }
+}
