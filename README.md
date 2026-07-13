@@ -18,7 +18,14 @@ inside your terminal (`claude-pokemon-pet term`) or your statusline.
   and falls asleep when you're idle.
 - **Levels & evolves** — its level is the number of tasks Claude completed
   today (resets at midnight). It evolves at Lv.6 and Lv.16 with an EXP bar
-  and a proper `What? CHARMANDER is evolving!` moment.
+  and a proper cinematic: sprite flash, `What? CHARMANDER is evolving!`,
+  then `Congratulations! Your CHARMANDER evolved into CHARMELEON!`
+- **Shinies & the dex** — the daily gacha rolls shiny 1/64 (✨ sparkle,
+  real shiny sprites). Every partner you've ever had is recorded:
+  `claude-pokemon-pet dex` shows `caught 23/151 · 1 shiny ✨`.
+- **Battle FX & session health** — type-colored particle bursts while
+  Claude works, an impact shake on task completion, and an HP bar that
+  dips with failing tool calls and refills as tasks complete.
 - **Daily gacha** — one of 81 gen-1 evolution chains is rolled the first time
   the overlay starts each day (Magikarp days build character). Your partner
   never changes mid-run; reroll anytime with the `pet random` command.

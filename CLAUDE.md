@@ -78,5 +78,5 @@ never make the core depend on a renderer. Franchise data lives in JSON packs
 1. ✅ Shared core refactor (PR #1)
 2. ✅ Terminal renderer + statusline (Linux/SSH/RunPod)
 3. ✅ Digimon pack + V-pet branching
-4. ⬜ Shinies, dex command, HUD, battle FX, evo cinematics
+4. ✅ Shinies, dex command, HUD, battle FX, evo cinematics
 5. ⬜ Trainer card
