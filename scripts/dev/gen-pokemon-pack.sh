@@ -17,16 +17,15 @@ jq -n --argjson ids "$ids" \
   {
     franchise: "pokemon",
     gates: [0, 6, 16],
-    sprites: {
-      base_url: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated",
-      target_px: 190
-    },
+    moves_by: "type",
+    sprites: { target_px: 190 },
     lines: $c,
     species: ($ids | to_entries | map({
         key: .key,
         value: { id: .value,
                  names: { en: (.key | ascii_upcase),
-                          ko: ($k.names[.key] // null) } }
+                          ko: ($k.names[.key] // null) },
+                 sprite_url: ("https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/" + (.value | tostring) + ".gif") }
       }) | from_entries),
     moves: {
       normal:   ["TACKLE", "BODY SLAM", "HYPER BEAM"],

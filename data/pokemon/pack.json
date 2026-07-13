@@ -6,7 +6,6 @@
     16
   ],
   "sprites": {
-    "base_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated",
     "target_px": 190
   },
   "lines": [
@@ -575,1057 +574,1208 @@
       "names": {
         "en": "BULBASAUR",
         "ko": "이상해씨"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/1.gif"
     },
     "ivysaur": {
       "id": 2,
       "names": {
         "en": "IVYSAUR",
         "ko": "이상해풀"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/2.gif"
     },
     "venusaur": {
       "id": 3,
       "names": {
         "en": "VENUSAUR",
         "ko": "이상해꽃"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/3.gif"
     },
     "charmander": {
       "id": 4,
       "names": {
         "en": "CHARMANDER",
         "ko": "파이리"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/4.gif"
     },
     "charmeleon": {
       "id": 5,
       "names": {
         "en": "CHARMELEON",
         "ko": "리자드"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/5.gif"
     },
     "charizard": {
       "id": 6,
       "names": {
         "en": "CHARIZARD",
         "ko": "리자몽"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/6.gif"
     },
     "squirtle": {
       "id": 7,
       "names": {
         "en": "SQUIRTLE",
         "ko": "꼬부기"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/7.gif"
     },
     "wartortle": {
       "id": 8,
       "names": {
         "en": "WARTORTLE",
         "ko": "어니부기"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/8.gif"
     },
     "blastoise": {
       "id": 9,
       "names": {
         "en": "BLASTOISE",
         "ko": "거북왕"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/9.gif"
     },
     "caterpie": {
       "id": 10,
       "names": {
         "en": "CATERPIE",
         "ko": "캐터피"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/10.gif"
     },
     "metapod": {
       "id": 11,
       "names": {
         "en": "METAPOD",
         "ko": "단데기"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/11.gif"
     },
     "butterfree": {
       "id": 12,
       "names": {
         "en": "BUTTERFREE",
         "ko": "버터플"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/12.gif"
     },
     "weedle": {
       "id": 13,
       "names": {
         "en": "WEEDLE",
         "ko": "뿔충이"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/13.gif"
     },
     "kakuna": {
       "id": 14,
       "names": {
         "en": "KAKUNA",
         "ko": "딱충이"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/14.gif"
     },
     "beedrill": {
       "id": 15,
       "names": {
         "en": "BEEDRILL",
         "ko": "독침붕"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/15.gif"
     },
     "pidgey": {
       "id": 16,
       "names": {
         "en": "PIDGEY",
         "ko": "구구"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/16.gif"
     },
     "pidgeotto": {
       "id": 17,
       "names": {
         "en": "PIDGEOTTO",
         "ko": "피죤"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/17.gif"
     },
     "pidgeot": {
       "id": 18,
       "names": {
         "en": "PIDGEOT",
         "ko": "피죤투"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/18.gif"
     },
     "rattata": {
       "id": 19,
       "names": {
         "en": "RATTATA",
         "ko": "꼬렛"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/19.gif"
     },
     "raticate": {
       "id": 20,
       "names": {
         "en": "RATICATE",
         "ko": "레트라"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/20.gif"
     },
     "spearow": {
       "id": 21,
       "names": {
         "en": "SPEAROW",
         "ko": "깨비참"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/21.gif"
     },
     "fearow": {
       "id": 22,
       "names": {
         "en": "FEAROW",
         "ko": "깨비드릴조"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/22.gif"
     },
     "ekans": {
       "id": 23,
       "names": {
         "en": "EKANS",
         "ko": "아보"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/23.gif"
     },
     "arbok": {
       "id": 24,
       "names": {
         "en": "ARBOK",
         "ko": "아보크"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/24.gif"
     },
     "pikachu": {
       "id": 25,
       "names": {
         "en": "PIKACHU",
         "ko": "피카츄"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/25.gif"
     },
     "raichu": {
       "id": 26,
       "names": {
         "en": "RAICHU",
         "ko": "라이츄"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/26.gif"
     },
     "sandshrew": {
       "id": 27,
       "names": {
         "en": "SANDSHREW",
         "ko": "모래두지"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/27.gif"
     },
     "sandslash": {
       "id": 28,
       "names": {
         "en": "SANDSLASH",
         "ko": "고지"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/28.gif"
     },
     "nidoran-f": {
       "id": 29,
       "names": {
         "en": "NIDORAN-F",
         "ko": "니드런♀"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/29.gif"
     },
     "nidorina": {
       "id": 30,
       "names": {
         "en": "NIDORINA",
         "ko": "니드리나"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/30.gif"
     },
     "nidoqueen": {
       "id": 31,
       "names": {
         "en": "NIDOQUEEN",
         "ko": "니드퀸"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/31.gif"
     },
     "nidoran-m": {
       "id": 32,
       "names": {
         "en": "NIDORAN-M",
         "ko": "니드런♂"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/32.gif"
     },
     "nidorino": {
       "id": 33,
       "names": {
         "en": "NIDORINO",
         "ko": "니드리노"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/33.gif"
     },
     "nidoking": {
       "id": 34,
       "names": {
         "en": "NIDOKING",
         "ko": "니드킹"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/34.gif"
     },
     "clefairy": {
       "id": 35,
       "names": {
         "en": "CLEFAIRY",
         "ko": "삐삐"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/35.gif"
     },
     "clefable": {
       "id": 36,
       "names": {
         "en": "CLEFABLE",
         "ko": "픽시"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/36.gif"
     },
     "vulpix": {
       "id": 37,
       "names": {
         "en": "VULPIX",
         "ko": "식스테일"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/37.gif"
     },
     "ninetales": {
       "id": 38,
       "names": {
         "en": "NINETALES",
         "ko": "나인테일"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/38.gif"
     },
     "jigglypuff": {
       "id": 39,
       "names": {
         "en": "JIGGLYPUFF",
         "ko": "푸린"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/39.gif"
     },
     "wigglytuff": {
       "id": 40,
       "names": {
         "en": "WIGGLYTUFF",
         "ko": "푸크린"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/40.gif"
     },
     "zubat": {
       "id": 41,
       "names": {
         "en": "ZUBAT",
         "ko": "주뱃"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/41.gif"
     },
     "golbat": {
       "id": 42,
       "names": {
         "en": "GOLBAT",
         "ko": "골뱃"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/42.gif"
     },
     "oddish": {
       "id": 43,
       "names": {
         "en": "ODDISH",
         "ko": "뚜벅쵸"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/43.gif"
     },
     "gloom": {
       "id": 44,
       "names": {
         "en": "GLOOM",
         "ko": "냄새꼬"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/44.gif"
     },
     "vileplume": {
       "id": 45,
       "names": {
         "en": "VILEPLUME",
         "ko": "라플레시아"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/45.gif"
     },
     "paras": {
       "id": 46,
       "names": {
         "en": "PARAS",
         "ko": "파라스"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/46.gif"
     },
     "parasect": {
       "id": 47,
       "names": {
         "en": "PARASECT",
         "ko": "파라섹트"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/47.gif"
     },
     "venonat": {
       "id": 48,
       "names": {
         "en": "VENONAT",
         "ko": "콘팡"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/48.gif"
     },
     "venomoth": {
       "id": 49,
       "names": {
         "en": "VENOMOTH",
         "ko": "도나리"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/49.gif"
     },
     "diglett": {
       "id": 50,
       "names": {
         "en": "DIGLETT",
         "ko": "디그다"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/50.gif"
     },
     "dugtrio": {
       "id": 51,
       "names": {
         "en": "DUGTRIO",
         "ko": "닥트리오"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/51.gif"
     },
     "meowth": {
       "id": 52,
       "names": {
         "en": "MEOWTH",
         "ko": "나옹"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/52.gif"
     },
     "persian": {
       "id": 53,
       "names": {
         "en": "PERSIAN",
         "ko": "페르시온"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/53.gif"
     },
     "psyduck": {
       "id": 54,
       "names": {
         "en": "PSYDUCK",
         "ko": "고라파덕"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/54.gif"
     },
     "golduck": {
       "id": 55,
       "names": {
         "en": "GOLDUCK",
         "ko": "골덕"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/55.gif"
     },
     "mankey": {
       "id": 56,
       "names": {
         "en": "MANKEY",
         "ko": "망키"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/56.gif"
     },
     "primeape": {
       "id": 57,
       "names": {
         "en": "PRIMEAPE",
         "ko": "성원숭"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/57.gif"
     },
     "growlithe": {
       "id": 58,
       "names": {
         "en": "GROWLITHE",
         "ko": "가디"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/58.gif"
     },
     "arcanine": {
       "id": 59,
       "names": {
         "en": "ARCANINE",
         "ko": "윈디"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/59.gif"
     },
     "poliwag": {
       "id": 60,
       "names": {
         "en": "POLIWAG",
         "ko": "발챙이"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/60.gif"
     },
     "poliwhirl": {
       "id": 61,
       "names": {
         "en": "POLIWHIRL",
         "ko": "슈륙챙이"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/61.gif"
     },
     "poliwrath": {
       "id": 62,
       "names": {
         "en": "POLIWRATH",
         "ko": "강챙이"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/62.gif"
     },
     "abra": {
       "id": 63,
       "names": {
         "en": "ABRA",
         "ko": "캐이시"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/63.gif"
     },
     "kadabra": {
       "id": 64,
       "names": {
         "en": "KADABRA",
         "ko": "윤겔라"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/64.gif"
     },
     "alakazam": {
       "id": 65,
       "names": {
         "en": "ALAKAZAM",
         "ko": "후딘"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/65.gif"
     },
     "machop": {
       "id": 66,
       "names": {
         "en": "MACHOP",
         "ko": "알통몬"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/66.gif"
     },
     "machoke": {
       "id": 67,
       "names": {
         "en": "MACHOKE",
         "ko": "근육몬"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/67.gif"
     },
     "machamp": {
       "id": 68,
       "names": {
         "en": "MACHAMP",
         "ko": "괴력몬"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/68.gif"
     },
     "bellsprout": {
       "id": 69,
       "names": {
         "en": "BELLSPROUT",
         "ko": "모다피"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/69.gif"
     },
     "weepinbell": {
       "id": 70,
       "names": {
         "en": "WEEPINBELL",
         "ko": "우츠동"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/70.gif"
     },
     "victreebel": {
       "id": 71,
       "names": {
         "en": "VICTREEBEL",
         "ko": "우츠보트"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/71.gif"
     },
     "tentacool": {
       "id": 72,
       "names": {
         "en": "TENTACOOL",
         "ko": "왕눈해"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/72.gif"
     },
     "tentacruel": {
       "id": 73,
       "names": {
         "en": "TENTACRUEL",
         "ko": "독파리"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/73.gif"
     },
     "geodude": {
       "id": 74,
       "names": {
         "en": "GEODUDE",
         "ko": "꼬마돌"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/74.gif"
     },
     "graveler": {
       "id": 75,
       "names": {
         "en": "GRAVELER",
         "ko": "데구리"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/75.gif"
     },
     "golem": {
       "id": 76,
       "names": {
         "en": "GOLEM",
         "ko": "딱구리"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/76.gif"
     },
     "ponyta": {
       "id": 77,
       "names": {
         "en": "PONYTA",
         "ko": "포니타"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/77.gif"
     },
     "rapidash": {
       "id": 78,
       "names": {
         "en": "RAPIDASH",
         "ko": "날쌩마"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/78.gif"
     },
     "slowpoke": {
       "id": 79,
       "names": {
         "en": "SLOWPOKE",
         "ko": "야돈"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/79.gif"
     },
     "slowbro": {
       "id": 80,
       "names": {
         "en": "SLOWBRO",
         "ko": "야도란"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/80.gif"
     },
     "magnemite": {
       "id": 81,
       "names": {
         "en": "MAGNEMITE",
         "ko": "코일"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/81.gif"
     },
     "magneton": {
       "id": 82,
       "names": {
         "en": "MAGNETON",
         "ko": "레어코일"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/82.gif"
     },
     "farfetchd": {
       "id": 83,
       "names": {
         "en": "FARFETCHD",
         "ko": "파오리"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/83.gif"
     },
     "doduo": {
       "id": 84,
       "names": {
         "en": "DODUO",
         "ko": "두두"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/84.gif"
     },
     "dodrio": {
       "id": 85,
       "names": {
         "en": "DODRIO",
         "ko": "두트리오"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/85.gif"
     },
     "seel": {
       "id": 86,
       "names": {
         "en": "SEEL",
         "ko": "쥬쥬"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/86.gif"
     },
     "dewgong": {
       "id": 87,
       "names": {
         "en": "DEWGONG",
         "ko": "쥬레곤"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/87.gif"
     },
     "grimer": {
       "id": 88,
       "names": {
         "en": "GRIMER",
         "ko": "질퍽이"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/88.gif"
     },
     "muk": {
       "id": 89,
       "names": {
         "en": "MUK",
         "ko": "질뻐기"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/89.gif"
     },
     "shellder": {
       "id": 90,
       "names": {
         "en": "SHELLDER",
         "ko": "셀러"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/90.gif"
     },
     "cloyster": {
       "id": 91,
       "names": {
         "en": "CLOYSTER",
         "ko": "파르셀"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/91.gif"
     },
     "gastly": {
       "id": 92,
       "names": {
         "en": "GASTLY",
         "ko": "고오스"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/92.gif"
     },
     "haunter": {
       "id": 93,
       "names": {
         "en": "HAUNTER",
         "ko": "고우스트"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/93.gif"
     },
     "gengar": {
       "id": 94,
       "names": {
         "en": "GENGAR",
         "ko": "팬텀"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/94.gif"
     },
     "onix": {
       "id": 95,
       "names": {
         "en": "ONIX",
         "ko": "롱스톤"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/95.gif"
     },
     "drowzee": {
       "id": 96,
       "names": {
         "en": "DROWZEE",
         "ko": "슬리프"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/96.gif"
     },
     "hypno": {
       "id": 97,
       "names": {
         "en": "HYPNO",
         "ko": "슬리퍼"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/97.gif"
     },
     "krabby": {
       "id": 98,
       "names": {
         "en": "KRABBY",
         "ko": "크랩"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/98.gif"
     },
     "kingler": {
       "id": 99,
       "names": {
         "en": "KINGLER",
         "ko": "킹크랩"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/99.gif"
     },
     "voltorb": {
       "id": 100,
       "names": {
         "en": "VOLTORB",
         "ko": "찌리리공"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/100.gif"
     },
     "electrode": {
       "id": 101,
       "names": {
         "en": "ELECTRODE",
         "ko": "붐볼"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/101.gif"
     },
     "exeggcute": {
       "id": 102,
       "names": {
         "en": "EXEGGCUTE",
         "ko": "아라리"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/102.gif"
     },
     "exeggutor": {
       "id": 103,
       "names": {
         "en": "EXEGGUTOR",
         "ko": "나시"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/103.gif"
     },
     "cubone": {
       "id": 104,
       "names": {
         "en": "CUBONE",
         "ko": "탕구리"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/104.gif"
     },
     "marowak": {
       "id": 105,
       "names": {
         "en": "MAROWAK",
         "ko": "텅구리"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/105.gif"
     },
     "hitmonlee": {
       "id": 106,
       "names": {
         "en": "HITMONLEE",
         "ko": "시라소몬"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/106.gif"
     },
     "hitmonchan": {
       "id": 107,
       "names": {
         "en": "HITMONCHAN",
         "ko": "홍수몬"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/107.gif"
     },
     "lickitung": {
       "id": 108,
       "names": {
         "en": "LICKITUNG",
         "ko": "내루미"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/108.gif"
     },
     "koffing": {
       "id": 109,
       "names": {
         "en": "KOFFING",
         "ko": "또가스"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/109.gif"
     },
     "weezing": {
       "id": 110,
       "names": {
         "en": "WEEZING",
         "ko": "또도가스"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/110.gif"
     },
     "rhyhorn": {
       "id": 111,
       "names": {
         "en": "RHYHORN",
         "ko": "뿔카노"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/111.gif"
     },
     "rhydon": {
       "id": 112,
       "names": {
         "en": "RHYDON",
         "ko": "코뿌리"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/112.gif"
     },
     "chansey": {
       "id": 113,
       "names": {
         "en": "CHANSEY",
         "ko": "럭키"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/113.gif"
     },
     "tangela": {
       "id": 114,
       "names": {
         "en": "TANGELA",
         "ko": "덩쿠리"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/114.gif"
     },
     "kangaskhan": {
       "id": 115,
       "names": {
         "en": "KANGASKHAN",
         "ko": "캥카"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/115.gif"
     },
     "horsea": {
       "id": 116,
       "names": {
         "en": "HORSEA",
         "ko": "쏘드라"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/116.gif"
     },
     "seadra": {
       "id": 117,
       "names": {
         "en": "SEADRA",
         "ko": "시드라"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/117.gif"
     },
     "goldeen": {
       "id": 118,
       "names": {
         "en": "GOLDEEN",
         "ko": "콘치"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/118.gif"
     },
     "seaking": {
       "id": 119,
       "names": {
         "en": "SEAKING",
         "ko": "왕콘치"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/119.gif"
     },
     "staryu": {
       "id": 120,
       "names": {
         "en": "STARYU",
         "ko": "별가사리"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/120.gif"
     },
     "starmie": {
       "id": 121,
       "names": {
         "en": "STARMIE",
         "ko": "아쿠스타"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/121.gif"
     },
     "mr-mime": {
       "id": 122,
       "names": {
         "en": "MR-MIME",
         "ko": "마임맨"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/122.gif"
     },
     "scyther": {
       "id": 123,
       "names": {
         "en": "SCYTHER",
         "ko": "스라크"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/123.gif"
     },
     "jynx": {
       "id": 124,
       "names": {
         "en": "JYNX",
         "ko": "루주라"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/124.gif"
     },
     "electabuzz": {
       "id": 125,
       "names": {
         "en": "ELECTABUZZ",
         "ko": "에레브"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/125.gif"
     },
     "magmar": {
       "id": 126,
       "names": {
         "en": "MAGMAR",
         "ko": "마그마"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/126.gif"
     },
     "pinsir": {
       "id": 127,
       "names": {
         "en": "PINSIR",
         "ko": "쁘사이저"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/127.gif"
     },
     "tauros": {
       "id": 128,
       "names": {
         "en": "TAUROS",
         "ko": "켄타로스"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/128.gif"
     },
     "magikarp": {
       "id": 129,
       "names": {
         "en": "MAGIKARP",
         "ko": "잉어킹"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/129.gif"
     },
     "gyarados": {
       "id": 130,
       "names": {
         "en": "GYARADOS",
         "ko": "갸라도스"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/130.gif"
     },
     "lapras": {
       "id": 131,
       "names": {
         "en": "LAPRAS",
         "ko": "라프라스"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/131.gif"
     },
     "ditto": {
       "id": 132,
       "names": {
         "en": "DITTO",
         "ko": "메타몽"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/132.gif"
     },
     "eevee": {
       "id": 133,
       "names": {
         "en": "EEVEE",
         "ko": "이브이"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/133.gif"
     },
     "vaporeon": {
       "id": 134,
       "names": {
         "en": "VAPOREON",
         "ko": "샤미드"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/134.gif"
     },
     "jolteon": {
       "id": 135,
       "names": {
         "en": "JOLTEON",
         "ko": "쥬피썬더"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/135.gif"
     },
     "flareon": {
       "id": 136,
       "names": {
         "en": "FLAREON",
         "ko": "부스터"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/136.gif"
     },
     "porygon": {
       "id": 137,
       "names": {
         "en": "PORYGON",
         "ko": "폴리곤"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/137.gif"
     },
     "omanyte": {
       "id": 138,
       "names": {
         "en": "OMANYTE",
         "ko": "암나이트"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/138.gif"
     },
     "omastar": {
       "id": 139,
       "names": {
         "en": "OMASTAR",
         "ko": "암스타"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/139.gif"
     },
     "kabuto": {
       "id": 140,
       "names": {
         "en": "KABUTO",
         "ko": "투구"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/140.gif"
     },
     "kabutops": {
       "id": 141,
       "names": {
         "en": "KABUTOPS",
         "ko": "투구푸스"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/141.gif"
     },
     "aerodactyl": {
       "id": 142,
       "names": {
         "en": "AERODACTYL",
         "ko": "프테라"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/142.gif"
     },
     "snorlax": {
       "id": 143,
       "names": {
         "en": "SNORLAX",
         "ko": "잠만보"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/143.gif"
     },
     "articuno": {
       "id": 144,
       "names": {
         "en": "ARTICUNO",
         "ko": "프리져"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/144.gif"
     },
     "zapdos": {
       "id": 145,
       "names": {
         "en": "ZAPDOS",
         "ko": "썬더"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/145.gif"
     },
     "moltres": {
       "id": 146,
       "names": {
         "en": "MOLTRES",
         "ko": "파이어"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/146.gif"
     },
     "dratini": {
       "id": 147,
       "names": {
         "en": "DRATINI",
         "ko": "미뇽"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/147.gif"
     },
     "dragonair": {
       "id": 148,
       "names": {
         "en": "DRAGONAIR",
         "ko": "신뇽"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/148.gif"
     },
     "dragonite": {
       "id": 149,
       "names": {
         "en": "DRAGONITE",
         "ko": "망나뇽"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/149.gif"
     },
     "mewtwo": {
       "id": 150,
       "names": {
         "en": "MEWTWO",
         "ko": "뮤츠"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/150.gif"
     },
     "mew": {
       "id": 151,
       "names": {
         "en": "MEW",
         "ko": "뮤"
-      }
+      },
+      "sprite_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/151.gif"
     }
   },
   "moves": {
@@ -1749,5 +1899,6 @@
     "BLIZZARD": "눈보라",
     "DRAGON RAGE": "용의분노",
     "SLAM": "후려치기"
-  }
+  },
+  "moves_by": "type"
 }
