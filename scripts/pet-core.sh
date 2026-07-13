@@ -19,12 +19,14 @@ NOW="${PET_NOW:-$(date +%s)}"
 clear_stale_lock() { # <path> — clear a lock leaked by a killed process
     [ -d "$1" ] || return 0
     local mtime
-    # a failed stat means the lock vanished mid-check (someone else's cycle):
-    # that is NOT staleness — treating it as age-infinity would rmdir a lock
-    # another process just acquired (empty dirs rmdir fine) and let two
-    # holders into the critical section
-    mtime=$(stat -f %m "$1" 2>/dev/null || stat -c %Y "$1" 2>/dev/null) || return 0
-    [ -n "$mtime" ] || return 0
+    # GNU stat first (-c %Y): on Linux, BSD-style `stat -f %m` does NOT fail —
+    # -f is filesystem mode there and returns the MOUNT POINT string, which
+    # poisons the arithmetic. macOS lacks -c, so it falls through to BSD form.
+    mtime=$(stat -c %Y "$1" 2>/dev/null || stat -f %m "$1" 2>/dev/null) || return 0
+    # a failed/non-numeric stat means the lock vanished mid-check — that is
+    # NOT staleness; treating it as age-infinity would rmdir a lock another
+    # process just acquired and let two holders into the critical section
+    case "$mtime" in ''|*[!0-9]*) return 0 ;; esac
     [ $(( $(date +%s) - mtime )) -gt 10 ] && rmdir "$1" 2>/dev/null
     return 0
 }
@@ -33,10 +35,12 @@ clear_stale_lock() { # <path> — clear a lock leaked by a killed process
 # inputs that gate (permanent) evolution. Bounded wait ≈1s, never fails.
 counter_lock() {
     local lock="$CACHE/.counter.lock" i=0
-    while [ "$i" -lt 100 ]; do
+    while [ "$i" -lt 150 ]; do
         mkdir "$lock" 2>/dev/null && return 0
-        clear_stale_lock "$lock"
-        sleep 0.01
+        # staleness is a 10s condition: probing it every spin just burns
+        # subprocesses and starves the actual lock holder under contention
+        [ $(( i % 25 )) -eq 24 ] && clear_stale_lock "$lock"
+        sleep 0.02
         i=$((i + 1))
     done
     return 0   # last resort: proceed unlocked rather than drop the event
