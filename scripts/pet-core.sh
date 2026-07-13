@@ -71,14 +71,17 @@ RESOLVE_JQ='
   ([$g[] | select(. <= $tasks)] | length) as $reach |
   ([([$reach, 1] | max), $len] | min) as $stage |
   $line[$stage - 1] as $sp |
-  ($stage == $len) as $final |
+  ((($pack.edges // {})[$sp]) // []) as $out |
+  (($stage == $len) and (($out | length) == 0)) as $final |
   ($g[$stage - 1] // 0) as $base |
   (if $final then ((($tasks - $base) % 10) * 10)
    else ((($tasks - $base) * 100 / ($g[$stage] - $base)) | floor)
    end) as $pct |
   ($pack.species[$sp]) as $spec |
   (if $lang == "ko" then ($spec.names.ko // $spec.names.en) else $spec.names.en end) as $name |
-  ($pack.moves[$p.type] // $pack.moves.normal) as $mv |
+  (if ($pack.moves_by // "type") == "stage"
+   then ($pack.moves[$stage | tostring] // [])
+   else ($pack.moves[$p.type] // $pack.moves.normal) end) as $mv |
   {
     date: $today,
     franchise: $p.franchise, species: $sp, name: $name, type: $p.type,
@@ -104,11 +107,39 @@ update_dex() {
        "$CACHE/dex.json" > "$tmp" && mv "$tmp" "$CACHE/dex.json"
 }
 
+# ── digimon-style growth: extend the line when daily gates unlock stages.
+# The branch is chosen AT the crossing (care mistakes then decide) and the
+# choice is recorded in the partner file — permanent for the day.
+extend_line() { # <pack-file>
+    local pack="$1" tasks mistakes len reach next tmp
+    tasks="$(read_daily tasks)"; mistakes="$(read_daily mistakes)"
+    while :; do
+        len="$(jq '.line | length' "$CACHE/partner")"
+        reach="$(jq --argjson t "$tasks" '[.gates[] | select(. <= $t)] | length' "$pack")"
+        [ "$reach" -gt "$len" ] || break
+        next="$(jq -r --slurpfile pt "$CACHE/partner" --argjson m "$mistakes" '
+            ($pt[0]) as $p | ($p.line[-1]) as $sp |
+            ((.edges // {})[$sp] // []) as $e |
+            if ($e | length) == 0 then empty else
+              ([$e[] | select(.quality == "reject")]) as $rej |
+              ([$e[] | select(.quality != "reject")]) as $norm |
+              (if $m >= (.mistake_threshold // 3) and ($rej | length) > 0 then $rej
+               elif ($norm | length) > 0 then $norm
+               else $rej end) as $pool |
+              $pool[(($p.seed + ($p.line | length)) % ($pool | length))].to
+            end' "$pack")"
+        [ -n "$next" ] || break
+        tmp="$(mktemp)"
+        jq --arg n "$next" '.line += [$n]' "$CACHE/partner" > "$tmp" && mv "$tmp" "$CACHE/partner"
+    done
+}
+
 cmd_resolve() {
     command -v jq >/dev/null 2>&1 || return 0   # hook path must survive a bare PATH
     jq -e . "$CACHE/partner" >/dev/null 2>&1 || default_partner   # missing or corrupt: self-heal
     local pack tasks mistakes streak lang state ts tmp
     pack="$(pack_file "$(active_franchise)")"
+    jq -e '.edges' "$pack" >/dev/null 2>&1 && extend_line "$pack"
     tasks="$(read_daily tasks)"
     mistakes="$(read_daily mistakes)"
     streak="$(read_streak)"
@@ -167,20 +198,33 @@ cmd_roll_if_new_day() {
 }
 
 cmd_pick() {
-    local name="${1:-}" pack eng idxs
-    pack="$(pack_file pokemon)"
-    # korean names resolve to their english slug first
-    eng="$(jq -r --arg k "$name" \
-        '.species | to_entries[] | select(.value.names.ko == $k) | .key' "$pack" | head -1)"
-    [ -n "$eng" ] && name="$eng"
-    # any line containing the name; random among matches (eevee branches)
-    idxs=($(jq -r --arg m "$name" \
-        '.lines | to_entries[] | select(.value.mons | index($m)) | .key' "$pack"))
-    if [ ${#idxs[@]} -eq 0 ]; then
-        echo "unknown gen-1 pokémon: ${1:-?}" >&2
-        exit 1
-    fi
-    write_partner "$pack" "${idxs[RANDOM % ${#idxs[@]}]}"
+    local name="${1:-}" f pack eng idxs
+    for f in pokemon digimon; do
+        pack="$(pack_file "$f")"
+        [ -f "$pack" ] || continue
+        # korean names resolve to their english slug first
+        eng="$(jq -r --arg k "$name" \
+            '.species | to_entries[] | select(.value.names.ko == $k) | .key' "$pack" | head -1)"
+        [ -z "$eng" ] && eng="$name"
+        # any line containing the name; random among matches (eevee branches);
+        # a digimon pick starts the LINE whose graph contains the species (the egg)
+        idxs=($(jq -r --arg m "$eng" \
+            '.lines | to_entries[] | select((.value.members // .value.mons) | index($m)) | .key' "$pack"))
+        if [ ${#idxs[@]} -gt 0 ]; then
+            write_partner "$pack" "${idxs[RANDOM % ${#idxs[@]}]}"
+            return
+        fi
+    done
+    echo "unknown pokémon/digimon: ${1:-?}" >&2
+    exit 1
+}
+
+cmd_franchise() {
+    local f="${1:-}" pack n
+    pack="$(pack_file "$f")"
+    [ -f "$pack" ] || { echo "unknown franchise: ${f:-?}" >&2; exit 1; }
+    n="$(jq '.lines | length' "$pack")"
+    write_partner "$pack" $(( RANDOM % n ))
 }
 
 # ── language: override file wins, then PET_LANG (test seam), else system ──
@@ -213,6 +257,7 @@ case "${1:-}" in
     roll)            cmd_roll ;;
     roll-if-new-day) cmd_roll_if_new_day ;;
     pick)            cmd_pick "${2:-}" ;;
+    franchise)       cmd_franchise "${2:-}" ;;
     lang)            cmd_lang "${2:-}" ;;
     resolve)         cmd_resolve ;;
     status)          cmd_status ;;

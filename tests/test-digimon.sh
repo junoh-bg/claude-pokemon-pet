@@ -20,4 +20,71 @@ assert_json "en name override" "$DPACK" '.species.metalgreymon_virus.names.en' "
 assert_json "ko name kept" "$DPACK" '.species.botamon.names.ko' "깜몬"
 assert_json "missing ko is null" "$DPACK" '.species.greymon.names.ko' "null"
 assert_json "5 move stages" "$DPACK" '.moves | length' "5"
+
+# ── evolution engine ──
+digimon_partner() {  # seed 0 → deterministic branch picks
+    printf '{"franchise":"digimon","line":["botamon"],"type":"vpet","date":"2026-07-13","seed":0}' > "$CACHE/partner"
+}
+set_tasks() { echo "2026-07-13 $1" > "$CACHE/tasks"; }
+set_mistakes() { echo "2026-07-13 $1" > "$CACHE/mistakes"; }
+R() { jq -r "$1" "$CACHE/resolved.json"; }
+
+setup  # baby is NOT final/gold; gates drive extension
+digimon_partner; set_tasks 0; "$CORE" resolve
+assert_eq "d t0 species" "botamon" "$(R .species)"
+assert_eq "d t0 final"   "false"   "$(R .final)"
+assert_eq "d t0 gold"    "false"   "$(R .exp_gold)"
+set_tasks 2; "$CORE" resolve
+assert_eq "d t2 species" "koromon" "$(R .species)"
+set_tasks 5; "$CORE" resolve
+assert_eq "d t5 rookie (seeded)" "agumon" "$(R .species)"
+set_tasks 10; "$CORE" resolve
+assert_eq "d t10 champion (seeded, clean)" "meramon" "$(R .species)"
+set_tasks 18; "$CORE" resolve
+assert_eq "d t18 ultimate" "mamemon" "$(R .species)"
+assert_eq "d t18 final" "true"  "$(R .final)"
+assert_eq "d t18 gold"  "true"  "$(R .exp_gold)"
+assert_json "line recorded" "$CACHE/partner" '.line | join(",")' "botamon,koromon,agumon,meramon,mamemon"
+teardown
+
+setup  # 3+ care mistakes at the champion crossing → joke evolution
+digimon_partner; set_mistakes 3; set_tasks 10; "$CORE" resolve
+assert_eq "sloppy day gets numemon" "numemon" "$(R .species)"
+set_tasks 18; "$CORE" resolve
+assert_eq "numemon continues to monzaemon" "monzaemon" "$(R .species)"
+teardown
+
+setup  # evolution is permanent: later mistakes don't rewrite the day
+digimon_partner; set_tasks 10; "$CORE" resolve
+assert_eq "clean champion first" "meramon" "$(R .species)"
+set_mistakes 9; "$CORE" resolve
+assert_eq "still meramon after mistakes" "meramon" "$(R .species)"
+teardown
+
+setup  # localized digimon: ko name + stage-keyed localized move
+digimon_partner; echo ko > "$CACHE/lang"; set_tasks 0; "$CORE" resolve
+assert_eq "d ko name" "깜몬" "$(R .name)"
+assert_eq "d ko move" "거품 공격" "$(R '.moves[0]')"
+teardown
+
+setup  # franchise switching
+PET_SEED=3 "$CORE" franchise digimon >/dev/null
+assert_json "switched to digimon" "$CACHE/partner" '.franchise' "digimon"
+assert_json "starts at an egg" "$CACHE/partner" '.line | length' "1"
+PET_SEED=3 "$CORE" franchise pokemon >/dev/null
+assert_json "switched back" "$CACHE/partner" '.franchise' "pokemon"
+if "$CORE" franchise dragonball >/dev/null 2>&1; then rc=0; else rc=1; fi
+assert_eq "unknown franchise exits 1" "1" "$rc"
+teardown
+
+setup  # cross-franchise pick: a digimon name starts that line's egg
+"$CORE" pick gabumon >/dev/null
+assert_json "pick gabumon → digimon" "$CACHE/partner" '.franchise' "digimon"
+assert_json "pick gabumon → v2 egg"  "$CACHE/partner" '.line[0]' "punimon"
+"$CORE" pick 파피몬 >/dev/null
+assert_json "korean digimon pick" "$CACHE/partner" '.line[0]' "punimon"
+"$CORE" pick pikachu >/dev/null
+assert_json "pokemon pick still works" "$CACHE/partner" '.franchise' "pokemon"
+teardown
+
 report
