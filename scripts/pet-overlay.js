@@ -173,8 +173,19 @@ function run(argv) {
   pill.setFillColor(cg(0.07, 0.08, 0.12, 0.62));
   win.contentView.layer.addSublayer(pill);
 
+  // speech-bubble tail pointing up at the pet
+  var tail = $.CAShapeLayer.layer;
+  var tp = $.CGPathCreateMutable();
+  $.CGPathMoveToPoint(tp, null, winW / 2 - 8, 50);
+  $.CGPathAddLineToPoint(tp, null, winW / 2 + 8, 50);
+  $.CGPathAddLineToPoint(tp, null, winW / 2, 60);
+  $.CGPathCloseSubpath(tp);
+  tail.setPath(tp);
+  tail.setFillColor(cg(0.07, 0.08, 0.12, 0.62));
+  win.contentView.layer.addSublayer(tail);
+
   var nameLabel = makeLabel(30, 12, true, 0.95, 0.78, 0.45, 0.95);
-  var moodLabel = makeLabel(6, 10, false, 0.86, 0.89, 1.0, 0.95);
+  var moodLabel = makeLabel(4, 10, false, 0.86, 0.89, 1.0, 0.95);
   win.contentView.addSubview(nameLabel);
   win.contentView.addSubview(moodLabel);
 
@@ -187,7 +198,7 @@ function run(argv) {
   }
 
   // EXP bar: progress to next evolution
-  var EXPW = 110, EXPH = 4, expX = (winW - EXPW) / 2, expY = 25;
+  var EXPW = 110, EXPH = 4, expX = (winW - EXPW) / 2, expY = 26;
   var expTrack = $.CAShapeLayer.layer;
   expTrack.setPath($.CGPathCreateWithRoundedRect($.CGRectMake(expX, expY, EXPW, EXPH), 2, 2, null));
   expTrack.setFillColor(cg(0.50, 0.53, 0.68, 0.95)); // light enough to read on the dark pill
@@ -202,43 +213,128 @@ function run(argv) {
       $.CGRectMake(expX, expY, EXPW * frac, EXPH), 2, 2, null));
   }
 
+  // HP bar: session health (dips on tool errors, refills on completed tasks)
+  var hpTrack = $.CAShapeLayer.layer;
+  hpTrack.setPath($.CGPathCreateWithRoundedRect($.CGRectMake(expX, 21, EXPW, 3), 1.5, 1.5, null));
+  hpTrack.setFillColor(cg(0.50, 0.53, 0.68, 0.95));
+  win.contentView.layer.addSublayer(hpTrack);
+  var hpFill = $.CAShapeLayer.layer;
+  win.contentView.layer.addSublayer(hpFill);
+  function setHp(p) {
+    var frac = Math.max(0.02, Math.min(1, (p.hp_pct || 100) / 100));
+    var c = p.hp_pct > 60 ? cg(0.35, 0.85, 0.45, 0.95)
+          : p.hp_pct > 30 ? cg(0.95, 0.80, 0.30, 0.95) : cg(0.95, 0.35, 0.30, 0.95);
+    hpFill.setFillColor(c);
+    hpFill.setPath($.CGPathCreateWithRoundedRect(
+      $.CGRectMake(expX, 21, EXPW * frac, 3), 1.5, 1.5, null));
+  }
+
+  // Battle FX: type-colored particle bursts + done-flash shake. Guarded —
+  // any failure here must never break the pet itself.
+  var TYPE_RGB = { fire: [1, .5, .2], water: [.3, .6, 1], grass: [.4, .9, .4],
+    electric: [1, .9, .3], psychic: [1, .4, .8], normal: [.9, .9, .8],
+    fighting: [.8, .4, .3], rock: [.7, .6, .4], ground: [.8, .7, .4],
+    poison: [.7, .4, .9], bug: [.7, .9, .3], flying: [.7, .8, 1],
+    ghost: [.5, .4, .9], ice: [.6, .9, 1], dragon: [.5, .5, 1],
+    vpet: [.75, .95, .6] };
+  var emitter = null, fxColor = '', fxOn = false, fxOffUntil = 0, shakeUntil = 0;
+  function setupEmitter(type) {
+    try {
+      var rgb = TYPE_RGB[type] || TYPE_RGB.normal;
+      if (emitter) { emitter.removeFromSuperlayer; emitter = null; }
+      var img = $.NSImage.alloc.initWithSize($.NSMakeSize(8, 8));
+      img.lockFocus;
+      $.NSColor.colorWithSRGBRedGreenBlueAlpha(rgb[0], rgb[1], rgb[2], 1).set;
+      $.NSBezierPath.bezierPathWithOvalInRect($.NSMakeRect(0, 0, 8, 8)).fill;
+      img.unlockFocus;
+      var cell = $.CAEmitterCell.emitterCell;
+      // NSImage bridges into layer contents on macOS; a raw CGImageRef does
+      // NOT survive the JXA bridge (lands as NSNull and throws)
+      cell.setContents(img);
+      cell.setBirthRate(1); cell.setLifetime(0.6);
+      cell.setVelocity(90); cell.setVelocityRange(50);
+      cell.setEmissionRange(Math.PI * 2);
+      cell.setScale(0.7); cell.setScaleRange(0.3); cell.setAlphaSpeed(-1.8);
+      emitter = $.CAEmitterLayer.layer;
+      emitter.setEmitterPosition($.CGPointMake(winW / 2, 140));
+      emitter.setBirthRate(0);
+      emitter.setEmitterCells($.NSArray.arrayWithObject(cell));
+      win.contentView.layer.addSublayer(emitter);
+      fxColor = type;
+    } catch (e) { emitter = null; fxColor = type; }
+  }
+  function burst(rate, ms) {
+    try {
+      if (emitter) { emitter.setBirthRate(rate); fxOn = true; fxOffUntil = Date.now() + ms; }
+    } catch (e) {}
+  }
+
   // ── State refresh (1s) ──
-  var current = { key: '', state: 'idle', age: 9999, mon: '' };
+  var current = { key: '', state: 'idle', age: 9999, mon: '', shiny: false };
   var facing = 'l';
-  function setSprite(mon, dir) {
-    var key = mon + '|' + dir;
+  function setSprite(mon, dir, shiny) {
+    var key = mon + '|' + dir + '|' + (shiny ? 's' : '');
     if (key === current.key) return;
     var img = $.NSImage.alloc.initWithContentsOfFile(
-      $(SPRITES + '/' + mon + (dir === 'r' ? '-flip' : '') + '.gif'));
+      $(SPRITES + '/' + mon + (shiny ? '-shiny' : '') + (dir === 'r' ? '-flip' : '') + '.gif'));
     if (img && !img.isNil()) { imageView.setImage(img); current.key = key; }
   }
-  var evolveUntil = 0, evolveName = '', prevStage = 0, prevName = '';
+  function roJosa(w) {  // (으)로 by final consonant; ㄹ counts as none
+    var c = w.charCodeAt(w.length - 1);
+    var fin = (c - 0xAC00) % 28;
+    return w + ((c >= 0xAC00 && c <= 0xD7A3 && fin > 0 && fin !== 8) ? '으로' : '로');
+  }
+  var evolveStart = 0, evolveOld = '', evolveNew = '', prevStage = 0, prevName = '';
+  var prevRState = '', lastSlot = 0;
   function refresh() {
     var p = petState();
     if (!p) return;                        // core hasn't resolved yet
     current.state = p.state;
     current.age = p.age;
     current.mon = p.species;
+    current.shiny = !!p.shiny;
     if (prevStage && p.stage > prevStage) {
-      evolveUntil = Date.now() + 10000;
-      evolveName = prevName;
+      evolveStart = Date.now();
+      evolveOld = prevName;
+      evolveNew = p.name;
+      burst(120, 600);
     }
     prevStage = p.stage;
     prevName = p.name;
-    setSprite(p.species, p.state === 'working' ? facing : 'l');
-    nameLabel.setStringValue($(p.name + '  Lv.' + p.tasks));
-    var evolveMsg = p.lang === 'ko'
-      ? '어라…!? ' + evolveName + '의 모습이…!'
-      : 'What? ' + evolveName + ' is evolving!';
-    moodLabel.setStringValue($(Date.now() < evolveUntil ? evolveMsg : moodText(p)));
+    if (p.type !== fxColor) setupEmitter(p.type);
+    var slot = Math.floor(Date.now() / 7000);
+    if (p.state === 'working' && slot !== lastSlot) { lastSlot = slot; burst(50, 250); }
+    if (p.state === 'done' && prevRState !== 'done') {
+      burst(120, 350);
+      shakeUntil = Date.now() + 500;
+    }
+    prevRState = p.state;
+    setSprite(p.species, p.state === 'working' ? facing : 'l', current.shiny);
+    nameLabel.setStringValue($(p.name + '  Lv.' + p.tasks +
+      (p.streak >= 2 ? '  🔥' + p.streak : '')));
+    var caption, evoAge = Date.now() - evolveStart;
+    if (evolveStart && evoAge < 10000) {
+      if (evoAge < 2500) {
+        caption = p.lang === 'ko' ? '어라…!? ' + evolveOld + '의 모습이…!'
+                                  : 'What? ' + evolveOld + ' is evolving!';
+      } else {
+        caption = p.lang === 'ko'
+          ? '축하합니다! ' + josa(evolveOld, '은', '는') + ' ' + roJosa(evolveNew) + ' 진화했다!'
+          : 'Congratulations! Your ' + evolveOld + ' evolved into ' + evolveNew + '!';
+      }
+    } else {
+      caption = moodText(p);
+    }
+    moodLabel.setStringValue($(caption));
     centerLabel(nameLabel);
     centerLabel(moodLabel);
     setExp(p);
+    setHp(p);
     win.setAlphaValue(p.state === 'idle' ? 0.55 : 1.0);
   }
 
   // ── Motion engine (20fps) + manual ⌥-drag ──
-  var t = 0, DT = 0.05, lastDx = 0;
+  var t = 0, DT = 0.05, lastDx = 0, blinkHidden = false;
   var OPT = 0x80000;
   var dragging = false, grabX = 0, grabY = 0;
   function endDrag() {
@@ -268,6 +364,21 @@ function run(argv) {
     win.setIgnoresMouseEvents(true);
     if (dragging) endDrag();
 
+    // evolution blink (20 fps granularity; refresh only runs at 1 Hz)
+    var evoAge = Date.now() - evolveStart;
+    if (evolveStart && evoAge < 2500) {
+      imageView.setHidden(Math.floor(evoAge / 250) % 2 === 1);
+    } else if (blinkHidden) {
+      imageView.setHidden(false);
+      blinkHidden = false;
+    }
+    if (evolveStart && evoAge < 2500) blinkHidden = true;
+    // particle bursts are short pulses; shut the emitter off after each
+    if (fxOn && Date.now() > fxOffUntil) {
+      try { if (emitter) emitter.setBirthRate(0); } catch (e) {}
+      fxOn = false;
+    }
+
     t += DT;
     var dx = 0, dy = 0;
     switch (current.state) {
@@ -275,7 +386,7 @@ function run(argv) {
         dx = -ROAM / 2 + (ROAM / 2) * Math.sin(t * 0.55);
         dy = Math.abs(Math.sin(t * 4.0)) * 4;
         var dir = dx >= lastDx ? 'r' : 'l';
-        if (dir !== facing) { facing = dir; setSprite(current.mon, facing); }
+        if (dir !== facing) { facing = dir; setSprite(current.mon, facing, current.shiny); }
         lastDx = dx;
         break;
       case 'thinking':
@@ -290,6 +401,10 @@ function run(argv) {
         break;
       default:
         dy = 1.5 * Math.sin(t * 0.7);
+    }
+    if (Date.now() < shakeUntil) {   // impact shake on task completion
+      dx += Math.random() * 6 - 3;
+      dy += Math.random() * 6 - 3;
     }
     win.setFrameOrigin($.NSMakePoint(homeX + dx, homeY + dy));
   }
