@@ -49,6 +49,17 @@
 
 ## Review loop
 
-(filled in after the loop completes)
+Three rounds. Round 1 (1 Important, 4 Minor): the terminal evolution
+invert-flash was a near-total no-op — `halfblocks` emits a full SGR reset
+for every transparent run, cancelling reverse-video for the rest of the
+row; the reviewer proved it against a real sprite, and the fix
+(`invert_line` re-arms `[7m` after each embedded reset) was then verified
+across all 605 rows of the real charmander animation. Also: a josa test
+that claimed to cover the ㄹ-batchim branch but didn't, a README/dex format
+mismatch, a stale latency note, and a 1-px HUD overlap. The fix round also
+re-measured the counter-lock worst case at 4.9 s — a hair under the 5 s
+hook timeout — and cut the spin budget to 75 iterations (measured 2.9 s),
+re-verifying 30-way counter exactness on both platforms. Round 2 verified
+everything and found two one-line doc drifts; round 3 PASS.
 
 ## Next: Phase 5 — trainer card (`pet card`), the final phase.
