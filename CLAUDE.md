@@ -85,6 +85,9 @@ never make the core depend on a renderer. Franchise data lives in JSON packs
    qlmanage cascade; ANSI card uses a left rail only — fixed-width right
    borders can't survive double-width Hangul)
 
-Post-roadmap (2026-07-14): digimon colorful-art re-source + full EN/KO
-localization (user feedback, see memory `digimon-visual-direction`);
-franchise-identity/naming decision pending research.
+Post-roadmap (2026-07-14): ✅ digimon colorful art (digi-api official
+renders; `petpng.py` pure-stdlib PNG pipeline; border flood-fill keying at
+threshold 235 — NEVER global chroma key), ✅ complete ko localization
+(official names + per-species signature attacks; unverified ko attacks fall
+back to 필살기, never mixed English), ✅ dual-franchise displayName
+(identity decision: keep the `claude-pokemon-pet` ID, no rename).

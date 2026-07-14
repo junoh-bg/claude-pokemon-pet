@@ -100,8 +100,12 @@ def encode(rgba, w, h):
             + chunk(b"IEND", b""))
 
 
-def floodfill_whitekey(rgba, w, h, thresh=250):
-    """Alpha-zero every near-white pixel CONNECTED TO THE BORDER."""
+def floodfill_whitekey(rgba, w, h, thresh=235):
+    """Alpha-zero every near-white pixel CONNECTED TO THE BORDER.
+
+    Threshold 235 also swallows the anti-aliased fringe between the art and
+    the white background; interior whites are safe regardless because the
+    fill can't cross non-white outline pixels."""
     out = bytearray(rgba)
 
     def is_bg(i):

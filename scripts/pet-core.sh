@@ -127,10 +127,11 @@ RESOLVE_JQ='
       else ($pack.moves[$p.type] // $pack.moves.normal // []) end) as $raw
      | (if $lang == "ko" then ($raw | map($pack.moves_ko[.] // .)) else $raw end)
    end) as $mv |
+  (if ($pack.edges // null) != null then ($g | length) else $len end) as $stages_total |
   {
     date: $today,
     franchise: $p.franchise, species: $sp, name: $name, type: $p.type,
-    stage: $stage, stages: $len, final: $final,
+    stage: $stage, stages: $stages_total, final: $final,
     tasks: $tasks, mistakes: $mistakes, streak: $streak, shiny: ($p.shiny // false),
     exp_pct: $pct, exp_gold: $final, hp_pct: $hp,
     line: $line,

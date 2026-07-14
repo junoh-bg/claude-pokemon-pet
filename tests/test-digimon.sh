@@ -46,6 +46,7 @@ digimon_partner; set_tasks 0; "$CORE" resolve
 assert_eq "d t0 species" "botamon" "$(R .species)"
 assert_eq "d t0 final"   "false"   "$(R .final)"
 assert_eq "d t0 gold"    "false"   "$(R .exp_gold)"
+assert_eq "d stages show potential (1/5, not 1/1)" "5" "$(R .stages)"
 set_tasks 2; "$CORE" resolve
 assert_eq "d t2 species" "koromon" "$(R .species)"
 set_tasks 5; "$CORE" resolve
