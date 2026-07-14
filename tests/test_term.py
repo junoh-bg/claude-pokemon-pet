@@ -206,6 +206,27 @@ class TestPngSpritePath(unittest.TestCase):
         self.assertIsNone(ui._kitty_sent)   # forces retransmit after change
 
 
+class TestLiving(unittest.TestCase):
+    def test_element_color(self):
+        self.assertEqual(pet_term.element_color("fire"), "38;5;203")
+        self.assertEqual(pet_term.element_color("holy"), "38;5;222")
+        self.assertEqual(pet_term.element_color("nonsense"), "38;5;150")
+
+    def test_projectile_line(self):
+        l0 = pet_term.projectile_line(0, 1, "fire", 40)
+        l3 = pet_term.projectile_line(3, 1, "fire", 40)
+        self.assertIn("●", l0)
+        self.assertIn("✶", l3)                                # impact frame
+        self.assertLess(l0.index("●"), l3.index("✶"))
+        self.assertIn("38;5;203", l0)
+        left = pet_term.projectile_line(0, -1, "fire", 40)
+        self.assertGreater(left.index("●"), l0.index("●"))    # starts from the right
+
+    def test_breathe_offset(self):
+        self.assertIn(pet_term.breathe_offset(0.0), (0, 1))
+        self.assertNotEqual(pet_term.breathe_offset(0.0), pet_term.breathe_offset(2.0))
+
+
 class TestResolved(unittest.TestCase):
     def test_load_missing_returns_none(self):
         self.assertIsNone(pet_term.load_resolved("/nonexistent-dir-xyz"))
