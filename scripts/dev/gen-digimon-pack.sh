@@ -9,6 +9,15 @@ cd "$ROOT"
 jq '
   def disp: {"metalgreymon_virus": "METALGREYMON", "extyranomon": "EX-TYRANOMON",
              "darktyranomon": "DARK TYRANOMON"}[.] // ascii_upcase;
+  # canonical-first edge order (flawless-day evolution = first edge):
+  # anime partner pairings and cited on-screen evolutions where they exist
+  # in-graph, franchise-prominence picks otherwise — see
+  # docs/notes/2026-07-14-evolution-canon-audit.md for per-species evidence
+  def canon: {"agumon": "greymon", "betamon": "seadramon",
+              "gabumon": "garurumon", "elecmon": "angemon",
+              "patamon": "unimon", "kunemon": "bakemon",
+              "piyomon": "leomon", "palmon": "leomon",
+              "gazimon": "devidramon", "gizamon": "deltamon"};
   def kdisp: if . == "메탈그레이몬(바이러스종)" then "메탈그레이몬" else . end;
   . as $c |
   {
@@ -32,7 +41,12 @@ jq '
       | map({from: .from, to: .to, quality: .quality})
       | group_by(.from)
       | map({ key: .[0].from, value: map({to: .to, quality: .quality}) })
-      | from_entries),
+      | from_entries
+      | with_entries(.value = (canon[.key] as $cn
+          | if $cn == null then .value
+            else ([.value[] | select(.to == $cn)]
+                  + [.value[] | select(.to != $cn)])
+            end))),
     moves: { "1": ["BUBBLE"], "2": ["ACID BUBBLE"],
              "3": ["SPIT SHOT", "SCRATCH", "HEADBUTT"],
              "4": ["HEAVY SHOT", "FIERCE BITE", "POWER SLAM"],

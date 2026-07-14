@@ -28,6 +28,16 @@ assert_json "en name override" "$DPACK" '.species.metalgreymon_virus.names.en' "
 assert_json "ko name kept" "$DPACK" '.species.botamon.names.ko' "깜몬"
 assert_json "greymon ko now official" "$DPACK" '.species.greymon.names.ko' "그레이몬"
 assert_json "5 move stages" "$DPACK" '.moves | length' "5"
+# canonical-first ordering (flawless-day evolution = first edge; audited
+# against anime/game canon — docs/notes/2026-07-14-evolution-canon-audit.md)
+assert_json "agumon canon first"  "$DPACK" '.edges.agumon[0].to'  "greymon"
+assert_json "gabumon canon first" "$DPACK" '.edges.gabumon[0].to' "garurumon"
+assert_json "betamon canon first" "$DPACK" '.edges.betamon[0].to' "seadramon"
+assert_json "piyomon canon first" "$DPACK" '.edges.piyomon[0].to' "leomon"
+assert_json "kunemon canon first" "$DPACK" '.edges.kunemon[0].to' "bakemon"
+assert_json "gazimon canon first" "$DPACK" '.edges.gazimon[0].to' "devidramon"
+assert_json "gizamon canon first" "$DPACK" '.edges.gizamon[0].to' "deltamon"
+
 # guard against future curation regressions: a non-ultimate species with no
 # outgoing edges would silently stop that day's evolution forever
 assert_json "every non-ultimate species has outgoing edges" "$DPACK" \
@@ -72,6 +82,12 @@ digimon_partner; set_tasks 10; "$CORE" resolve
 assert_eq "clean champion first" "greymon" "$(R .species)"
 set_mistakes 9; "$CORE" resolve
 assert_eq "still greymon after mistakes" "greymon" "$(R .species)"
+teardown
+
+setup  # flawless gabumon day → garurumon (the Matt pairing), not kabuterimon
+printf '{"franchise":"digimon","line":["punimon","tunomon","gabumon"],"type":"vpet","date":"2026-07-13","seed":0}' > "$CACHE/partner"
+set_tasks 10; "$CORE" resolve
+assert_eq "flawless gabumon → garurumon" "garurumon" "$(R .species)"
 teardown
 
 setup  # care tiers: 1-2 mistakes give a mid-tier champion, never the top one
