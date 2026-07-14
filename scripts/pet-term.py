@@ -510,9 +510,23 @@ def main(argv):
         while True:
             if watch_keys:
                 ready, _, _ = select.select([sys.stdin], [], [], 0)
-                if ready and sys.stdin.read(1) in ("q", "Q", "\x1b"):
-                    restore_terminal()
-                    sys.exit(0)
+                if ready:
+                    # raw bytes, not TextIOWrapper.read: a fragmented multi-
+                    # byte character would block the decode layer and freeze
+                    # the whole render loop (reviewed, reproduced via pty)
+                    fd = sys.stdin.fileno()
+                    b = os.read(fd, 1)
+                    if b in (b"q", b"Q"):
+                        restore_terminal()
+                        sys.exit(0)
+                    if b == b"\x1b":
+                        # lone Esc quits; ESC-[... is an arrow/function key —
+                        # peek briefly and drain the sequence instead
+                        follow, _, _ = select.select([sys.stdin], [], [], 0.03)
+                        if not follow:
+                            restore_terminal()
+                            sys.exit(0)
+                        os.read(fd, 32)
             ui.draw()
             time.sleep(TICK)
     except SystemExit:

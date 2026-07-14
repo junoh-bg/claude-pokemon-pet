@@ -129,8 +129,8 @@ RESOLVE_JQ='
    end) as $mv |
   (if $mb == "species"
    then (($spec.attack.en // "") | ascii_downcase) as $atk
-      | (if   ($atk | test("flame|fire|burning|heat")) then "fire"
-         elif ($atk | test("ice|snow|zero"))           then "ice"
+      | (if   ($atk | test("flame|fire|burning|heat|volcano")) then "fire"
+         elif ($atk | test("ice|icicle|snow|zero"))    then "ice"
          elif ($atk | test("thunder|electric|shock|spark")) then "electric"
          elif ($atk | test("water|hydro|tidal|wave"))  then "water"
          elif ($atk | test("poison|sludge|acid|poop")) then "poison"

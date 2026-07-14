@@ -116,6 +116,10 @@ pin '["botamon","koromon","agumon","numemon"]'; set_tasks 10; "$CORE" resolve
 assert_eq "poop throw → poison" "poison" "$(R .element)"
 pin '["botamon","koromon"]'; set_tasks 2; "$CORE" resolve
 assert_eq "bubbles → vpet default" "vpet" "$(R .element)"
+pin '["yuramon","tanemon","palmon","mojyamon"]'; set_tasks 10; "$CORE" resolve
+assert_eq "icicle rod → ice" "ice" "$(R .element)"
+pin '["yuramon","tanemon","piyomon","monochromon"]'; set_tasks 10; "$CORE" resolve
+assert_eq "volcano strike → fire" "fire" "$(R .element)"
 echo ko > "$CACHE/lang"
 pin '["botamon","koromon","agumon"]'; set_tasks 5; "$CORE" resolve
 assert_eq "element ignores display language" "fire" "$(R .element)"
