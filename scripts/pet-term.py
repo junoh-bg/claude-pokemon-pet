@@ -456,10 +456,11 @@ class UI:
             if not bob:
                 out.append("\r\n")   # keep total height stable across bob frames
         # attack projectile line (frames 0..3, then quiet)
+        elem = r.get("element", "vpet")
         if (self.attack_tick is not None and self.attack_tick < 4
-                and show_projectile(r.get("element", "vpet"))):
+                and show_projectile(elem)):
             out.append(projectile_line(self.attack_tick, self.attack_dir,
-                                       r.get("element", "vpet"), 40) + "\r\n")
+                                       elem, 40) + "\r\n")
             self.attack_tick += 1
         else:
             if self.attack_tick is not None and self.attack_tick < 4:
