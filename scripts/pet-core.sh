@@ -127,10 +127,22 @@ RESOLVE_JQ='
       else ($pack.moves[$p.type] // $pack.moves.normal // []) end) as $raw
      | (if $lang == "ko" then ($raw | map($pack.moves_ko[.] // .)) else $raw end)
    end) as $mv |
+  (if $mb == "species"
+   then (($spec.attack.en // "") | ascii_downcase) as $atk
+      | (if   ($atk | test("flame|fire|burning|heat")) then "fire"
+         elif ($atk | test("ice|snow|zero"))           then "ice"
+         elif ($atk | test("thunder|electric|shock|spark")) then "electric"
+         elif ($atk | test("water|hydro|tidal|wave"))  then "water"
+         elif ($atk | test("poison|sludge|acid|poop")) then "poison"
+         elif ($atk | test("heaven|holy"))             then "holy"
+         elif ($atk | test("death|devil|hell|dark|oblivion")) then "dark"
+         else "vpet" end)
+   else $p.type end) as $element |
   (if ($pack.edges // null) != null then ($g | length) else $len end) as $stages_total |
   {
     date: $today,
     franchise: $p.franchise, species: $sp, name: $name, type: $p.type,
+    element: $element,
     stage: $stage, stages: $stages_total, final: $final,
     tasks: $tasks, mistakes: $mistakes, streak: $streak, shiny: ($p.shiny // false),
     exp_pct: $pct, exp_gold: $final, hp_pct: $hp,
