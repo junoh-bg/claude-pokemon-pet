@@ -15,6 +15,7 @@ import base64, json, math, os, signal, subprocess, sys, time
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import petgif
+import petpng
 
 CACHE = os.path.expanduser("~/.cache/claude-pokemon-pet")
 ESC = "\x1b"
@@ -272,14 +273,24 @@ class UI:
         path = os.path.join(CACHE, "sprites", sprite_file(species, shiny))
         if shiny and not os.path.exists(path):    # shiny variant not cached yet
             path = os.path.join(CACHE, "sprites", sprite_file(species, False))
+        if not os.path.exists(path):              # png franchise packs (digimon art)
+            png = os.path.join(CACHE, "sprites", species + ".png")
+            if os.path.exists(png):
+                path = png
         try:
             with open(path, "rb") as fh:
                 self.gif_bytes = fh.read()
-            self.anim = petgif.decode(self.gif_bytes)
-            if franchise == "digimon":       # v-pet sprites: white background → transparent
-                self.anim = petgif.Anim(self.anim.width, self.anim.height,
-                                        [petgif.Frame(whitekey(f.rgba), f.delay_ms)
-                                         for f in self.anim.frames])
+            if path.endswith(".png"):
+                rgba, w, h = petpng.decode(self.gif_bytes)
+                if franchise == "digimon":   # solid-white bg → border flood-fill key
+                    rgba = petpng.floodfill_whitekey(rgba, w, h)
+                self.anim = petgif.Anim(w, h, [petgif.Frame(rgba, 200)])
+            else:
+                self.anim = petgif.decode(self.gif_bytes)
+                if franchise == "digimon":   # legacy gif cache: exact white key
+                    self.anim = petgif.Anim(self.anim.width, self.anim.height,
+                                            [petgif.Frame(whitekey(f.rgba), f.delay_ms)
+                                             for f in self.anim.frames])
         except Exception:            # any decode failure degrades to placeholder text
             self.anim = None
         self.species, self.frame_i = species, 0

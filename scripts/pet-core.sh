@@ -260,10 +260,16 @@ cmd_card() {
     pcount="$(jq '[.[] | select(.franchise == "pokemon")] | length' "$CACHE/dex.json")"
     dcount="$(jq '[.[] | select(.franchise == "digimon")] | length' "$CACHE/dex.json")"
     scount="$(jq '[.[] | select(.shiny)] | length' "$CACHE/dex.json")"
-    sprite="$CACHE/sprites-big/$species$( [ "$shiny" = "true" ] && echo -shiny ).gif"
-    [ -f "$sprite" ] || sprite="$CACHE/sprites/$species.gif"
+    local sfx cand mime
+    sfx="$( [ "$shiny" = "true" ] && echo -shiny )"
+    sprite=""; mime="image/gif"
+    for cand in "sprites-big/$species$sfx.gif" "sprites-big/$species$sfx.png" \
+                "sprites/$species.gif" "sprites/$species.png"; do
+        [ -f "$CACHE/$cand" ] && { sprite="$CACHE/$cand"; break; }
+    done
+    case "$sprite" in *.png) mime="image/png" ;; esac
     b64=""
-    [ -f "$sprite" ] && b64="$(base64 < "$sprite" | tr -d '\n')"
+    [ -n "$sprite" ] && b64="$(base64 < "$sprite" | tr -d '\n')"
 
     local L_TRAINER L_STREAK L_STAGE L_DEX L_DAYS
     if [ "$lang" = "ko" ]; then
@@ -295,7 +301,7 @@ cmd_card() {
   <text x="28" y="146" font-size="13" fill="#9aa08c">$L_DEX pokemon $pcount/151 · digimon $dcount/70</text>
   <text x="28" y="168" font-size="13" fill="#9aa08c">shiny $scount</text>
   $star
-  <image href="data:image/gif;base64,$b64" x="290" y="60" width="160" height="160"/>
+  <image href="data:$mime;base64,$b64" x="290" y="60" width="160" height="160"/>
   <text x="28" y="244" font-size="12" fill="#6f7462">$L_TRAINER $user_x · $TODAY</text>
   <text x="28" y="262" font-size="10" fill="#4d5145">claude-pokemon-pet</text>
 </svg>

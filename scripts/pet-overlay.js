@@ -275,8 +275,11 @@ function run(argv) {
   function setSprite(mon, dir, shiny) {
     var key = mon + '|' + dir + '|' + (shiny ? 's' : '');
     if (key === current.key) return;
-    var img = $.NSImage.alloc.initWithContentsOfFile(
-      $(SPRITES + '/' + mon + (shiny ? '-shiny' : '') + (dir === 'r' ? '-flip' : '') + '.gif'));
+    var base = SPRITES + '/' + mon + (shiny ? '-shiny' : '') + (dir === 'r' ? '-flip' : '');
+    var img = $.NSImage.alloc.initWithContentsOfFile($(base + '.gif'));
+    if (!img || img.isNil()) {   // png franchise packs (digimon colorful art)
+      img = $.NSImage.alloc.initWithContentsOfFile($(base + '.png'));
+    }
     if (img && !img.isNil()) { imageView.setImage(img); current.key = key; }
   }
   function roJosa(w) {  // (으)로 by final consonant; ㄹ counts as none
