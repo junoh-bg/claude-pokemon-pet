@@ -12,30 +12,29 @@ inside your terminal (`claude-pokemon-pet term`) or your statusline.
 
 ## Features
 
-- **Reacts to your session** — roams around while Claude works
-  (`CHARIZARD used FLAMETHROWER!`), bobs while thinking, hops when a task
-  completes (`It's super effective!`), fidgets when Claude needs your input,
-  and falls asleep when you're idle.
+- **Two franchises** — 151 gen-1 Pokémon with their real evolution chains,
+  or the five original 1997 Digimon V-pet versions (70 species) with
+  branching evolution that judges how your session went. Switch anytime:
+  `claude-pokemon-pet digimon` / `pokemon`.
+- **Reacts to your session** — roams while Claude works
+  (`CHARIZARD used FLAMETHROWER!`) with type-colored particle bursts, bobs
+  while thinking, hops (with an impact shake) when a task completes, fidgets
+  when Claude needs your input, and falls asleep when you're idle.
 - **Levels & evolves** — its level is the number of tasks Claude completed
-  today (resets at midnight). It evolves at Lv.6 and Lv.16 with an EXP bar
-  and a proper cinematic: sprite flash, `What? CHARMANDER is evolving!`,
-  then `Congratulations! Your CHARMANDER evolved into CHARMELEON!`
-- **Shinies & the dex** — the daily gacha rolls shiny 1/64 (✨ sparkle,
-  real shiny sprites). Every partner you've ever had is recorded:
-  `claude-pokemon-pet dex` shows per-franchise progress
-  (`pokemon: caught 23/151`), your shiny count, and the dated capture list.
-- **Battle FX & session health** — type-colored particle bursts while
-  Claude works, an impact shake on task completion, and an HP bar that
-  dips with failing tool calls and refills as tasks complete.
-- **Daily gacha** — one of 81 gen-1 evolution chains is rolled the first time
-  the overlay starts each day (Magikarp days build character). Your partner
-  never changes mid-run; reroll anytime with the `pet random` command.
-- **A system-wide companion** — the pet floats above *everything* on your
-  Mac (every app, window, and Space), not just the terminal. It is
-  click-through, so it never steals clicks or focus. Hold ⌥ (Option) and
-  drag to put it wherever you like.
-- **English & Korean** — names and battle text follow your system language,
-  with official Korean names for all 151 Pokémon (`피카츄의 10만볼트!`).
+  today (resets at midnight), with an EXP bar, an HP bar that dips on
+  failing tool calls, and a full evolution cinematic
+  (`What? CHARMANDER is evolving!` → sprite flash →
+  `Congratulations! Your CHARMANDER evolved into CHARMELEON!`).
+- **Daily gacha, shinies & the dex** — a fresh partner each day (shiny
+  1/64 ✨, real shiny sprites; Magikarp days build character). Everything
+  you've ever raised is in `claude-pokemon-pet dex`; show off with
+  `claude-pokemon-pet card` — a shareable trainer-card PNG.
+- **Anywhere you work** — a native floating overlay on macOS
+  (click-through, above every app and Space, ⌥-drag to move), a terminal
+  renderer for Linux / SSH / RunPods, and a one-line statusline pet for
+  everything else.
+- **English & Korean** — names and battle text follow your system language
+  (`피카츄의 10만볼트!`), with official Korean names for all 151 Pokémon.
 
 ## Requirements
 
@@ -139,6 +138,18 @@ A one-line pet for Claude Code's statusline — works absolutely everywhere:
 Run `claude-pokemon-pet statusline` to print the one-line `settings.json`
 snippet (we never edit your settings for you) and a live preview.
 
+### Dex & trainer card
+
+```sh
+claude-pokemon-pet dex     # everything you've ever raised, per franchise, shinies marked
+claude-pokemon-pet card    # renders a shareable trainer card
+```
+
+`card` always writes an SVG and prints an ANSI card inline; when a
+rasterizer is available (`rsvg-convert`, ImageMagick, or macOS's built-in
+Quick Look) it also produces `card.png` — partner art, level, stage,
+streak, dex progress, trainer name.
+
 ### CLI
 
 The same commands are available from your shell via the bundled CLI:
@@ -187,6 +198,7 @@ To get it out of the way entirely, toggle it off (`prefix+P` /
 | Permission needed | anxious fidget | `PIKACHU looks at you expectantly` |
 | New session | greeting hops | `Go! PIKACHU!` |
 | Idle | breathing, dimmed | `PIKACHU is fast asleep` |
+| Tool call fails | HP bar dips (and steers Digimon evolution) | — |
 
 ### Language
 
