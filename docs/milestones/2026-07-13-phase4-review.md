@@ -1,6 +1,6 @@
 # Milestone Review — Phase 4: UI Upgrades (v0.7.0)
 
-**Branch/PR:** `feat/phase4-ui` · **Tests:** 7 bash suites + 31 Python tests, green on macOS + Debian
+**Branch/PR:** `feat/phase4-ui` · **Tests:** 7 bash suites + 33 Python tests, green on macOS + Debian
 
 ## What was built
 
