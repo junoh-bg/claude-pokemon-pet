@@ -45,7 +45,7 @@ Per mode:
 
 | Mode | Needs | Notes |
 |---|---|---|
-| Floating overlay | macOS + [`gifsicle`](https://www.lcdf.org/gifsicle/) | native AppKit window (JXA); `curl`/`osascript` ship with macOS |
+| Floating overlay | macOS + [`gifsicle`](https://www.lcdf.org/gifsicle/) | native AppKit window (JXA); `curl`/`osascript` ship with macOS; digimon sprites additionally need `python3` (present with Xcode CLT) |
 | Terminal pet (`term`) | any OS + `python3` (≥3.8, stdlib only) + `curl` | works on Linux, over SSH, in devcontainers and RunPods |
 | Statusline | just `jq` | one line in any terminal |
 | Trainer card PNG (optional) | `rsvg-convert` or ImageMagick | SVG + ANSI need nothing; macOS Quick Look works as a padded fallback |
@@ -115,9 +115,13 @@ claude-pokemon-pet digimon      # or: /claude-pokemon-pet:pet digimon
 ```
 
 Your partner becomes one of the five original 1997 **Digital Monster V-pet**
-lines (Ver.1–Ver.5), drawn with the authentic LCD sprites. Five stages, gated
-by tasks completed today: Baby → In-Training (2) → Rookie (5) → Champion (10)
-→ Ultimate (18) — then the gold EXP bar takes over.
+lines (Ver.1–Ver.5), drawn with colorful official art (fetched from
+[digi-api](https://digi-api.com) at install; `python3` processes the
+sprites — background keyed by border flood-fill, so white bellies and
+angel wings survive). Five stages, gated by tasks completed today:
+Baby → In-Training (2) → Rookie (5) → Champion (10) → Ultimate (18) — then
+the gold EXP bar takes over. Battle text uses each species' real signature
+attack in your language: `아구몬의 베이비 플레임!` / `AGUMON used Baby Flame!`.
 
 Unlike Pokémon mode, evolution **branches** — and it watches how your session
 is going. Each failing tool call counts as a *care mistake* (user interrupts
@@ -301,9 +305,11 @@ you can read in `scripts/`.
 
 Sprites are fetched at install time and are not redistributed with this
 repo: Pokémon from [PokeAPI/sprites](https://github.com/PokeAPI/sprites)
-(gen-5 Black/White animated set), Digimon V-pet sprites from
-[Wikimon](https://wikimon.net). Pokémon is © Nintendo / Creatures Inc. /
-GAME FREAK inc.; Digimon is © Bandai. This is a fan-made tool, not
-affiliated with or endorsed by them.
+(gen-5 Black/White animated set), Digimon official art from
+[digi-api](https://digi-api.com); evolution-chart and Korean-name data
+curated from [Wikimon](https://wikimon.net) and Bandai's official Korean
+reference. Pokémon is © Nintendo / Creatures Inc. / GAME FREAK inc.;
+Digimon is © Bandai. This is a fan-made tool, not affiliated with or
+endorsed by them.
 
 MIT licensed — see [LICENSE](LICENSE).

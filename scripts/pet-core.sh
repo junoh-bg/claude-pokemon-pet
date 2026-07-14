@@ -118,19 +118,26 @@ RESOLVE_JQ='
   ([([100 - 15 * $mistakes + 10 * $tasks, 100] | min), 10] | max) as $hp |
   ($pack.species[$sp]) as $spec |
   (if $lang == "ko" then ($spec.names.ko // $spec.names.en) else $spec.names.en end) as $name |
-  (if ($pack.moves_by // "type") == "stage"
-   then ($pack.moves[$stage | tostring] // [])
-   else ($pack.moves[$p.type] // $pack.moves.normal) end) as $mv |
+  (($pack.moves_by // "type")) as $mb |
+  (if $mb == "species"
+   then [ (if $lang == "ko" then ($spec.attack.ko // "필살기")
+           else ($spec.attack.en // "ATTACK") end) ]
+   else
+     (if $mb == "stage" then ($pack.moves[$stage | tostring] // [])
+      else ($pack.moves[$p.type] // $pack.moves.normal // []) end) as $raw
+     | (if $lang == "ko" then ($raw | map($pack.moves_ko[.] // .)) else $raw end)
+   end) as $mv |
+  (if ($pack.edges // null) != null then ($g | length) else $len end) as $stages_total |
   {
     date: $today,
     franchise: $p.franchise, species: $sp, name: $name, type: $p.type,
-    stage: $stage, stages: $len, final: $final,
+    stage: $stage, stages: $stages_total, final: $final,
     tasks: $tasks, mistakes: $mistakes, streak: $streak, shiny: ($p.shiny // false),
     exp_pct: $pct, exp_gold: $final, hp_pct: $hp,
     line: $line,
     line_names: ($line | map($pack.species[.] as $s |
         if $lang == "ko" then ($s.names.ko // $s.names.en) else $s.names.en end)),
-    moves: (if $lang == "ko" then ($mv | map($pack.moves_ko[.] // .)) else $mv end),
+    moves: $mv,
     lang: $lang, state: $state, state_ts: $ts
   }'
 
@@ -254,10 +261,25 @@ cmd_card() {
     pcount="$(jq '[.[] | select(.franchise == "pokemon")] | length' "$CACHE/dex.json")"
     dcount="$(jq '[.[] | select(.franchise == "digimon")] | length' "$CACHE/dex.json")"
     scount="$(jq '[.[] | select(.shiny)] | length' "$CACHE/dex.json")"
-    sprite="$CACHE/sprites-big/$species$( [ "$shiny" = "true" ] && echo -shiny ).gif"
-    [ -f "$sprite" ] || sprite="$CACHE/sprites/$species.gif"
+    local sfx cand mime
+    sfx="$( [ "$shiny" = "true" ] && echo -shiny )"
+    sprite=""; mime="image/gif"
+    for cand in "sprites-big/$species$sfx.gif" "sprites-big/$species$sfx.png" \
+                "sprites/$species.gif"; do
+        [ -f "$CACHE/$cand" ] && { sprite="$CACHE/$cand"; break; }
+    done
+    if [ -z "$sprite" ] && [ -f "$CACHE/sprites/$species.png" ]; then
+        # raw png originals sit on an opaque white background — key on the
+        # fly rather than embed a white box; no python3 → no art (cleaner)
+        if command -v python3 >/dev/null 2>&1 &&
+           python3 "$ROOT/scripts/process-sprite.py" "$CACHE/sprites/$species.png" \
+               "$CACHE/.card-sprite.png" "$CACHE/.card-sprite-flip.png" 320 2>/dev/null; then
+            sprite="$CACHE/.card-sprite.png"
+        fi
+    fi
+    case "$sprite" in *.png) mime="image/png" ;; esac
     b64=""
-    [ -f "$sprite" ] && b64="$(base64 < "$sprite" | tr -d '\n')"
+    [ -n "$sprite" ] && b64="$(base64 < "$sprite" | tr -d '\n')"
 
     local L_TRAINER L_STREAK L_STAGE L_DEX L_DAYS
     if [ "$lang" = "ko" ]; then
@@ -289,7 +311,7 @@ cmd_card() {
   <text x="28" y="146" font-size="13" fill="#9aa08c">$L_DEX pokemon $pcount/151 · digimon $dcount/70</text>
   <text x="28" y="168" font-size="13" fill="#9aa08c">shiny $scount</text>
   $star
-  <image href="data:image/gif;base64,$b64" x="290" y="60" width="160" height="160"/>
+  <image href="data:$mime;base64,$b64" x="290" y="60" width="160" height="160"/>
   <text x="28" y="244" font-size="12" fill="#6f7462">$L_TRAINER $user_x · $TODAY</text>
   <text x="28" y="262" font-size="10" fill="#4d5145">claude-pokemon-pet</text>
 </svg>

@@ -15,6 +15,7 @@ import base64, json, math, os, signal, subprocess, sys, time
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import petgif
+import petpng
 
 CACHE = os.path.expanduser("~/.cache/claude-pokemon-pet")
 ESC = "\x1b"
@@ -62,14 +63,18 @@ def _color(px, truecolor, fg):
     return ("38" if fg else "48") + ";5;%d" % c
 
 
-def halfblocks(rgba, w, h, max_cols, truecolor):
+def halfblocks(rgba, w, h, max_cols, truecolor, mirrored=False):
     step = max(1, math.ceil(w / max_cols))
     cw, ch = (w + step - 1) // step, (h + step - 1) // step
     if ch % 2:
         ch += 1
 
     def px(x, y):
+        # mirroring happens during sampling — flipping the full-resolution
+        # buffer first would do ~40x the work for pixels never rendered
         sx, sy = min(w - 1, x * step), y * step
+        if mirrored:
+            sx = w - 1 - sx
         if sy >= h:
             return (0, 0, 0, 0)
         o = (sy * w + sx) * 4
@@ -261,6 +266,7 @@ class UI:
         self.last_kick = 0.0
         self.gif_bytes = b""
         self._iterm_sent = None
+        self._kitty_sent = None
         self.prev_stage, self.prev_name = 0, ""
         self.evolve_start, self.evolve_old, self.evolve_new = 0.0, "", ""
         self.truecolor = os.environ.get("COLORTERM", "") in ("truecolor", "24bit")
@@ -269,17 +275,28 @@ class UI:
         if self.backend == "kitty" and self.species is not None:
             sys.stdout.buffer.write(kitty_delete(77))
         self._iterm_sent = None
+        self._kitty_sent = None
         path = os.path.join(CACHE, "sprites", sprite_file(species, shiny))
         if shiny and not os.path.exists(path):    # shiny variant not cached yet
             path = os.path.join(CACHE, "sprites", sprite_file(species, False))
+        if not os.path.exists(path):              # png franchise packs (digimon art)
+            png = os.path.join(CACHE, "sprites", species + ".png")
+            if os.path.exists(png):
+                path = png
         try:
             with open(path, "rb") as fh:
                 self.gif_bytes = fh.read()
-            self.anim = petgif.decode(self.gif_bytes)
-            if franchise == "digimon":       # v-pet sprites: white background → transparent
-                self.anim = petgif.Anim(self.anim.width, self.anim.height,
-                                        [petgif.Frame(whitekey(f.rgba), f.delay_ms)
-                                         for f in self.anim.frames])
+            if path.endswith(".png"):
+                rgba, w, h = petpng.decode(self.gif_bytes)
+                if franchise == "digimon":   # solid-white bg → border flood-fill key
+                    rgba = petpng.floodfill_whitekey(rgba, w, h)
+                self.anim = petgif.Anim(w, h, [petgif.Frame(rgba, 200)])
+            else:
+                self.anim = petgif.decode(self.gif_bytes)
+                if franchise == "digimon":   # legacy gif cache: exact white key
+                    self.anim = petgif.Anim(self.anim.width, self.anim.height,
+                                            [petgif.Frame(whitekey(f.rgba), f.delay_ms)
+                                             for f in self.anim.frames])
         except Exception:            # any decode failure degrades to placeholder text
             self.anim = None
         self.species, self.frame_i = species, 0
@@ -288,14 +305,14 @@ class UI:
         if not self.anim:
             return ["  (sprite missing — run: claude-pokemon-pet sprites)"]
         fr = self.anim.frames[self.frame_i % len(self.anim.frames)]
-        rgba = fr.rgba
+        mirrored = False
         if state == "working":
             self.facing_left = int(now / 3) % 2 == 0
-            if not self.facing_left:
-                rgba = petgif.mirror(rgba, self.anim.width, self.anim.height)
+            mirrored = not self.facing_left
         pad = " " * (int(now * 2) % 5 if state == "working" else 0)
         return [pad + l for l in
-                halfblocks(rgba, self.anim.width, self.anim.height, MAX_COLS, self.truecolor)]
+                halfblocks(fr.rgba, self.anim.width, self.anim.height,
+                           MAX_COLS, self.truecolor, mirrored=mirrored)]
 
     def draw(self):
         now = time.time()
@@ -326,14 +343,18 @@ class UI:
         out.append(dim)
         rows = 12
         if self.backend == "kitty" and self.anim:
-            fr = self.anim.frames[self.frame_i % len(self.anim.frames)]
-            rgba = fr.rgba
-            if st == "working" and int(now / 3) % 2:
-                rgba = petgif.mirror(rgba, self.anim.width, self.anim.height)
-            sys.stdout.write("".join(out))
-            sys.stdout.flush()
-            out = []
-            kitty_show(rgba, self.anim.width, self.anim.height, rows, img_id=77)
+            fr_idx = self.frame_i % len(self.anim.frames)
+            mirrored = st == "working" and int(now / 3) % 2 == 1
+            key = (self.species, fr_idx, mirrored)
+            if key != self._kitty_sent:   # only retransmit when the frame changed
+                rgba = self.anim.frames[fr_idx].rgba
+                if mirrored:
+                    rgba = petgif.mirror(rgba, self.anim.width, self.anim.height)
+                sys.stdout.write("".join(out))
+                sys.stdout.flush()
+                out = []
+                kitty_show(rgba, self.anim.width, self.anim.height, rows, img_id=77)
+                self._kitty_sent = key
             out.append(ESC + "[%dB\r" % rows)
         elif inline and self.gif_bytes:
             if self._iterm_sent != self.species:

@@ -29,6 +29,47 @@ if python3 -c 'import xml.etree.ElementTree as ET,sys; ET.parse(sys.argv[1])' "$
 assert_eq "svg is well-formed xml" "yes" "$ok"
 teardown
 
+setup  # digimon card embeds png art with the right mime
+printf '{"franchise":"digimon","line":["botamon"],"type":"vpet","date":"2026-07-13","seed":0}' > "$CACHE/partner"
+mkdir -p "$CACHE/sprites-big"
+# stub 1x1 RGBA png (via python if present, else skip the mime assert)
+if command -v python3 >/dev/null; then
+    python3 -c "
+import sys, os
+sys.path.insert(0, os.path.join('$ROOT', 'scripts'))
+import petpng
+open('$CACHE/sprites-big/botamon.png', 'wb').write(petpng.encode(bytes([1,2,3,255]), 1, 1))"
+    set_tasks 0; "$CORE" resolve; "$CORE" card >/dev/null
+    case "$(cat "$CACHE/card.svg")" in *"data:image/png;base64,iVBOR"*) ok=yes ;; *) ok=no ;; esac
+    assert_eq "digimon card embeds png" "yes" "$ok"
+fi
+teardown
+
+setup  # raw white-bg png fallback gets keyed on the fly (never a white box)
+if command -v python3 >/dev/null; then
+    printf '{"franchise":"digimon","line":["botamon"],"type":"vpet","date":"2026-07-13","seed":0}' > "$CACHE/partner"
+    mkdir -p "$CACHE/sprites"   # note: raw original, NO sprites-big processed file
+    python3 -c "
+import sys, os
+sys.path.insert(0, os.path.join('$ROOT', 'scripts'))
+import petpng
+rgba = bytes([255,255,255,255]*3 + [200,10,10,255])
+open('$CACHE/sprites/botamon.png', 'wb').write(petpng.encode(rgba, 2, 2))"
+    set_tasks 0; "$CORE" resolve; "$CORE" card >/dev/null 2>&1
+    ok=no
+    if [ -f "$CACHE/.card-sprite.png" ]; then
+        a=$(python3 -c "
+import sys, os
+sys.path.insert(0, os.path.join('$ROOT', 'scripts'))
+import petpng
+rgba, w, h = petpng.decode(open('$CACHE/.card-sprite.png','rb').read())
+print(rgba[3])")
+        [ "$a" = "0" ] && ok=yes
+    fi
+    assert_eq "card keys raw png on the fly" "yes" "$ok"
+fi
+teardown
+
 setup  # korean card is fully korean
 printf '{"franchise":"pokemon","line":["charmander","charmeleon","charizard"],"type":"fire","date":"2026-07-13","seed":0,"shiny":false}' > "$CACHE/partner"
 echo ko > "$CACHE/lang"; set_tasks 3; "$CORE" resolve; "$CORE" card >/dev/null
