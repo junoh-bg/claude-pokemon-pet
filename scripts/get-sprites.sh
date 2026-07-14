@@ -29,8 +29,9 @@ for PACK in "$ROOT"/data/*/pack.json; do
         # this pack replaced an older gif set: purge stale files so renderers
         # can't pick up the superseded art
         jq -r '.species | keys[]' "$PACK" | while read -r mon; do
-            rm -f "$CACHE/sprites/$mon.gif" \
-                  "$CACHE/sprites-big/$mon.gif" "$CACHE/sprites-big/$mon-flip.gif"
+            rm -f "$CACHE/sprites/$mon.gif" "$CACHE/sprites/$mon-shiny.gif" \
+                  "$CACHE/sprites-big/$mon.gif" "$CACHE/sprites-big/$mon-flip.gif" \
+                  "$CACHE/sprites-big/$mon-shiny.gif" "$CACHE/sprites-big/$mon-shiny-flip.gif"
         done
     fi
 done
@@ -43,14 +44,19 @@ for PACK in "$ROOT"/data/*/pack.json; do
     if [ "$EXT" = "png" ]; then
         # PNG packs: keyed (border flood-fill) + scaled + flip via python
         command -v python3 >/dev/null || { echo "python3 not found — skipped $(jq -r .franchise "$PACK") overlay sprites"; continue; }
-        jq -r '.species | keys[]' "$PACK" | while read -r mon; do
+        i=0
+        jq -r '.species | keys[]' "$PACK" > "$CACHE/.sprite-names"
+        while read -r mon; do
             p="$CACHE/sprites/$mon.png"
             [ -f "$p" ] || continue
             [ -f "$CACHE/sprites-big/$mon.png" ] && continue
-            python3 "$ROOT/scripts/process-sprite.py" "$p" \
+            ( python3 "$ROOT/scripts/process-sprite.py" "$p" \
                 "$CACHE/sprites-big/$mon.png" "$CACHE/sprites-big/$mon-flip.png" "$TARGET" ||
-                echo "sprite processing failed: $mon" >&2
-        done
+                echo "sprite processing failed: $mon" >&2 ) &
+            i=$((i + 1)); [ $((i % 4)) -eq 0 ] && wait
+        done < "$CACHE/.sprite-names"
+        wait
+        rm -f "$CACHE/.sprite-names"
         continue
     fi
     command -v gifsicle >/dev/null || { echo "gifsicle not found — skipped overlay upscales (terminal mode doesn't need them)"; continue; }

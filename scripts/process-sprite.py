@@ -24,10 +24,14 @@ def main(argv):
     scale = target / max(w, h)
     tw, th = max(1, round(w * scale)), max(1, round(h * scale))
     rgba = petpng.resize_nearest(rgba, w, h, tw, th)
-    with open(dst, "wb") as fh:
-        fh.write(petpng.encode(rgba, tw, th))
-    with open(dst_flip, "wb") as fh:
-        fh.write(petpng.encode(petpng.mirror(rgba, tw, th), tw, th))
+    # atomic writes: an interrupted run must never leave a truncated file at
+    # the final path — the install script's existence check would skip it
+    for path, data in ((dst, petpng.encode(rgba, tw, th)),
+                       (dst_flip, petpng.encode(petpng.mirror(rgba, tw, th), tw, th))):
+        tmp = path + ".tmp"
+        with open(tmp, "wb") as fh:
+            fh.write(data)
+        os.replace(tmp, path)
     return 0
 
 

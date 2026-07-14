@@ -140,6 +140,49 @@ class TestGraphicsSeqs(unittest.TestCase):
         self.assertTrue(seq.endswith(b"\x07"))
 
 
+class TestPngSpritePath(unittest.TestCase):
+    def setUp(self):
+        import tempfile
+        sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts"))
+        import petpng
+        self.petpng = petpng
+        self.tmp = tempfile.mkdtemp()
+        os.makedirs(os.path.join(self.tmp, "sprites"))
+        self.old_cache = pet_term.CACHE
+        pet_term.CACHE = self.tmp
+
+    def tearDown(self):
+        import shutil
+        pet_term.CACHE = self.old_cache
+        shutil.rmtree(self.tmp)
+
+    def test_load_species_png_floodfills(self):
+        # 2x2: three white pixels + one red — digimon load keys border whites
+        rgba = bytes([255, 255, 255, 255] * 3 + [200, 10, 10, 255])
+        with open(os.path.join(self.tmp, "sprites", "agumon.png"), "wb") as fh:
+            fh.write(self.petpng.encode(rgba, 2, 2))
+        ui = pet_term.UI("/root", "ansi")
+        ui.load_species("agumon", "digimon")
+        self.assertIsNotNone(ui.anim)
+        self.assertEqual((ui.anim.width, ui.anim.height), (2, 2))
+        self.assertEqual(ui.anim.frames[0].rgba[3], 0)        # white keyed
+        self.assertEqual(ui.anim.frames[0].rgba[15], 255)     # red kept
+
+    def test_load_species_malformed_png_degrades(self):
+        with open(os.path.join(self.tmp, "sprites", "bad.png"), "wb") as fh:
+            fh.write(b"definitely not a png")
+        ui = pet_term.UI("/root", "ansi")
+        ui.load_species("bad", "digimon")
+        self.assertIsNone(ui.anim)
+
+    def test_kitty_dedup_resets_on_species_change(self):
+        ui = pet_term.UI("/root", "ansi")   # ansi backend: no escape writes
+        self.assertIsNone(ui._kitty_sent)
+        ui._kitty_sent = ("agumon", 0, False)
+        ui.load_species("missing-species", "digimon")
+        self.assertIsNone(ui._kitty_sent)   # forces retransmit after change
+
+
 class TestResolved(unittest.TestCase):
     def test_load_missing_returns_none(self):
         self.assertIsNone(pet_term.load_resolved("/nonexistent-dir-xyz"))

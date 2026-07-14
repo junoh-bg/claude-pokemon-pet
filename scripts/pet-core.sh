@@ -265,9 +265,18 @@ cmd_card() {
     sfx="$( [ "$shiny" = "true" ] && echo -shiny )"
     sprite=""; mime="image/gif"
     for cand in "sprites-big/$species$sfx.gif" "sprites-big/$species$sfx.png" \
-                "sprites/$species.gif" "sprites/$species.png"; do
+                "sprites/$species.gif"; do
         [ -f "$CACHE/$cand" ] && { sprite="$CACHE/$cand"; break; }
     done
+    if [ -z "$sprite" ] && [ -f "$CACHE/sprites/$species.png" ]; then
+        # raw png originals sit on an opaque white background — key on the
+        # fly rather than embed a white box; no python3 → no art (cleaner)
+        if command -v python3 >/dev/null 2>&1 &&
+           python3 "$ROOT/scripts/process-sprite.py" "$CACHE/sprites/$species.png" \
+               "$CACHE/.card-sprite.png" "$CACHE/.card-sprite-flip.png" 320 2>/dev/null; then
+            sprite="$CACHE/.card-sprite.png"
+        fi
+    fi
     case "$sprite" in *.png) mime="image/png" ;; esac
     b64=""
     [ -n "$sprite" ] && b64="$(base64 < "$sprite" | tr -d '\n')"
