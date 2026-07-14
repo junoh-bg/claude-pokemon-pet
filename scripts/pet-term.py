@@ -11,7 +11,7 @@ stale this only *asks* the core to re-resolve — no game logic here.
 Usage: pet-term.py [plugin-root]    (Ctrl-C to quit)
 Env: PET_TERM_MODE=kitty|iterm|ansi forces a backend.
 """
-import base64, json, math, os, signal, subprocess, sys, time
+import base64, json, math, os, shutil, signal, subprocess, sys, time
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import petgif
@@ -64,27 +64,42 @@ def _color(px, truecolor, fg):
 
 
 def halfblocks(rgba, w, h, max_cols, truecolor, mirrored=False):
+    """Render RGBA to ▀ half-block lines. Cells are AREA-AVERAGED
+    (alpha-weighted): nearest-pixel sampling turns detailed art into noise
+    at terminal resolution — averaging keeps shapes readable."""
     step = max(1, math.ceil(w / max_cols))
     cw, ch = (w + step - 1) // step, (h + step - 1) // step
     if ch % 2:
         ch += 1
 
-    def px(x, y):
+    def cell(x, y):
         # mirroring happens during sampling — flipping the full-resolution
-        # buffer first would do ~40x the work for pixels never rendered
-        sx, sy = min(w - 1, x * step), y * step
-        if mirrored:
-            sx = w - 1 - sx
-        if sy >= h:
+        # buffer first would do the work for pixels never rendered
+        cx = (cw - 1 - x) if mirrored else x
+        x0, y0 = cx * step, y * step
+        if y0 >= h:
             return (0, 0, 0, 0)
-        o = (sy * w + sx) * 4
-        return tuple(rgba[o:o + 4])
+        r = g = b = a = n = 0
+        for sy in range(y0, min(y0 + step, h)):
+            base = sy * w * 4
+            for sx in range(x0, min(x0 + step, w)):
+                o = base + sx * 4
+                al = rgba[o + 3]
+                if al:
+                    r += rgba[o] * al
+                    g += rgba[o + 1] * al
+                    b += rgba[o + 2] * al
+                    a += al
+                n += 1
+        if n == 0 or a == 0 or a < 64 * n:   # cell is mostly transparent
+            return (0, 0, 0, 0)
+        return (r // a, g // a, b // a, 255)
 
     lines = []
     for row in range(0, ch, 2):
         parts = []
         for col in range(cw):
-            top, bot = px(col, row), px(col, row + 1)
+            top, bot = cell(col, row), cell(col, row + 1)
             if top[3] == 0 and bot[3] == 0:
                 parts.append(ESC + "[0m ")
                 continue
@@ -92,6 +107,17 @@ def halfblocks(rgba, w, h, max_cols, truecolor, mirrored=False):
                          (_color(top, truecolor, True), _color(bot, truecolor, False)))
         lines.append("".join(parts) + ESC + "[0m")
     return lines
+
+
+def sprite_cols(term_cols, term_lines, w, h):
+    """Adaptive sprite width: use the pane we actually have (24..64 cols),
+    height-aware for the near-square art we ship. NOTE: the 24-col
+    readability floor wins over the height bound — an extreme portrait
+    sprite in a tiny pane could still overflow (no such asset exists)."""
+    by_width = max(24, min(64, term_cols - 6))
+    rows_budget = max(8, term_lines - 8)
+    by_height = max(24, int(rows_budget * 2 * w / max(1, h)))
+    return min(by_width, by_height)
 
 
 def exp_bar(pct, gold, width=10):
@@ -267,6 +293,7 @@ class UI:
         self.gif_bytes = b""
         self._iterm_sent = None
         self._kitty_sent = None
+        self._lines_cache = {}
         self.prev_stage, self.prev_name = 0, ""
         self.evolve_start, self.evolve_old, self.evolve_new = 0.0, "", ""
         self.truecolor = os.environ.get("COLORTERM", "") in ("truecolor", "24bit")
@@ -300,19 +327,27 @@ class UI:
         except Exception:            # any decode failure degrades to placeholder text
             self.anim = None
         self.species, self.frame_i = species, 0
+        self._lines_cache = {}
 
     def sprite_lines(self, state, now):
         if not self.anim:
             return ["  (sprite missing — run: claude-pokemon-pet sprites)"]
-        fr = self.anim.frames[self.frame_i % len(self.anim.frames)]
+        fr_idx = self.frame_i % len(self.anim.frames)
         mirrored = False
         if state == "working":
             self.facing_left = int(now / 3) % 2 == 0
             mirrored = not self.facing_left
+        size = shutil.get_terminal_size(fallback=(80, 24))
+        cols = sprite_cols(size.columns, size.lines, self.anim.width, self.anim.height)
+        key = (fr_idx, mirrored, cols)
+        lines = self._lines_cache.get(key)
+        if lines is None:
+            lines = halfblocks(self.anim.frames[fr_idx].rgba,
+                               self.anim.width, self.anim.height,
+                               cols, self.truecolor, mirrored=mirrored)
+            self._lines_cache[key] = lines
         pad = " " * (int(now * 2) % 5 if state == "working" else 0)
-        return [pad + l for l in
-                halfblocks(fr.rgba, self.anim.width, self.anim.height,
-                           MAX_COLS, self.truecolor, mirrored=mirrored)]
+        return [pad + l for l in lines]
 
     def draw(self):
         now = time.time()
@@ -376,6 +411,9 @@ class UI:
         out.append(" " + exp_bar(r["exp_pct"], r["exp_gold"]) +
                    "  " + hp_bar(r.get("hp_pct", 100), width=5) + "\r\n")
         out.append(" " + mood + ESC + "[K\r\n")
+        if self.backend == "ansi" and os.environ.get("TERM_PROGRAM") == "Apple_Terminal":
+            out.append(ESC + "[2m tip: iTerm2 / kitty / WezTerm render the pet pixel-perfect"
+                       + ESC + "[0m\r\n")
         if inline:
             out.append(ESC + "[0J")           # clear leftovers below without touching the GIF
         sys.stdout.write("".join(out))
