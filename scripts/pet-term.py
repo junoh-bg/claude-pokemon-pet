@@ -521,8 +521,9 @@ def main(argv):
                         sys.exit(0)
                     if b == b"\x1b":
                         # lone Esc quits; ESC-[... is an arrow/function key —
-                        # peek briefly and drain the sequence instead
-                        follow, _, _ = select.select([sys.stdin], [], [], 0.03)
+                        # peek briefly and drain the sequence instead (75ms:
+                        # generous for laggy SSH, imperceptible on a keypress)
+                        follow, _, _ = select.select([sys.stdin], [], [], 0.075)
                         if not follow:
                             restore_terminal()
                             sys.exit(0)
