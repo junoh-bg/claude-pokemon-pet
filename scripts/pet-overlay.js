@@ -368,12 +368,10 @@ function run(argv) {
       lastSlot = slot;
       var adir = facing === 'r' ? 1 : -1;
       lunge(adir);
-      // no projectile for attacks with no inferable element (e.g. Enigma):
-      // a generic blob is nobody's actual technique — lunge + spark only
+      // no projectile AND no green spark for attacks with no inferable
+      // element (e.g. Enigma) — the lunge alone carries the attack
       if (elem !== 'vpet') {
         fireProjectile(adir, TYPE_RGB[elem] || TYPE_RGB.normal);
-      } else {
-        burst(40, 200);
       }
     }
     if (p.state === 'done' && prevRState !== 'done') {
