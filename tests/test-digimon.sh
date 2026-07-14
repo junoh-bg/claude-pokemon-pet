@@ -52,12 +52,12 @@ assert_eq "d t2 species" "koromon" "$(R .species)"
 set_tasks 5; "$CORE" resolve
 assert_eq "d t5 rookie (seeded)" "agumon" "$(R .species)"
 set_tasks 10; "$CORE" resolve
-assert_eq "d t10 champion (seeded, clean)" "meramon" "$(R .species)"
+assert_eq "d t10 champion (flawless → top tier)" "greymon" "$(R .species)"
 set_tasks 18; "$CORE" resolve
-assert_eq "d t18 ultimate" "mamemon" "$(R .species)"
+assert_eq "d t18 ultimate" "metalgreymon_virus" "$(R .species)"
 assert_eq "d t18 final" "true"  "$(R .final)"
 assert_eq "d t18 gold"  "true"  "$(R .exp_gold)"
-assert_json "line recorded" "$CACHE/partner" '.line | join(",")' "botamon,koromon,agumon,meramon,mamemon"
+assert_json "line recorded" "$CACHE/partner" '.line | join(",")' "botamon,koromon,agumon,greymon,metalgreymon_virus"
 teardown
 
 setup  # 3+ care mistakes at the champion crossing → joke evolution
@@ -69,9 +69,21 @@ teardown
 
 setup  # evolution is permanent: later mistakes don't rewrite the day
 digimon_partner; set_tasks 10; "$CORE" resolve
-assert_eq "clean champion first" "meramon" "$(R .species)"
+assert_eq "clean champion first" "greymon" "$(R .species)"
 set_mistakes 9; "$CORE" resolve
-assert_eq "still meramon after mistakes" "meramon" "$(R .species)"
+assert_eq "still greymon after mistakes" "greymon" "$(R .species)"
+teardown
+
+setup  # care tiers: 1-2 mistakes give a mid-tier champion, never the top one
+digimon_partner; set_mistakes 1; set_tasks 10; "$CORE" resolve
+assert_eq "one mistake → mid tier (seeded)" "tyranomon" "$(R .species)"
+teardown
+
+setup  # care tiers: mid pool is still seeded variety, not fixed
+printf '{"franchise":"digimon","line":["botamon"],"type":"vpet","date":"2026-07-13","seed":1}' > "$CACHE/partner"
+set_mistakes 2; set_tasks 10; "$CORE" resolve
+case "$(R .species)" in tyranomon|devimon|meramon) ok=yes ;; *) ok="no($(R .species))" ;; esac
+assert_eq "two mistakes → some mid-tier champion" "yes" "$ok"
 teardown
 
 setup  # localized digimon: ko name + real signature attack

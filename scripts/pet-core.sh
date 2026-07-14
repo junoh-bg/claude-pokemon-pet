@@ -202,9 +202,13 @@ extend_line() { # <pack-file>
             if ($e | length) == 0 then empty else
               ([$e[] | select(.quality == "reject")]) as $rej |
               ([$e[] | select(.quality != "reject")]) as $norm |
+              # care tiers: flawless day → the top branch (edge order = canon);
+              # 1-2 mistakes → seeded variety among the rest; 3+ → the joke path
               (if $m >= (.mistake_threshold // 3) and ($rej | length) > 0 then $rej
-               elif ($norm | length) > 0 then $norm
-               else $rej end) as $pool |
+               elif ($norm | length) == 0 then $rej
+               elif $m == 0 then [$norm[0]]
+               elif ($norm | length) > 1 then $norm[1:]
+               else $norm end) as $pool |
               $pool[(($p.seed + ($p.line | length)) % ($pool | length))].to
             end' "$pack")"
         [ -n "$next" ] || break   # species with no outgoing edges: growth simply stops
