@@ -11,7 +11,7 @@ stale this only *asks* the core to re-resolve — no game logic here.
 Usage: pet-term.py [plugin-root]    (Ctrl-C to quit)
 Env: PET_TERM_MODE=kitty|iterm|ansi forces a backend.
 """
-import base64, json, math, os, shutil, signal, subprocess, sys, time
+import base64, json, math, os, select, shutil, signal, subprocess, sys, termios, time, tty
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import petgif
@@ -132,6 +132,31 @@ def hp_bar(pct, width=10):
     color = "38;5;46" if pct > 60 else "38;5;226" if pct > 30 else "38;5;196"
     return (ESC + "[" + color + "m" + "▰" * filled +
             ESC + "[38;5;240m" + "▱" * (width - filled) + ESC + "[0m")
+
+
+ELEMENT_256 = {"fire": 203, "water": 75, "grass": 114, "electric": 220,
+               "ice": 87, "poison": 135, "psychic": 213, "normal": 187,
+               "fighting": 173, "rock": 137, "ground": 179, "bug": 149,
+               "flying": 153, "ghost": 141, "dragon": 105, "holy": 222,
+               "dark": 99, "vpet": 150}
+
+
+def element_color(element):
+    return "38;5;%d" % ELEMENT_256.get(element, 150)
+
+
+def breathe_offset(now):
+    """One-row bob every ~2s — the terminal's breathing."""
+    return int(now / 2) % 2
+
+
+def projectile_line(tick, direction, element, width):
+    """Frames 0..3 of the attack projectile; frame 3 is the impact."""
+    span = max(10, width - 8)
+    step = span // 4
+    x = 4 + step * tick if direction > 0 else width - 4 - step * tick
+    glyph = "✶" if tick >= 3 else ("●∙∙" if direction > 0 else "∙∙●")
+    return " " * max(0, x) + ESC + "[" + element_color(element) + "m" + glyph + ESC + "[0m"
 
 
 def sprite_file(species, shiny):
@@ -296,6 +321,8 @@ class UI:
         self._lines_cache = {}
         self.prev_stage, self.prev_name = 0, ""
         self.evolve_start, self.evolve_old, self.evolve_new = 0.0, "", ""
+        self.last_slot, self.attack_tick, self.attack_dir = 0, None, 1
+        self.prev_mistakes, self.recoil_flash = -1, False
         self.truecolor = os.environ.get("COLORTERM", "") in ("truecolor", "24bit")
 
     def load_species(self, species, franchise=None, shiny=False):
@@ -346,7 +373,10 @@ class UI:
                                self.anim.width, self.anim.height,
                                cols, self.truecolor, mirrored=mirrored)
             self._lines_cache[key] = lines
-        pad = " " * (int(now * 2) % 5 if state == "working" else 0)
+        padn = int(now * 2) % 5 if state == "working" else 0
+        if self.attack_tick == 0:   # lunge: dart toward the target
+            padn = max(0, padn + (2 if not self.facing_left else -2))
+        pad = " " * padn
         return [pad + l for l in lines]
 
     def draw(self):
@@ -374,6 +404,16 @@ class UI:
         evo_age = now - self.evolve_start if self.evolve_start else 99
         if evo_age < 10:
             mood = evo_caption(self.evolve_old, self.evolve_new, r.get("lang", "en"), evo_age)
+        # attack: same caption-slot clock as the overlay
+        slot = int(now / 7)
+        if st == "working" and slot != self.last_slot:
+            self.last_slot = slot
+            self.attack_tick = 0
+            self.attack_dir = -1 if self.facing_left else 1
+        # recoil: one invert-flash draw when today's mistakes rise
+        m = r.get("mistakes", 0)
+        self.recoil_flash = self.prev_mistakes >= 0 and m > self.prev_mistakes
+        self.prev_mistakes = m
         dim = ESC + "[2m" if st == "idle" else ""
         out.append(dim)
         rows = 12
@@ -402,9 +442,20 @@ class UI:
             else:
                 out.append(ESC + "[%dB\r" % (rows + 1))   # skip over the live GIF
         else:
-            invert = evo_age < 2 and int(now * 4) % 2 == 0   # evolution flash
+            invert = (evo_age < 2 and int(now * 4) % 2 == 0) or self.recoil_flash
+            bob = breathe_offset(now) if st in ("idle", "waiting", "thinking") else 0
+            out.append("\r\n" * bob)
             for l in self.sprite_lines(st, now):
                 out.append((invert_line(l) if invert else l) + "\r\n")
+            if not bob:
+                out.append("\r\n")   # keep total height stable across bob frames
+        # attack projectile line (frames 0..3, then quiet)
+        if self.attack_tick is not None and self.attack_tick < 4:
+            out.append(projectile_line(self.attack_tick, self.attack_dir,
+                                       r.get("element", "vpet"), 40) + "\r\n")
+            self.attack_tick += 1
+        else:
+            out.append(ESC + "[K\r\n")
         out.append(ESC + "[0m\r\n")
         out.append(" %s%s  Lv.%d   \U0001f525%dd\r\n" %
                    ("✨ " if r.get("shiny") else "", r["name"], r["tasks"], r["streak"]))
@@ -421,9 +472,17 @@ class UI:
         self.frame_i += 1
 
 
+_TTY_ATTRS = None
+
+
 def restore_terminal():
     sys.stdout.write(ESC + "[?25h" + ESC + "[?1049l")   # show cursor, leave alt screen
     sys.stdout.flush()
+    if _TTY_ATTRS is not None:
+        try:
+            termios.tcsetattr(sys.stdin.fileno(), termios.TCSADRAIN, _TTY_ATTRS)
+        except Exception:
+            pass
 
 
 def main(argv):
@@ -438,9 +497,37 @@ def main(argv):
 
     signal.signal(signal.SIGINT, on_signal)
     signal.signal(signal.SIGTERM, on_signal)
+    global _TTY_ATTRS
+    watch_keys = sys.stdin.isatty()
+    if watch_keys:
+        try:
+            _TTY_ATTRS = termios.tcgetattr(sys.stdin.fileno())
+            tty.setcbreak(sys.stdin.fileno())
+        except Exception:
+            watch_keys = False
     sys.stdout.write(ESC + "[?1049h" + ESC + "[?25l")   # alt screen, hide cursor
     try:
         while True:
+            if watch_keys:
+                ready, _, _ = select.select([sys.stdin], [], [], 0)
+                if ready:
+                    # raw bytes, not TextIOWrapper.read: a fragmented multi-
+                    # byte character would block the decode layer and freeze
+                    # the whole render loop (reviewed, reproduced via pty)
+                    fd = sys.stdin.fileno()
+                    b = os.read(fd, 1)
+                    if b in (b"q", b"Q"):
+                        restore_terminal()
+                        sys.exit(0)
+                    if b == b"\x1b":
+                        # lone Esc quits; ESC-[... is an arrow/function key —
+                        # peek briefly and drain the sequence instead (75ms:
+                        # generous for laggy SSH, imperceptible on a keypress)
+                        follow, _, _ = select.select([sys.stdin], [], [], 0.075)
+                        if not follow:
+                            restore_terminal()
+                            sys.exit(0)
+                        os.read(fd, 32)
             ui.draw()
             time.sleep(TICK)
     except SystemExit:

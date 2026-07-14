@@ -62,6 +62,13 @@ never make the core depend on a renderer. Franchise data lives in JSON packs
   The seeded pick indexes into pack edge order — `gen-digimon-pack.sh` must
   preserve curation-file edge order (jq `group_by` is stable; don't replace it
   with something that isn't).
+- **JXA Core Animation** (living-pets): transform sub-paths compose — an
+  always-on `transform.scale.y` animation coexists with model-value
+  `transform.rotation` set per tick; animation `values` arrays MUST be
+  `NSMutableArray` + `addObject` (the `$([...])` bridge lands as NSNull —
+  same class of bug as the Phase 4 CGImageRef discovery); probe every new
+  bridge pattern in an isolated `osascript -e` before wiring, because the
+  mandatory try/catch guards will silently eat a bridge failure.
 - **Hooks run concurrently** (`"async": true`): any read-modify-write of
   cache state needs the mkdir-lock pattern (`clear_stale_lock` + `mkdir`,
   wall-clock staleness — never `PET_NOW`). Counter bumps use a bounded-wait

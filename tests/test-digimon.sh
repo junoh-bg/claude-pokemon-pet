@@ -100,6 +100,31 @@ if "$CORE" franchise dragonball >/dev/null 2>&1; then rc=0; else rc=1; fi
 assert_eq "unknown franchise exits 1" "1" "$rc"
 teardown
 
+setup  # element inference from the EN attack name, per keyword class
+pin() { printf '{"franchise":"digimon","line":%s,"type":"vpet","date":"2026-07-13","seed":0}' "$1" > "$CACHE/partner"; }
+pin '["botamon","koromon","agumon"]'; set_tasks 5; "$CORE" resolve
+assert_eq "baby flame → fire" "fire" "$(R .element)"
+pin '["botamon","koromon","betamon","seadramon"]'; set_tasks 10; "$CORE" resolve
+assert_eq "ice arrow → ice" "ice" "$(R .element)"
+pin '["botamon","koromon","betamon"]'; set_tasks 5; "$CORE" resolve
+assert_eq "electric shock → electric" "electric" "$(R .element)"
+pin '["punimon","tunomon","gabumon","angemon"]'; set_tasks 10; "$CORE" resolve
+assert_eq "heavens knuckle → holy" "holy" "$(R .element)"
+pin '["botamon","koromon","agumon","devimon"]'; set_tasks 10; "$CORE" resolve
+assert_eq "death claw → dark" "dark" "$(R .element)"
+pin '["botamon","koromon","agumon","numemon"]'; set_tasks 10; "$CORE" resolve
+assert_eq "poop throw → poison" "poison" "$(R .element)"
+pin '["botamon","koromon"]'; set_tasks 2; "$CORE" resolve
+assert_eq "bubbles → vpet default" "vpet" "$(R .element)"
+pin '["yuramon","tanemon","palmon","mojyamon"]'; set_tasks 10; "$CORE" resolve
+assert_eq "icicle rod → ice" "ice" "$(R .element)"
+pin '["yuramon","tanemon","piyomon","monochromon"]'; set_tasks 10; "$CORE" resolve
+assert_eq "volcano strike → fire" "fire" "$(R .element)"
+echo ko > "$CACHE/lang"
+pin '["botamon","koromon","agumon"]'; set_tasks 5; "$CORE" resolve
+assert_eq "element ignores display language" "fire" "$(R .element)"
+teardown
+
 setup  # concurrent hooks must not corrupt the evolution line (reviewed race)
 digimon_partner; set_tasks 2
 for i in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20; do "$CORE" resolve & done

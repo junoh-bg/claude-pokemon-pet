@@ -127,6 +127,11 @@ echo "2026-07-13 0" > "$CACHE/mistakes"; set_tasks 12; "$CORE" resolve
 assert_eq "hp caps at 100" "100" "$(R .hp_pct)"
 teardown
 
+setup  # element mirrors the type for pokemon
+charmander_partner; set_tasks 0; "$CORE" resolve
+assert_eq "pokemon element = type" "fire" "$(R .element)"
+teardown
+
 setup  # corrupt partner file self-heals to the fallback line
 echo 'not json' > "$CACHE/partner"
 set_tasks 0; "$CORE" resolve
