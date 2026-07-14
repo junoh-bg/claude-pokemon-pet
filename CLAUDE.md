@@ -81,4 +81,10 @@ never make the core depend on a renderer. Franchise data lives in JSON packs
 2. ✅ Terminal renderer + statusline (Linux/SSH/RunPod)
 3. ✅ Digimon pack + V-pet branching
 4. ✅ Shinies, dex command, HUD, battle FX, evo cinematics
-5. ⬜ Trainer card
+5. ✅ Trainer card (`pet card`: SVG always; PNG via rsvg-convert → magick →
+   qlmanage cascade; ANSI card uses a left rail only — fixed-width right
+   borders can't survive double-width Hangul)
+
+Post-roadmap (2026-07-14): digimon colorful-art re-source + full EN/KO
+localization (user feedback, see memory `digimon-visual-direction`);
+franchise-identity/naming decision pending research.

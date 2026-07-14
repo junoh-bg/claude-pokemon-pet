@@ -55,6 +55,7 @@ case "${1:-toggle}" in
     random)    "$CORE" roll ;;
     digimon|pokemon) "$CORE" franchise "$1" ;;
     dex)       "$CORE" dex ;;
+    card)      "$CORE" card ;;
     pet)       "$CORE" pick "${2:-}" ;;
     lang)      "$CORE" lang "${2:-}" ;;
     sprites)   exec "$ROOT/scripts/get-sprites.sh" ;;
@@ -84,7 +85,7 @@ case "${1:-toggle}" in
         "$CORE" status
         ;;
     *)
-        echo "usage: claude-pokemon-pet [toggle|on|off|random|digimon|pokemon|pet <name>|dex|lang <ko|en|auto>|term|statusline|sprites|status]" >&2
+        echo "usage: claude-pokemon-pet [toggle|on|off|random|digimon|pokemon|pet <name>|dex|card|lang <ko|en|auto>|term|statusline|sprites|status]" >&2
         exit 1
         ;;
 esac
