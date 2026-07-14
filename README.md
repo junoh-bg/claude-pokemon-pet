@@ -1,235 +1,170 @@
-# claude-pokemon-pet
+# Claude Pet — Pokémon & Digimon
 
-A Pokémon (or Digimon!) companion for Claude Code. A random partner appears,
-reacts to what Claude is doing, levels up with every completed task, and
-evolves along its real evolution chain. On macOS it floats over your screen
-as a native overlay; on Linux, over SSH, or on a headless RunPod it lives
-inside your terminal (`claude-pokemon-pet term`) or your statusline.
+A companion for Claude Code that lives on your screen. A random partner
+appears each day, reacts to what Claude is doing, levels up with every
+completed task, and evolves along its real evolution chain — 151 gen-1
+Pokémon, or the five original 1997 Digimon V-pet lines with branching
+evolution that judges how your session went.
 
 <p align="center">
   <img src="assets/demo.gif" width="720" alt="claude-pokemon-pet — a Charizard reacting to a Claude Code session">
 </p>
 
-## Features
+On macOS it floats over everything as a native overlay. On Linux, over SSH,
+or on a headless RunPod it lives inside your terminal or your statusline.
 
-- **Two franchises** — 151 gen-1 Pokémon with their real evolution chains,
-  or the five original 1997 Digimon V-pet versions (70 species) with
-  branching evolution that judges how your session went. Switch anytime:
-  `claude-pokemon-pet digimon` / `pokemon`.
-- **Reacts to your session** — roams while Claude works
-  (`CHARIZARD used FLAMETHROWER!`) with type-colored particle bursts, bobs
-  while thinking, hops (with an impact shake) when a task completes, fidgets
-  when Claude needs your input, and falls asleep when you're idle.
-- **Levels & evolves** — its level is the number of tasks Claude completed
-  today (resets at midnight), with an EXP bar, an HP bar that dips on
-  failing tool calls, and a full evolution cinematic
-  (`What? CHARMANDER is evolving!` → sprite flash →
-  `Congratulations! Your CHARMANDER evolved into CHARMELEON!`).
-- **Daily gacha, shinies & the dex** — a fresh partner each day (shiny
-  1/64 ✨, real shiny sprites; Magikarp days build character). Everything
-  you've ever raised is in `claude-pokemon-pet dex`; show off with
-  `claude-pokemon-pet card` — a shareable trainer card (PNG where a
-  rasterizer is available, SVG + ANSI everywhere).
-- **Anywhere you work** — a native floating overlay on macOS
-  (click-through, above every app and Space, ⌥-drag to move), a terminal
-  renderer for Linux / SSH / RunPods, and a one-line statusline pet for
-  everything else.
-- **English & Korean** — names and battle text follow your system language
-  (`피카츄의 10만볼트!`), with official Korean names for all 151 Pokémon.
+## Quick start
+
+```
+/plugin marketplace add junoh-bg/claude-pokemon-pet
+/plugin install claude-pokemon-pet@claude-pokemon-pet
+/reload-plugins
+```
+
+macOS: `brew install jq gifsicle` first. That's it — your partner appears
+bottom-right on the next session. Then try:
+
+```sh
+claude-pokemon-pet digimon     # switch franchise
+claude-pokemon-pet dex         # your collection
+claude-pokemon-pet card        # a shareable trainer card
+```
+
+## Commands
+
+Everything is available two ways: the slash command
+(`/claude-pokemon-pet:pet …` — type `/pet` and pick it) or the bundled CLI
+(`~/.claude/plugins/marketplaces/claude-pokemon-pet/scripts/claude-pokemon-pet`,
+worth symlinking onto your PATH).
+
+| Command | What it does |
+|---|---|
+| *(none)* / `toggle` | overlay on/off (off also disables session autostart) |
+| `on` · `off` | explicit overlay control |
+| `random` | reroll today's partner (same franchise) |
+| `digimon` · `pokemon` | switch franchise — rolls a fresh partner in it |
+| `pet <name>` | pick a species — English or Korean (`pet pikachu`, `pet 파이리`, `pet agumon`) |
+| `dex` | everything you've ever raised, per franchise, shinies marked |
+| `card` | render a trainer card (PNG/SVG file + ANSI inline) |
+| `term` | run the pet inside the current terminal (Linux/SSH/anywhere) |
+| `statusline` | print setup for the one-line statusline pet |
+| `lang ko` · `en` · `auto` | language override (default: system language) |
+| `status` | partner, stage, today's tasks / care mistakes / streak |
+| `sprites` | re-download sprite art |
+
+## Your pet's day
+
+| Session event | Pet reaction |
+|---|---|
+| You submit a prompt | slow bob — `PIKACHU is getting pumped!` |
+| Claude uses tools | roams left/right with type-colored particle bursts — `AGUMON used Baby Flame!` |
+| Task completes | excited hops, impact shake, **+1 level** |
+| A tool call fails | **+1 care mistake** — HP bar dips (and steers Digimon evolution) |
+| Permission needed | anxious fidget |
+| Idle | falls asleep, dimmed |
+
+- **Level = tasks Claude completed today** (resets at midnight; the daily
+  gacha rolls a fresh partner each morning — shiny 1/64 ✨).
+- **Evolution** comes with a proper cinematic: sprite flash,
+  `What? CHARMANDER is evolving!`, then
+  `Congratulations! Your CHARMANDER evolved into CHARMELEON!`
+- Pokémon evolve at Lv.6 and Lv.16. Fully evolved partners grind a gold
+  EXP bar instead.
+- A 🔥 streak flame appears at 2+ consecutive days with completed tasks.
+
+## Digimon mode
+
+```sh
+claude-pokemon-pet digimon
+```
+
+One of the five original **Digital Monster** V-pet lines (Ver.1–Ver.5, 70
+species), drawn with colorful official art. Five stages, gated by today's
+tasks: Baby → In-Training (2) → Rookie (5) → Champion (10) → Ultimate (18).
+
+Unlike Pokémon, evolution **branches** — and it watches your session.
+Reach an evolution gate with **3+ care mistakes** (failing tool calls;
+pressing Esc doesn't count) and your partner takes the canonical joke path:
+Numemon and friends await the sloppy. Every choice locks in the moment it
+happens, exactly like the 1997 device. `status` shows today's tally.
+
+Battle text uses each species' real signature attack in your language:
+`아구몬의 베이비 플레임!` / `AGUMON used Baby Flame!` — with official
+Korean names for all 70 species.
+
+## Terminal mode — Linux, SSH, RunPods
+
+No display needed. The pet renders *inside* a terminal, so it works over
+SSH to a headless box — the graphics stream as ordinary terminal output:
+
+```sh
+claude-pokemon-pet term        # in a tmux split or a second SSH session
+```
+
+Run it **on the machine where Claude Code runs** (that's where the hooks
+and state live). Graphics auto-detect, best first:
+
+| Tier | Terminals |
+|---|---|
+| Kitty graphics protocol | kitty, WezTerm, Ghostty |
+| iTerm2 inline images | iTerm2 |
+| ANSI half-blocks | any 256-color terminal, including inside tmux |
+
+Force one with `PET_TERM_MODE=kitty|iterm|ansi`. Ctrl-C quits and restores
+the terminal.
+
+## Statusline pet
+
+The universal fallback — one line in Claude Code's statusline, works in
+absolutely any terminal:
+
+```
+🔥 리자몽 Lv.23 ▰▰▰▱▱ ⚔️
+```
+
+`claude-pokemon-pet statusline` prints the one-line `settings.json` snippet
+(we never edit your settings for you) and a live preview.
+
+## Dex & trainer card
+
+```
+$ claude-pokemon-pet dex
+pokemon: caught 23/151
+digimon: caught 8/70
+shiny: 1 ✨
+  2026-07-13  charmander
+  2026-07-14  patamon ✨
+```
+
+```sh
+claude-pokemon-pet card
+```
+
+Writes `card.svg` (always) and `card.png` (when `rsvg-convert`,
+ImageMagick, or macOS Quick Look is available — Quick Look pads it square;
+`brew install librsvg` for an exact-size card), plus an ANSI card inline:
+partner art, level, stage, streak, dex progress, trainer name — in your
+language.
+
+## Positioning & language
+
+- The overlay is system-wide, above every app and Space, and click-through.
+  **Hold ⌥ (Option) and drag** to move it anywhere (saved across restarts).
+- Names and battle text follow your system language — Korean systems get
+  official names and battle text (`피카츄의 10만볼트!`,
+  `효과는 굉장했다!`). Override with `lang ko` / `lang en` / `lang auto`.
 
 ## Requirements
 
 Everyone needs Claude Code with plugin support and
-[`jq`](https://jqlang.github.io/jq/) (the game core is bash + jq).
-Per mode:
+[`jq`](https://jqlang.github.io/jq/). Per mode:
 
-| Mode | Needs | Notes |
-|---|---|---|
-| Floating overlay | macOS + [`gifsicle`](https://www.lcdf.org/gifsicle/) | native AppKit window (JXA); `curl`/`osascript` ship with macOS; digimon sprites additionally need `python3` (present with Xcode CLT) |
-| Terminal pet (`term`) | any OS + `python3` (≥3.8, stdlib only) + `curl` | works on Linux, over SSH, in devcontainers and RunPods |
-| Statusline | just `jq` | one line in any terminal |
-| Trainer card PNG (optional) | `rsvg-convert` or ImageMagick | SVG + ANSI need nothing; macOS Quick Look works as a padded fallback |
-
-macOS: `brew install jq gifsicle` · Debian/Ubuntu: `apt install jq` (python3
-and curl are usually present)
-
-## Install
-
-1. Install the dependencies above.
-2. In Claude Code:
-
-   ```
-   /plugin marketplace add junoh-bg/claude-pokemon-pet
-   /plugin install claude-pokemon-pet@claude-pokemon-pet
-   ```
-
-3. Run `/reload-plugins` to activate it in the current session (or just
-   start a new session).
-
-On first activation, sprites for all 151 gen-1 Pokémon are downloaded
-(~5 MB, one time, a few seconds) and your first partner appears in the
-bottom-right corner of the screen your mouse is on.
-
-## Usage
-
-### Slash command
-
-The command is namespaced by plugin name: `/claude-pokemon-pet:pet`. Type
-`/pet` and pick it from the autocomplete menu to get there.
-
-```
-/claude-pokemon-pet:pet            toggle the overlay
-/claude-pokemon-pet:pet random     roll a new random partner
-/claude-pokemon-pet:pet pikachu    switch to a specific pokémon (eevee picks a random branch)
-/claude-pokemon-pet:pet lang ko    switch language (ko | en | auto)
-/claude-pokemon-pet:pet status     show partner, state, and today's task count
-```
-
-### Terminal mode (Linux / SSH / RunPod)
-
-No display? The pet renders *inside* a terminal — including over SSH to a
-headless box, because the graphics stream as ordinary terminal output:
-
-```sh
-claude-pokemon-pet term
-```
-
-Run it in a tmux split or a second SSH session **on the same machine where
-Claude Code runs** (the hooks and cache live there). Graphics are picked
-automatically:
-
-| Tier | Terminals | Look |
-|---|---|---|
-| Kitty graphics protocol | kitty, WezTerm, Ghostty | pixel-perfect animated sprite |
-| iTerm2 inline images | iTerm2 | native animated GIF |
-| ANSI half-blocks | anything 256-color (incl. inside tmux) | chunky pixel art |
-
-Force a tier with `PET_TERM_MODE=kitty|iterm|ansi` (inside tmux the default
-is half-blocks; graphics protocols need tmux `allow-passthrough`). Ctrl-C
-quits and restores your terminal.
-
-### Digimon mode
-
-```
-claude-pokemon-pet digimon      # or: /claude-pokemon-pet:pet digimon
-```
-
-Your partner becomes one of the five original 1997 **Digital Monster V-pet**
-lines (Ver.1–Ver.5), drawn with colorful official art (fetched from
-[digi-api](https://digi-api.com) at install; `python3` processes the
-sprites — background keyed by border flood-fill, so white bellies and
-angel wings survive). Five stages, gated by tasks completed today:
-Baby → In-Training (2) → Rookie (5) → Champion (10) → Ultimate (18) — then
-the gold EXP bar takes over. Battle text uses each species' real signature
-attack in your language: `아구몬의 베이비 플레임!` / `AGUMON used Baby Flame!`.
-
-Unlike Pokémon mode, evolution **branches** — and it watches how your session
-is going. Each failing tool call counts as a *care mistake* (user interrupts
-don't count; `pet status` shows today's tally). If you have **3+ care
-mistakes at the moment an evolution triggers**, your partner takes the
-canonical joke path (Numemon and friends await the sloppy). Each evolution
-choice is locked in for the day, exactly like the real V-pet.
-
-`claude-pokemon-pet pokemon` switches back; `pet agumon` (or `pet 파피몬`)
-jumps straight to a specific line — you start from its egg, V-pet style.
-
-### Statusline pet
-
-A one-line pet for Claude Code's statusline — works absolutely everywhere:
-
-```
-🔥 CHARMELEON Lv.12 ▰▰▰▱▱ ⚔️
-```
-
-Run `claude-pokemon-pet statusline` to print the one-line `settings.json`
-snippet (we never edit your settings for you) and a live preview.
-
-### Dex & trainer card
-
-```sh
-claude-pokemon-pet dex     # everything you've ever raised, per franchise, shinies marked
-claude-pokemon-pet card    # renders a shareable trainer card
-```
-
-`card` always writes an SVG and prints an ANSI card inline; when a
-rasterizer is available it also produces `card.png` — partner art, level,
-stage, streak, dex progress, trainer name. Rasterizers are tried in order:
-`rsvg-convert` → ImageMagick → macOS Quick Look (the Quick Look fallback
-pads the image square — `brew install librsvg` for an exact-size card).
-On a bare Linux/SSH box with none of them, you still get the SVG + ANSI.
-
-### CLI
-
-The same commands are available from your shell via the bundled CLI:
-
-```sh
-~/.claude/plugins/marketplaces/claude-pokemon-pet/scripts/claude-pokemon-pet \
-    [toggle|on|off|random|digimon|pokemon|pet <name>|dex|card|lang <ko|en|auto>|term|statusline|sprites|status]
-```
-
-Optionally symlink it onto your PATH and bind a tmux key:
-
-```sh
-ln -s ~/.claude/plugins/marketplaces/claude-pokemon-pet/scripts/claude-pokemon-pet /opt/homebrew/bin/claude-pokemon-pet
-```
-
-```tmux
-# ~/.tmux.conf
-bind P run-shell "/opt/homebrew/bin/claude-pokemon-pet toggle"
-```
-
-`claude-pokemon-pet off` also disables the session autostart until you run
-`claude-pokemon-pet on` (or toggle via the slash command) again.
-
-### Positioning
-
-The overlay is **system-wide**: it stays on top of every app and Space on
-your Mac, not only the terminal — your partner keeps you company in the
-browser, editor, Slack, everywhere. Because it is click-through, it never
-interferes with whatever is underneath.
-
-To move it: **hold ⌥ (Option), then click-drag the pet** — anywhere on any
-display. Release to drop; the new spot becomes its home (saved across
-restarts). It spawns bottom-right of the screen your mouse is on the first
-time it starts.
-
-To get it out of the way entirely, toggle it off (`prefix+P` /
-`claude-pokemon-pet off` / the slash command).
-
-### Moods
-
-| Session event | Pet behavior | Caption |
-|---|---|---|
-| You submit a prompt | slow bob | `PIKACHU is getting pumped!` |
-| Claude uses tools | roams left/right, faces its walking direction | `PIKACHU used THUNDERBOLT!` |
-| Task completes | excited hops (+1 Lv) | `It's super effective!` |
-| Permission needed | anxious fidget | `PIKACHU looks at you expectantly` |
-| New session | greeting hops | `Go! PIKACHU!` |
-| Idle | breathing, dimmed | `PIKACHU is fast asleep` |
-| Tool call fails | HP bar dips (and steers Digimon evolution) | — |
-
-### Language
-
-Names and captions follow your macOS system language — Korean systems get
-the official Korean names and battle text (`피카츄의 10만볼트!`,
-`효과는 굉장했다!`). Override anytime:
-
-```sh
-claude-pokemon-pet lang ko     # force Korean
-claude-pokemon-pet lang en     # force English
-claude-pokemon-pet lang auto   # follow the system again
-```
-
-Korean names also work when picking a partner: `pet 파이리`. (The English
-captions shown elsewhere in this README appear in Korean when `lang` is `ko`.)
-
-## Configuration
-
-| Tunable | Where | Default | Meaning |
-|---|---|---|---|
-| `gates` | `data/pokemon/pack.json` | `[0, 6, 16]` | tasks per day to reach each stage |
-| `BOTTOM_OFFSET` | `scripts/pet-overlay.js` | 30 | default distance from the bottom screen edge (px) |
-| `ROAM` | `scripts/pet-overlay.js` | 240 | how far it wanders while working (px) |
+| Mode | Needs |
+|---|---|
+| Floating overlay (macOS) | [`gifsicle`](https://www.lcdf.org/gifsicle/); digimon sprites also use `python3` (present with Xcode CLT) |
+| Terminal pet | any OS + `python3` (≥3.8, stdlib only) + `curl` |
+| Statusline | just `jq` |
+| Trainer card PNG (optional) | `rsvg-convert` or ImageMagick (Quick Look works, padded) |
 
 ## Updating
 
@@ -238,78 +173,52 @@ captions shown elsewhere in this README appear in Korean when `lang` is `ko`.)
 /reload-plugins
 ```
 
-`marketplace update` pulls the latest release and bumps the installed
-version; `reload-plugins` applies it to the current session.
+<details>
+<summary><b>Troubleshooting</b></summary>
 
-## Troubleshooting
-
-The CLI lives at
-`~/.claude/plugins/marketplaces/claude-pokemon-pet/scripts/claude-pokemon-pet`
-(referred to below as `claude-pokemon-pet`).
-
-- **No pet after install** — run `claude-pokemon-pet status`. Most common
-  cause: missing `jq`/`gifsicle` (the CLI prints which).
+- **No pet after install** — run `claude-pokemon-pet status`; it names any
+  missing dependency.
 - **Pet on the wrong screen** — it spawns on the screen your mouse is on at
-  start. Toggle it off and on with the mouse on the right screen, or ⌥-drag
-  it anywhere, including across displays.
-- **Reset position** — `rm ~/.cache/claude-pokemon-pet/pos`, then restart the pet.
+  start; ⌥-drag it anywhere, including across displays.
+- **Reset position** — `rm ~/.cache/claude-pokemon-pet/pos`, restart the pet.
 - **Re-download sprites** — `claude-pokemon-pet sprites`.
-- **Full reset** (level, partner, position, sprites) —
+- **Full reset** (level, partner, dex, position, sprites) —
   `rm -r ~/.cache/claude-pokemon-pet`, then start a new session.
+</details>
 
-## Uninstall
-
-```
-/plugin uninstall claude-pokemon-pet
-```
-
-then remove the runtime cache and the optional symlink:
-
-```sh
-rm -r ~/.cache/claude-pokemon-pet
-rm -f /opt/homebrew/bin/claude-pokemon-pet
-```
-
-## How it works
+<details>
+<summary><b>How it works</b></summary>
 
 | Piece | Role |
 |---|---|
-| `hooks/hooks.json` | registers Claude Code hooks automatically on install |
-| `scripts/pet-core.sh` | the game core: reduces hook events to `resolved.json` — the single file every renderer reads (species, level, EXP, localized names/moves) |
-| `scripts/pet-overlay.js` | JXA/AppKit overlay, a pure view of `resolved.json`: native GIF playback, 20 fps motion engine, battle-log captions, ⌥-drag |
-| `scripts/claude-pokemon-pet` | CLI: overlay process management; delegates game ops to the core |
-| `scripts/pet-term.py` + `scripts/petgif.py` | terminal renderer (pure-stdlib Python): GIF decode, kitty/iTerm2/ANSI backends |
+| `hooks/hooks.json` | registers Claude Code hooks on install |
+| `scripts/pet-core.sh` | the game core: reduces hook events to `resolved.json` — the single file every renderer reads |
+| `scripts/pet-overlay.js` | macOS overlay (JXA/AppKit), a pure view: GIF/PNG playback, 20 fps motion, FX, ⌥-drag |
+| `scripts/pet-term.py` + `petgif.py` / `petpng.py` | terminal renderer (pure-stdlib Python): image decode, kitty/iTerm2/ANSI backends |
 | `scripts/pet-statusline.sh` | one-line statusline renderer |
-| `scripts/get-sprites.sh` | downloads sprites, builds nearest-neighbor upscales + mirrored variants |
-| `data/pokemon/pack.json` | franchise pack: 81 evolution lines, 151 species with English/Korean names, move pools, sprite source |
-| `data/digimon/pack.json` | franchise pack: the five 1997 V-pet versions — 70 species, branching evolution graph with care-mistake reject paths |
+| `scripts/get-sprites.sh` + `process-sprite.py` | sprite fetch + install-time processing (border flood-fill keying) |
+| `data/pokemon/pack.json` · `data/digimon/pack.json` | franchise packs: species, evolution graphs, names (en/ko), attacks, sprite sources |
 
 Hook events: `UserPromptSubmit` → thinking, `PostToolUse` → working,
-`PostToolUseFailure` → a "care mistake" (daily counter, drives upcoming
-features), `Stop` → done (+1 task), `PermissionRequest` → waiting,
-`SessionStart` → hello + overlay autostart. All state lives in
-`~/.cache/claude-pokemon-pet/` (including your `dex.json` — every partner
-you've ever had — and daily streak); the plugin directory itself is never
-written to.
+`PostToolUseFailure` → care mistake, `Stop` → done (+1 task),
+`PermissionRequest` → waiting, `SessionStart` → hello + autostart. All
+state lives in `~/.cache/claude-pokemon-pet/`; the plugin directory is
+never written to. Developer docs: [`docs/`](docs/).
+</details>
 
 ## Privacy & security
 
-This plugin runs entirely on your machine. It downloads Pokémon sprites from
-[PokeAPI](https://github.com/PokeAPI/sprites) once on first run and makes no
-other network calls. It collects no data and sends nothing anywhere. All it
-writes is session state and your sprite cache under `~/.cache/claude-pokemon-pet/`.
-The overlay is a local `osascript` window; the hooks are small shell scripts
-you can read in `scripts/`.
+Runs entirely on your machine. Sprites are downloaded once at install
+(from PokeAPI and digi-api) — no other network calls, no data collected,
+nothing sent anywhere. The overlay is a local `osascript` window; every
+hook is a small shell script you can read in `scripts/`.
 
 ## Credits
 
-Sprites are fetched at install time and are not redistributed with this
-repo: Pokémon from [PokeAPI/sprites](https://github.com/PokeAPI/sprites)
-(gen-5 Black/White animated set), Digimon official art from
-[digi-api](https://digi-api.com); evolution-chart and Korean-name data
-curated from [Wikimon](https://wikimon.net) and Bandai's official Korean
-reference. Pokémon is © Nintendo / Creatures Inc. / GAME FREAK inc.;
-Digimon is © Bandai. This is a fan-made tool, not affiliated with or
-endorsed by them.
-
-MIT licensed — see [LICENSE](LICENSE).
+Sprites are fetched at install time and never redistributed: Pokémon from
+[PokeAPI/sprites](https://github.com/PokeAPI/sprites) (gen-5 animated set),
+Digimon official art from [digi-api](https://digi-api.com); evolution-chart
+and Korean-name data curated from [Wikimon](https://wikimon.net) and
+Bandai's official Korean reference. Pokémon © Nintendo / Creatures Inc. /
+GAME FREAK inc.; Digimon © Bandai. A fan-made tool, not affiliated with or
+endorsed by them. MIT licensed — see [LICENSE](LICENSE).
