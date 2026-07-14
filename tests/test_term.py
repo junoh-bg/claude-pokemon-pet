@@ -91,6 +91,26 @@ class TestDrawing(unittest.TestCase):
         self.assertFalse(pet_term.use_inline_gif("kitty", "pokemon"))
         self.assertFalse(pet_term.use_inline_gif("ansi", "digimon"))
 
+    def test_halfblocks_averages_cells(self):
+        # 2x2 downsampled to 1 cell: half red / half transparent → red cell
+        # (nearest sampling could land on the transparent pixel — the bug)
+        rgba = bytes([255, 0, 0, 255, 0, 0, 0, 0, 0, 0, 0, 0, 255, 0, 0, 255])
+        lines = pet_term.halfblocks(rgba, 2, 2, max_cols=1, truecolor=True)
+        joined = "".join(lines)
+        self.assertIn("255;0;0", joined)
+
+    def test_halfblocks_mostly_transparent_cell_stays_clear(self):
+        # 1 opaque pixel in a 4x4 cell block (6% coverage) → transparent cell
+        rgba = bytearray(4 * 4 * 4)
+        rgba[0:4] = bytes([255, 0, 0, 255])
+        lines = pet_term.halfblocks(bytes(rgba), 4, 4, max_cols=1, truecolor=True)
+        self.assertNotIn("▀", "".join(lines))
+
+    def test_sprite_cols_adaptive(self):
+        self.assertEqual(pet_term.sprite_cols(80, 24, 320, 320), 32)   # height-bound
+        self.assertEqual(pet_term.sprite_cols(200, 60, 320, 320), 64)  # cap
+        self.assertEqual(pet_term.sprite_cols(28, 40, 320, 320), 24)   # floor
+
     def test_exp_bar(self):
         bar = pet_term.exp_bar(50, False, width=10)
         self.assertEqual(bar.count("▰"), 5)
