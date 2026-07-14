@@ -233,6 +233,8 @@ ice #7cc3d1
 dragon #6f66d6
 vpet #8fae6e'
 
+xml_escape() { printf '%s' "$1" | sed 's/&/\&amp;/g; s/</\&lt;/g; s/>/\&gt;/g'; }
+
 cmd_card() {
     [ -f "$CACHE/resolved.json" ] || cmd_resolve
     [ -f "$CACHE/dex.json" ] || echo '[]' > "$CACHE/dex.json"
@@ -268,6 +270,12 @@ cmd_card() {
     local star=""
     [ "$shiny" = "true" ] && star='<path d="M292 30 l4 9 9 1 -7 7 2 10 -8 -5 -8 5 2 -10 -7 -7 9 -1 z" fill="#f5d76e"/>'
 
+    # anything externally-set or data-driven gets XML-escaped ($USER can
+    # legally contain &/< — one bad char would break the SVG and the PNG)
+    local user_x name_x
+    user_x="$(xml_escape "$USER")"
+    name_x="$(xml_escape "$name")"
+
     cat > "$CACHE/card.svg" <<CARDEOF
 <svg xmlns="http://www.w3.org/2000/svg" width="480" height="280" font-family="Menlo, Consolas, monospace">
   <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
@@ -275,14 +283,14 @@ cmd_card() {
   </linearGradient></defs>
   <rect width="480" height="280" rx="16" fill="url(#g)"/>
   <rect x="0" y="0" width="480" height="8" rx="4" fill="$hex"/>
-  <text x="28" y="52" font-size="22" font-weight="bold" fill="#f2e6c8">$name</text>
+  <text x="28" y="52" font-size="22" font-weight="bold" fill="#f2e6c8">$name_x</text>
   <text x="28" y="80" font-size="14" fill="#c9cdb8">Lv.$lv · $L_STAGE $stage/$stages</text>
   <text x="28" y="118" font-size="13" fill="#9aa08c">$L_STREAK $streak$L_DAYS</text>
   <text x="28" y="146" font-size="13" fill="#9aa08c">$L_DEX pokemon $pcount/151 · digimon $dcount/70</text>
   <text x="28" y="168" font-size="13" fill="#9aa08c">shiny $scount</text>
   $star
   <image href="data:image/gif;base64,$b64" x="290" y="60" width="160" height="160"/>
-  <text x="28" y="244" font-size="12" fill="#6f7462">$L_TRAINER $USER · $TODAY</text>
+  <text x="28" y="244" font-size="12" fill="#6f7462">$L_TRAINER $user_x · $TODAY</text>
   <text x="28" y="262" font-size="10" fill="#4d5145">claude-pokemon-pet</text>
 </svg>
 CARDEOF
@@ -297,14 +305,32 @@ CARDEOF
     printf '▙▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄\n'
     echo "card: $CACHE/card.svg"
 
-    # PNG when a rasterizer exists (exact-size first, quicklook fallback)
+    # PNG when a rasterizer works — success-based cascade, never silent:
+    # a tool being installed doesn't mean it converted
+    local png_ok=false tried=false
     if command -v rsvg-convert >/dev/null 2>&1; then
-        rsvg-convert -o "$CACHE/card.png" "$CACHE/card.svg" 2>/dev/null && echo "png:  $CACHE/card.png"
-    elif command -v magick >/dev/null 2>&1; then
-        magick "$CACHE/card.svg" "$CACHE/card.png" 2>/dev/null && echo "png:  $CACHE/card.png"
-    elif command -v qlmanage >/dev/null 2>&1; then
-        ( cd "$CACHE" && qlmanage -t -s 960 -o . card.svg >/dev/null 2>&1 ) &&
-            [ -f "$CACHE/card.svg.png" ] && mv "$CACHE/card.svg.png" "$CACHE/card.png" && echo "png:  $CACHE/card.png"
+        tried=true
+        rsvg-convert -o "$CACHE/card.png" "$CACHE/card.svg" 2>/dev/null && png_ok=true
+    fi
+    if [ "$png_ok" = false ] && command -v magick >/dev/null 2>&1; then
+        tried=true
+        magick "$CACHE/card.svg" "$CACHE/card.png" 2>/dev/null && png_ok=true
+    fi
+    if [ "$png_ok" = false ] && command -v qlmanage >/dev/null 2>&1; then
+        tried=true
+        if ( cd "$CACHE" && qlmanage -t -s 960 -o . card.svg >/dev/null 2>&1 ) &&
+           [ -f "$CACHE/card.svg.png" ]; then
+            mv "$CACHE/card.svg.png" "$CACHE/card.png"
+            # quicklook pads its thumbnail to a square with unpredictable
+            # placement — cropping blind makes it worse, so we don't
+            echo "note: quicklook fallback pads the PNG square — install rsvg-convert or imagemagick for an exact-size card" >&2
+            png_ok=true
+        fi
+    fi
+    if [ "$png_ok" = true ]; then
+        echo "png:  $CACHE/card.png"
+    elif [ "$tried" = true ]; then
+        echo "note: PNG conversion failed — the SVG at $CACHE/card.svg still works" >&2
     fi
     return 0
 }

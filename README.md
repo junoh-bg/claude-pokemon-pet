@@ -28,7 +28,8 @@ inside your terminal (`claude-pokemon-pet term`) or your statusline.
 - **Daily gacha, shinies & the dex** — a fresh partner each day (shiny
   1/64 ✨, real shiny sprites; Magikarp days build character). Everything
   you've ever raised is in `claude-pokemon-pet dex`; show off with
-  `claude-pokemon-pet card` — a shareable trainer-card PNG.
+  `claude-pokemon-pet card` — a shareable trainer card (PNG where a
+  rasterizer is available, SVG + ANSI everywhere).
 - **Anywhere you work** — a native floating overlay on macOS
   (click-through, above every app and Space, ⌥-drag to move), a terminal
   renderer for Linux / SSH / RunPods, and a one-line statusline pet for
@@ -47,6 +48,7 @@ Per mode:
 | Floating overlay | macOS + [`gifsicle`](https://www.lcdf.org/gifsicle/) | native AppKit window (JXA); `curl`/`osascript` ship with macOS |
 | Terminal pet (`term`) | any OS + `python3` (≥3.8, stdlib only) + `curl` | works on Linux, over SSH, in devcontainers and RunPods |
 | Statusline | just `jq` | one line in any terminal |
+| Trainer card PNG (optional) | `rsvg-convert` or ImageMagick | SVG + ANSI need nothing; macOS Quick Look works as a padded fallback |
 
 macOS: `brew install jq gifsicle` · Debian/Ubuntu: `apt install jq` (python3
 and curl are usually present)
@@ -146,9 +148,11 @@ claude-pokemon-pet card    # renders a shareable trainer card
 ```
 
 `card` always writes an SVG and prints an ANSI card inline; when a
-rasterizer is available (`rsvg-convert`, ImageMagick, or macOS's built-in
-Quick Look) it also produces `card.png` — partner art, level, stage,
-streak, dex progress, trainer name.
+rasterizer is available it also produces `card.png` — partner art, level,
+stage, streak, dex progress, trainer name. Rasterizers are tried in order:
+`rsvg-convert` → ImageMagick → macOS Quick Look (the Quick Look fallback
+pads the image square — `brew install librsvg` for an exact-size card).
+On a bare Linux/SSH box with none of them, you still get the SVG + ANSI.
 
 ### CLI
 
@@ -156,7 +160,7 @@ The same commands are available from your shell via the bundled CLI:
 
 ```sh
 ~/.claude/plugins/marketplaces/claude-pokemon-pet/scripts/claude-pokemon-pet \
-    [toggle|on|off|random|pet <name>|lang <ko|en|auto>|sprites|status]
+    [toggle|on|off|random|digimon|pokemon|pet <name>|dex|card|lang <ko|en|auto>|term|statusline|sprites|status]
 ```
 
 Optionally symlink it onto your PATH and bind a tmux key:
