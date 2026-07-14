@@ -110,6 +110,9 @@ class TestDrawing(unittest.TestCase):
         self.assertEqual(pet_term.sprite_cols(80, 24, 320, 320), 32)   # height-bound
         self.assertEqual(pet_term.sprite_cols(200, 60, 320, 320), 64)  # cap
         self.assertEqual(pet_term.sprite_cols(28, 40, 320, 320), 24)   # floor
+        # documented limitation: the 24-col readability floor wins over the
+        # height bound for extreme portrait ratios (no shipped asset hits it)
+        self.assertEqual(pet_term.sprite_cols(80, 24, 40, 320), 24)
 
     def test_exp_bar(self):
         bar = pet_term.exp_bar(50, False, width=10)

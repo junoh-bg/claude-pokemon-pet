@@ -11,7 +11,7 @@ stale this only *asks* the core to re-resolve — no game logic here.
 Usage: pet-term.py [plugin-root]    (Ctrl-C to quit)
 Env: PET_TERM_MODE=kitty|iterm|ansi forces a backend.
 """
-import base64, json, math, os, signal, subprocess, sys, time
+import base64, json, math, os, shutil, signal, subprocess, sys, time
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import petgif
@@ -111,7 +111,9 @@ def halfblocks(rgba, w, h, max_cols, truecolor, mirrored=False):
 
 def sprite_cols(term_cols, term_lines, w, h):
     """Adaptive sprite width: use the pane we actually have (24..64 cols),
-    bounded by height so tall panes don't overflow (2 pixels per row)."""
+    height-aware for the near-square art we ship. NOTE: the 24-col
+    readability floor wins over the height bound — an extreme portrait
+    sprite in a tiny pane could still overflow (no such asset exists)."""
     by_width = max(24, min(64, term_cols - 6))
     rows_budget = max(8, term_lines - 8)
     by_height = max(24, int(rows_budget * 2 * w / max(1, h)))
@@ -335,7 +337,6 @@ class UI:
         if state == "working":
             self.facing_left = int(now / 3) % 2 == 0
             mirrored = not self.facing_left
-        import shutil
         size = shutil.get_terminal_size(fallback=(80, 24))
         cols = sprite_cols(size.columns, size.lines, self.anim.width, self.anim.height)
         key = (fr_idx, mirrored, cols)
