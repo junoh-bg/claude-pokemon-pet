@@ -19,6 +19,6 @@ jq -r '
   def semoji: {working:"⚔️",thinking:"🤔",waiting:"⏳",done:"✨",hello:"👋"}[.state] // "💤";
   def bar: (.exp_pct * 5 / 100 | floor) as $f
     | (("▰" * $f) // "") + (("▱" * (5 - $f)) // "");
-  "\(temoji) \(.name) Lv.\(.tasks) \(bar) \(semoji)"
+  "\(temoji) \(if .shiny then "✨" else "" end)\(.name) Lv.\(.tasks) \(bar) \(semoji)"
 ' "$R" 2>/dev/null || echo "🥚 no pet yet"
 exit 0

@@ -41,6 +41,15 @@ if "$CORE" pick notapokemon >/dev/null 2>&1; then rc=0; else rc=1; fi
 assert_eq "unknown pick exits 1" "1" "$rc"
 teardown
 
+setup  # shiny roll: seam forces it; digimon never rolls
+PET_SHINY=1 "$CORE" roll >/dev/null
+assert_json "forced shiny" "$CACHE/partner" '.shiny' "true"
+PET_SHINY=0 "$CORE" roll >/dev/null
+assert_json "forced non-shiny" "$CACHE/partner" '.shiny' "false"
+PET_SHINY=1 "$CORE" franchise digimon >/dev/null
+assert_json "digimon never shiny" "$CACHE/partner" '.shiny' "false"
+teardown
+
 setup  # lang override + auto
 "$CORE" lang ko >/dev/null
 assert_eq "lang file written" "ko" "$(cat "$CACHE/lang")"

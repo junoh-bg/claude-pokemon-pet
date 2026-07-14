@@ -13,6 +13,8 @@ assert_json "species sprite_url" "$PACK" '.species.charmander.sprite_url' \
     "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/4.gif"
 assert_json "moves_by type"  "$PACK" '.moves_by' "type"
 assert_json "sprite px"      "$PACK" '.sprites.target_px' "190"
+assert_json "shiny rate"     "$PACK" '.sprites.shiny_rate' "64"
+assert_json "shiny url"      "$PACK" '.species.charmander.sprite_shiny_url | endswith("/shiny/4.gif")' "true"
 assert_json "min id"         "$PACK" '[.species[].id] | min' "1"
 assert_json "max id"         "$PACK" '[.species[].id] | max' "151"
 assert_json "en names upper" "$PACK" '.species.charmander.names.en' "CHARMANDER"

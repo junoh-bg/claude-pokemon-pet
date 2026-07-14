@@ -19,11 +19,13 @@ stop()  { pkill -f "pet-overlay.js" 2>/dev/null; echo "overlay: off"; }
 launch() {
     local lock="$CACHE/.launch.lock"
     if [ -d "$lock" ]; then   # clear a lock leaked by a killed process
-        # (a failed stat means the lock vanished mid-check — not staleness)
+        # GNU stat first — on Linux `stat -f %m` returns the MOUNT POINT.
+        # (a failed/non-numeric stat means it vanished mid-check — not staleness)
         local mtime
-        if mtime=$(stat -f %m "$lock" 2>/dev/null || stat -c %Y "$lock" 2>/dev/null) && [ -n "$mtime" ]; then
-            [ $(( $(date +%s) - mtime )) -gt 30 ] && rmdir "$lock" 2>/dev/null
-        fi
+        mtime=$(stat -c %Y "$lock" 2>/dev/null || stat -f %m "$lock" 2>/dev/null) || mtime=""
+        case "$mtime" in ''|*[!0-9]*) : ;; *)
+            [ $(( $(date +%s) - mtime )) -gt 30 ] && rmdir "$lock" 2>/dev/null ;;
+        esac
     fi
     mkdir "$lock" 2>/dev/null || return 0   # another launch already in progress
     if [ -z "$(pid)" ]; then
@@ -52,6 +54,7 @@ case "${1:-toggle}" in
     autostart) [ -f "$CACHE/off" ] || [ -n "$(pid)" ] || start ;;
     random)    "$CORE" roll ;;
     digimon|pokemon) "$CORE" franchise "$1" ;;
+    dex)       "$CORE" dex ;;
     pet)       "$CORE" pick "${2:-}" ;;
     lang)      "$CORE" lang "${2:-}" ;;
     sprites)   exec "$ROOT/scripts/get-sprites.sh" ;;
@@ -81,7 +84,7 @@ case "${1:-toggle}" in
         "$CORE" status
         ;;
     *)
-        echo "usage: claude-pokemon-pet [toggle|on|off|random|digimon|pokemon|pet <name>|lang <ko|en|auto>|term|statusline|sprites|status]" >&2
+        echo "usage: claude-pokemon-pet [toggle|on|off|random|digimon|pokemon|pet <name>|dex|lang <ko|en|auto>|term|statusline|sprites|status]" >&2
         exit 1
         ;;
 esac

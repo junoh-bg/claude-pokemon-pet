@@ -19,12 +19,14 @@ NOW="${PET_NOW:-$(date +%s)}"
 clear_stale_lock() { # <path> — clear a lock leaked by a killed process
     [ -d "$1" ] || return 0
     local mtime
-    # a failed stat means the lock vanished mid-check (someone else's cycle):
-    # that is NOT staleness — treating it as age-infinity would rmdir a lock
-    # another process just acquired (empty dirs rmdir fine) and let two
-    # holders into the critical section
-    mtime=$(stat -f %m "$1" 2>/dev/null || stat -c %Y "$1" 2>/dev/null) || return 0
-    [ -n "$mtime" ] || return 0
+    # GNU stat first (-c %Y): on Linux, BSD-style `stat -f %m` does NOT fail —
+    # -f is filesystem mode there and returns the MOUNT POINT string, which
+    # poisons the arithmetic. macOS lacks -c, so it falls through to BSD form.
+    mtime=$(stat -c %Y "$1" 2>/dev/null || stat -f %m "$1" 2>/dev/null) || return 0
+    # a failed/non-numeric stat means the lock vanished mid-check — that is
+    # NOT staleness; treating it as age-infinity would rmdir a lock another
+    # process just acquired and let two holders into the critical section
+    case "$mtime" in ''|*[!0-9]*) return 0 ;; esac
     [ $(( $(date +%s) - mtime )) -gt 10 ] && rmdir "$1" 2>/dev/null
     return 0
 }
@@ -32,11 +34,16 @@ clear_stale_lock() { # <path> — clear a lock leaked by a killed process
 # under concurrent hooks, which silently miscounts tasks/mistakes — the
 # inputs that gate (permanent) evolution. Bounded wait ≈1s, never fails.
 counter_lock() {
+    # budget: 75 iterations, MEASURED ~2.9s worst case under a held lock
+    # (subprocess overhead dominates the nominal sleep) — inside the 5s
+    # hook timeout; re-measure, don't re-derive from sleep math
     local lock="$CACHE/.counter.lock" i=0
-    while [ "$i" -lt 100 ]; do
+    while [ "$i" -lt 75 ]; do
         mkdir "$lock" 2>/dev/null && return 0
-        clear_stale_lock "$lock"
-        sleep 0.01
+        # staleness is a 10s condition: probing it every spin just burns
+        # subprocesses and starves the actual lock holder under contention
+        [ $(( i % 25 )) -eq 24 ] && clear_stale_lock "$lock"
+        sleep 0.02
         i=$((i + 1))
     done
     return 0   # last resort: proceed unlocked rather than drop the event
@@ -108,6 +115,7 @@ RESOLVE_JQ='
   (if $final then ((($tasks - $base) % 10) * 10)
    else ([([((($tasks - $base) * 100 / ((($g[$stage] // ($base + 10)) - $base))) | floor), 100] | min), 0] | max)
    end) as $pct |
+  ([([100 - 15 * $mistakes + 10 * $tasks, 100] | min), 10] | max) as $hp |
   ($pack.species[$sp]) as $spec |
   (if $lang == "ko" then ($spec.names.ko // $spec.names.en) else $spec.names.en end) as $name |
   (if ($pack.moves_by // "type") == "stage"
@@ -117,8 +125,8 @@ RESOLVE_JQ='
     date: $today,
     franchise: $p.franchise, species: $sp, name: $name, type: $p.type,
     stage: $stage, stages: $len, final: $final,
-    tasks: $tasks, mistakes: $mistakes, streak: $streak, shiny: false,
-    exp_pct: $pct, exp_gold: $final,
+    tasks: $tasks, mistakes: $mistakes, streak: $streak, shiny: ($p.shiny // false),
+    exp_pct: $pct, exp_gold: $final, hp_pct: $hp,
     line: $line,
     line_names: ($line | map($pack.species[.] as $s |
         if $lang == "ko" then ($s.names.ko // $s.names.en) else $s.names.en end)),
@@ -128,14 +136,29 @@ RESOLVE_JQ='
 
 update_dex() {
     [ -f "$CACHE/dex.json" ] || echo '[]' > "$CACHE/dex.json"
-    local sp fr tmp
+    local sp fr sh tmp
     sp="$(jq -r '.species' "$CACHE/resolved.json")"
     fr="$(jq -r '.franchise' "$CACHE/resolved.json")"
+    sh="$(jq -r '.shiny' "$CACHE/resolved.json")"
     tmp="$(mktemp)"
-    jq --arg s "$sp" --arg f "$fr" --arg d "$TODAY" \
-       'if any(.[]; .species == $s and .franchise == $f) then .
-        else . + [{species: $s, franchise: $f, date: $d, shiny: false}] end' \
+    jq --arg s "$sp" --arg f "$fr" --arg d "$TODAY" --argjson sh "$sh" \
+       'if any(.[]; .species == $s and .franchise == $f)
+        then map(if .species == $s and .franchise == $f and $sh then .shiny = true else . end)
+        else . + [{species: $s, franchise: $f, date: $d, shiny: $sh}] end' \
        "$CACHE/dex.json" > "$tmp" && mv "$tmp" "$CACHE/dex.json"
+}
+
+cmd_dex() {
+    [ -f "$CACHE/dex.json" ] || echo '[]' > "$CACHE/dex.json"
+    local f pack total caught
+    for f in pokemon digimon; do
+        pack="$(pack_file "$f")"; [ -f "$pack" ] || continue
+        total="$(jq '.species | length' "$pack")"
+        caught="$(jq --arg f "$f" '[.[] | select(.franchise == $f)] | length' "$CACHE/dex.json")"
+        echo "$f: caught $caught/$total"
+    done
+    echo "shiny: $(jq '[.[] | select(.shiny)] | length' "$CACHE/dex.json") ✨"
+    jq -r 'sort_by(.date)[] | "  \(.date)  \(.species)\(if .shiny then " ✨" else "" end)"' "$CACHE/dex.json"
 }
 
 # ── digimon-style growth: extend the line when daily gates unlock stages.
@@ -216,9 +239,18 @@ default_partner() {   # safe fallback, mirrors v1's chains[1] = charmander
 }
 
 write_partner() { # <pack-file> <line-index>
-    local tmp; tmp="$(mktemp)"
-    jq --argjson i "$2" --arg d "$TODAY" --argjson s "$RANDOM" \
-       '{franchise: .franchise, line: .lines[$i].mons, type: .lines[$i].type, date: $d, seed: $s}' \
+    local tmp rate s
+    tmp="$(mktemp)"
+    rate="$(jq -r '.sprites.shiny_rate // 0' "$1")"
+    s=false
+    if [ "$rate" -gt 0 ] 2>/dev/null; then
+        [ $(( RANDOM % rate )) -eq 0 ] && s=true
+        case "${PET_SHINY:-}" in 1) s=true ;; 0) s=false ;; esac   # test seam;
+        # inside the rate guard so it can never shiny a franchise that has none
+    fi
+    jq --argjson i "$2" --arg d "$TODAY" --argjson sd "$RANDOM" --argjson sh "$s" \
+       '{franchise: .franchise, line: .lines[$i].mons, type: .lines[$i].type,
+         date: $d, seed: $sd, shiny: $sh}' \
        "$1" > "$tmp" && mv "$tmp" "$CACHE/partner"
     cmd_resolve
     echo "pet: $(jq -r '.line | join(" → ")' "$CACHE/partner")"
@@ -298,6 +330,7 @@ case "${1:-}" in
     franchise)       cmd_franchise "${2:-}" ;;
     lang)            cmd_lang "${2:-}" ;;
     resolve)         cmd_resolve ;;
+    dex)             cmd_dex ;;
     status)          cmd_status ;;
     *) echo "usage: pet-core.sh <event <state>|roll|roll-if-new-day|pick <name>|lang <ko|en|auto>|resolve>" >&2; exit 1 ;;
 esac

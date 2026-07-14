@@ -70,13 +70,15 @@ never make the core depend on a renderer. Franchise data lives in JSON packs
   assume any new mutation has this bug until proven otherwise. Known accepted
   residual: timeout-based stale reclamation can, in a sub-ms window, rmdir a
   fresh lock if a live owner held one >10s (pathological); fencing tokens are
-  disproportionate here. Measured worst-case hook latency under a held
-  counter lock: ~2.7s (bounded, inside the 5s hook timeout).
+  disproportionate here. Spin iterations cost ~33ms each (subprocess
+  overhead dominates the nominal sleep) — budget the loop count from
+  MEASURED latency under a held lock, not the sleep math; current tuning:
+  75 iterations, measured ~2.9s worst case against the 5s hook timeout.
 
 ## Phase status
 
 1. ✅ Shared core refactor (PR #1)
 2. ✅ Terminal renderer + statusline (Linux/SSH/RunPod)
 3. ✅ Digimon pack + V-pet branching
-4. ⬜ Shinies, dex command, HUD, battle FX, evo cinematics
+4. ✅ Shinies, dex command, HUD, battle FX, evo cinematics
 5. ⬜ Trainer card
