@@ -22,7 +22,8 @@ inside your terminal (`claude-pokemon-pet term`) or your statusline.
   then `Congratulations! Your CHARMANDER evolved into CHARMELEON!`
 - **Shinies & the dex** — the daily gacha rolls shiny 1/64 (✨ sparkle,
   real shiny sprites). Every partner you've ever had is recorded:
-  `claude-pokemon-pet dex` shows `caught 23/151 · 1 shiny ✨`.
+  `claude-pokemon-pet dex` shows per-franchise progress
+  (`pokemon: caught 23/151`), your shiny count, and the dated capture list.
 - **Battle FX & session health** — type-colored particle bursts while
   Claude works, an impact shake on task completion, and an HP bar that
   dips with failing tool calls and refills as tasks complete.

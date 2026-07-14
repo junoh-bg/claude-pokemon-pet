@@ -107,6 +107,14 @@ def sprite_file(species, shiny):
     return species + ("-shiny" if shiny else "") + ".gif"
 
 
+def invert_line(line):
+    """Wrap a half-block line in reverse-video. halfblocks() emits a full
+    SGR reset (ESC[0m) for transparent runs, which would cancel the reverse
+    for the rest of the row — re-arm it after every embedded reset."""
+    return (ESC + "[7m" + line.replace(ESC + "[0m", ESC + "[0m" + ESC + "[7m")
+            + ESC + "[27m")
+
+
 def whitekey(rgba):
     """V-pet sprites ship on an opaque white background: key it out.
     Exact pure white only — matches gifsicle --transparent='#FFFFFF' in
@@ -340,10 +348,7 @@ class UI:
         else:
             invert = evo_age < 2 and int(now * 4) % 2 == 0   # evolution flash
             for l in self.sprite_lines(st, now):
-                if invert:
-                    out.append(ESC + "[7m" + l + ESC + "[27m\r\n")
-                else:
-                    out.append(l + "\r\n")
+                out.append((invert_line(l) if invert else l) + "\r\n")
         out.append(ESC + "[0m\r\n")
         out.append(" %s%s  Lv.%d   \U0001f525%dd\r\n" %
                    ("✨ " if r.get("shiny") else "", r["name"], r["tasks"], r["streak"]))

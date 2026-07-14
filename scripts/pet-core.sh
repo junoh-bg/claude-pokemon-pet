@@ -34,8 +34,10 @@ clear_stale_lock() { # <path> — clear a lock leaked by a killed process
 # under concurrent hooks, which silently miscounts tasks/mistakes — the
 # inputs that gate (permanent) evolution. Bounded wait ≈1s, never fails.
 counter_lock() {
+    # budget: ~33ms/iteration measured (sleep + subprocess overhead), so 75
+    # iterations ≈ 2.5s worst case — safely inside the 5s hook timeout
     local lock="$CACHE/.counter.lock" i=0
-    while [ "$i" -lt 150 ]; do
+    while [ "$i" -lt 75 ]; do
         mkdir "$lock" 2>/dev/null && return 0
         # staleness is a 10s condition: probing it every spin just burns
         # subprocesses and starves the actual lock holder under contention

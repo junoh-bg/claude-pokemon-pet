@@ -185,7 +185,7 @@ function run(argv) {
   win.contentView.layer.addSublayer(tail);
 
   var nameLabel = makeLabel(30, 12, true, 0.95, 0.78, 0.45, 0.95);
-  var moodLabel = makeLabel(4, 10, false, 0.86, 0.89, 1.0, 0.95);
+  var moodLabel = makeLabel(3, 10, false, 0.86, 0.89, 1.0, 0.95);   // frame 3..21, clear of the HP bar
   win.contentView.addSubview(nameLabel);
   win.contentView.addSubview(moodLabel);
 
@@ -215,7 +215,7 @@ function run(argv) {
 
   // HP bar: session health (dips on tool errors, refills on completed tasks)
   var hpTrack = $.CAShapeLayer.layer;
-  hpTrack.setPath($.CGPathCreateWithRoundedRect($.CGRectMake(expX, 21, EXPW, 3), 1.5, 1.5, null));
+  hpTrack.setPath($.CGPathCreateWithRoundedRect($.CGRectMake(expX, 22, EXPW, 3), 1.5, 1.5, null));
   hpTrack.setFillColor(cg(0.50, 0.53, 0.68, 0.95));
   win.contentView.layer.addSublayer(hpTrack);
   var hpFill = $.CAShapeLayer.layer;
@@ -226,7 +226,7 @@ function run(argv) {
           : p.hp_pct > 30 ? cg(0.95, 0.80, 0.30, 0.95) : cg(0.95, 0.35, 0.30, 0.95);
     hpFill.setFillColor(c);
     hpFill.setPath($.CGPathCreateWithRoundedRect(
-      $.CGRectMake(expX, 21, EXPW * frac, 3), 1.5, 1.5, null));
+      $.CGRectMake(expX, 22, EXPW * frac, 3), 1.5, 1.5, null));
   }
 
   // Battle FX: type-colored particle bursts + done-flash shake. Guarded —

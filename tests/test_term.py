@@ -68,7 +68,22 @@ class TestDrawing(unittest.TestCase):
         self.assertIn("Congratulations", st)
         st = pet_term.evo_caption("파이리", "리자드", "ko", 4.0)
         self.assertIn("진화했다", st)
-        self.assertIn("리자드로", st)   # ㄹ-final → 로, not 으로
+        self.assertIn("리자드로", st)   # no batchim → 로
+
+    def test_ro_josa_branches(self):
+        self.assertEqual(pet_term.ro_josa("리자드"), "리자드로")       # no batchim → 로
+        self.assertEqual(pet_term.ro_josa("리자몽"), "리자몽으로")     # ㅇ batchim → 으로
+        self.assertEqual(pet_term.ro_josa("이상해풀"), "이상해풀로")   # ㄹ batchim → 로 (the exception)
+
+    def test_invert_line_survives_embedded_resets(self):
+        # transparent-left, red-right: halfblocks emits ESC[0m before the pixel
+        rgba = bytes([0, 0, 0, 0, 255, 0, 0, 255, 0, 0, 0, 0, 255, 0, 0, 255])
+        line = pet_term.halfblocks(rgba, 2, 2, max_cols=10, truecolor=True)[0]
+        self.assertIn("\x1b[0m", line)                      # the reset that broke it
+        inv = pet_term.invert_line(line)
+        self.assertTrue(inv.startswith("\x1b[7m"))
+        self.assertIn("\x1b[0m\x1b[7m", inv)                # re-armed after every reset
+        self.assertTrue(inv.endswith("\x1b[27m"))
 
     def test_use_inline_gif(self):
         self.assertTrue(pet_term.use_inline_gif("iterm", "pokemon"))
