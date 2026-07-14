@@ -57,9 +57,9 @@ worth symlinking onto your PATH).
 | Session event | Pet reaction |
 |---|---|
 | You submit a prompt | slow bob — `PIKACHU is getting pumped!` |
-| Claude uses tools | roams left/right with type-colored particle bursts — `AGUMON used Baby Flame!` |
+| Claude uses tools | roams and waddles; every battle caption fires a lunge + element-colored projectile — `AGUMON used Baby Flame!` arcs out in fire-orange |
 | Task completes | excited hops, impact shake, **+1 level** |
-| A tool call fails | **+1 care mistake** — HP bar dips (and steers Digimon evolution) |
+| A tool call fails | **+1 care mistake** — HP bar dips, the pet recoils (and Digimon evolution takes note) |
 | Permission needed | anxious fidget |
 | Idle | falls asleep, dimmed |
 
@@ -110,8 +110,9 @@ and state live). Graphics auto-detect, best first:
 | iTerm2 inline images | iTerm2 |
 | ANSI half-blocks | any 256-color terminal, including inside tmux |
 
-Force one with `PET_TERM_MODE=kitty|iterm|ansi`. Ctrl-C quits and restores
-the terminal.
+Force one with `PET_TERM_MODE=kitty|iterm|ansi`. Quit with **q**, Esc, or
+Ctrl-C — the pane is restored either way (if a force-killed session ever
+leaves it stuck, type `reset` to recover it).
 
 ## Statusline pet
 

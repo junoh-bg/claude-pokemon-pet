@@ -11,7 +11,7 @@ stale this only *asks* the core to re-resolve — no game logic here.
 Usage: pet-term.py [plugin-root]    (Ctrl-C to quit)
 Env: PET_TERM_MODE=kitty|iterm|ansi forces a backend.
 """
-import base64, json, math, os, shutil, signal, subprocess, sys, time
+import base64, json, math, os, select, shutil, signal, subprocess, sys, termios, time, tty
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import petgif
@@ -472,9 +472,17 @@ class UI:
         self.frame_i += 1
 
 
+_TTY_ATTRS = None
+
+
 def restore_terminal():
     sys.stdout.write(ESC + "[?25h" + ESC + "[?1049l")   # show cursor, leave alt screen
     sys.stdout.flush()
+    if _TTY_ATTRS is not None:
+        try:
+            termios.tcsetattr(sys.stdin.fileno(), termios.TCSADRAIN, _TTY_ATTRS)
+        except Exception:
+            pass
 
 
 def main(argv):
@@ -489,9 +497,22 @@ def main(argv):
 
     signal.signal(signal.SIGINT, on_signal)
     signal.signal(signal.SIGTERM, on_signal)
+    global _TTY_ATTRS
+    watch_keys = sys.stdin.isatty()
+    if watch_keys:
+        try:
+            _TTY_ATTRS = termios.tcgetattr(sys.stdin.fileno())
+            tty.setcbreak(sys.stdin.fileno())
+        except Exception:
+            watch_keys = False
     sys.stdout.write(ESC + "[?1049h" + ESC + "[?25l")   # alt screen, hide cursor
     try:
         while True:
+            if watch_keys:
+                ready, _, _ = select.select([sys.stdin], [], [], 0)
+                if ready and sys.stdin.read(1) in ("q", "Q", "\x1b"):
+                    restore_terminal()
+                    sys.exit(0)
             ui.draw()
             time.sleep(TICK)
     except SystemExit:
