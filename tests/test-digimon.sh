@@ -28,6 +28,16 @@ assert_json "en name override" "$DPACK" '.species.metalgreymon_virus.names.en' "
 assert_json "ko name kept" "$DPACK" '.species.botamon.names.ko' "깜몬"
 assert_json "greymon ko now official" "$DPACK" '.species.greymon.names.ko' "그레이몬"
 assert_json "5 move stages" "$DPACK" '.moves | length' "5"
+# canonical-first ordering (flawless-day evolution = first edge; audited
+# against anime/game canon — docs/notes/2026-07-14-evolution-canon-audit.md)
+assert_json "agumon canon first"  "$DPACK" '.edges.agumon[0].to'  "greymon"
+assert_json "gabumon canon first" "$DPACK" '.edges.gabumon[0].to' "garurumon"
+assert_json "betamon canon first" "$DPACK" '.edges.betamon[0].to' "seadramon"
+assert_json "piyomon canon first" "$DPACK" '.edges.piyomon[0].to' "leomon"
+assert_json "kunemon canon first" "$DPACK" '.edges.kunemon[0].to' "bakemon"
+assert_json "gazimon canon first" "$DPACK" '.edges.gazimon[0].to' "devidramon"
+assert_json "gizamon canon first" "$DPACK" '.edges.gizamon[0].to' "deltamon"
+
 # guard against future curation regressions: a non-ultimate species with no
 # outgoing edges would silently stop that day's evolution forever
 assert_json "every non-ultimate species has outgoing edges" "$DPACK" \
@@ -52,12 +62,12 @@ assert_eq "d t2 species" "koromon" "$(R .species)"
 set_tasks 5; "$CORE" resolve
 assert_eq "d t5 rookie (seeded)" "agumon" "$(R .species)"
 set_tasks 10; "$CORE" resolve
-assert_eq "d t10 champion (seeded, clean)" "meramon" "$(R .species)"
+assert_eq "d t10 champion (flawless → top tier)" "greymon" "$(R .species)"
 set_tasks 18; "$CORE" resolve
-assert_eq "d t18 ultimate" "mamemon" "$(R .species)"
+assert_eq "d t18 ultimate" "metalgreymon_virus" "$(R .species)"
 assert_eq "d t18 final" "true"  "$(R .final)"
 assert_eq "d t18 gold"  "true"  "$(R .exp_gold)"
-assert_json "line recorded" "$CACHE/partner" '.line | join(",")' "botamon,koromon,agumon,meramon,mamemon"
+assert_json "line recorded" "$CACHE/partner" '.line | join(",")' "botamon,koromon,agumon,greymon,metalgreymon_virus"
 teardown
 
 setup  # 3+ care mistakes at the champion crossing → joke evolution
@@ -69,9 +79,28 @@ teardown
 
 setup  # evolution is permanent: later mistakes don't rewrite the day
 digimon_partner; set_tasks 10; "$CORE" resolve
-assert_eq "clean champion first" "meramon" "$(R .species)"
+assert_eq "clean champion first" "greymon" "$(R .species)"
 set_mistakes 9; "$CORE" resolve
-assert_eq "still meramon after mistakes" "meramon" "$(R .species)"
+assert_eq "still greymon after mistakes" "greymon" "$(R .species)"
+teardown
+
+setup  # flawless gabumon day → garurumon (the Matt pairing), not kabuterimon
+printf '{"franchise":"digimon","line":["punimon","tunomon","gabumon"],"type":"vpet","date":"2026-07-13","seed":0}' > "$CACHE/partner"
+set_tasks 10; "$CORE" resolve
+assert_eq "flawless gabumon → garurumon" "garurumon" "$(R .species)"
+teardown
+
+setup  # care tiers: 1-2 mistakes give a mid-tier champion, never the top one
+printf '{"franchise":"digimon","line":["botamon","koromon","agumon"],"type":"vpet","date":"2026-07-13","seed":0}' > "$CACHE/partner"
+set_mistakes 1; set_tasks 10; "$CORE" resolve
+assert_eq "one mistake → agumon mid tier (seeded)" "tyranomon" "$(R .species)"
+teardown
+
+setup  # care tiers apply at every crossing: 1+ mistakes at rookie → betamon side
+digimon_partner; set_mistakes 2; set_tasks 10; "$CORE" resolve
+case "$(R .species)" in tyranomon|devimon|meramon|airdramon|seadramon) ok=yes ;; *) ok="no($(R .species))" ;; esac
+assert_eq "two mistakes → a proper (non-joke) champion" "yes" "$ok"
+assert_json "rookie tier also applied" "$CACHE/partner" '.line[2]' "betamon"
 teardown
 
 setup  # localized digimon: ko name + real signature attack
@@ -134,7 +163,7 @@ teardown
 
 setup  # day rollover: stage recomputes from the new day's zero tasks
 digimon_partner; set_tasks 18; "$CORE" resolve
-assert_eq "grown to ultimate" "mamemon" "$(R .species)"
+assert_eq "grown to ultimate" "metalgreymon_virus" "$(R .species)"
 PET_TODAY=2026-07-14 "$CORE" status >/dev/null
 assert_eq "midnight devolves to the egg" "botamon" "$(R .species)"
 teardown

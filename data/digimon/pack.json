@@ -946,6 +946,10 @@
     ],
     "betamon": [
       {
+        "to": "seadramon",
+        "quality": "normal"
+      },
+      {
         "to": "devimon",
         "quality": "normal"
       },
@@ -955,10 +959,6 @@
       },
       {
         "to": "airdramon",
-        "quality": "normal"
-      },
-      {
-        "to": "seadramon",
         "quality": "normal"
       },
       {
@@ -1062,11 +1062,11 @@
     ],
     "gabumon": [
       {
-        "to": "kabuterimon",
+        "to": "garurumon",
         "quality": "normal"
       },
       {
-        "to": "garurumon",
+        "to": "kabuterimon",
         "quality": "normal"
       },
       {
@@ -1090,15 +1090,15 @@
     ],
     "gazimon": [
       {
+        "to": "devidramon",
+        "quality": "normal"
+      },
+      {
         "to": "darktyranomon",
         "quality": "normal"
       },
       {
         "to": "cyclomon",
-        "quality": "normal"
-      },
-      {
-        "to": "devidramon",
         "quality": "normal"
       },
       {
@@ -1112,6 +1112,10 @@
     ],
     "gizamon": [
       {
+        "to": "deltamon",
+        "quality": "normal"
+      },
+      {
         "to": "devidramon",
         "quality": "normal"
       },
@@ -1121,10 +1125,6 @@
       },
       {
         "to": "flymon",
-        "quality": "normal"
-      },
-      {
-        "to": "deltamon",
         "quality": "normal"
       },
       {
@@ -1156,11 +1156,11 @@
     ],
     "kunemon": [
       {
-        "to": "orgemon",
+        "to": "bakemon",
         "quality": "normal"
       },
       {
-        "to": "bakemon",
+        "to": "orgemon",
         "quality": "normal"
       },
       {
@@ -1280,15 +1280,15 @@
     ],
     "piyomon": [
       {
+        "to": "leomon",
+        "quality": "normal"
+      },
+      {
         "to": "monochromon",
         "quality": "normal"
       },
       {
         "to": "cockatrimon",
-        "quality": "normal"
-      },
-      {
-        "to": "leomon",
         "quality": "normal"
       },
       {

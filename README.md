@@ -83,10 +83,18 @@ species), drawn with colorful official art. Five stages, gated by today's
 tasks: Baby → In-Training (2) → Rookie (5) → Champion (10) → Ultimate (18).
 
 Unlike Pokémon, evolution **branches** — and it watches your session.
-Reach an evolution gate with **3+ care mistakes** (failing tool calls;
-pressing Esc doesn't count) and your partner takes the canonical joke path:
-Numemon and friends await the sloppy. Every choice locks in the moment it
-happens, exactly like the 1997 device. `status` shows today's tally.
+Care mistakes (failing tool calls; pressing Esc doesn't count) decide the
+branch at each evolution gate:
+
+- **0 mistakes** — the canonical branch, audited against the anime and
+  games: a flawless 아구몬 becomes 그레이몬, 가부몬 becomes 가루몬.
+- **1–2 mistakes** — a mid-tier champion from the rest of the chart
+  (seeded per day, so it's stable until midnight).
+- **3+ mistakes** — the canonical joke path: Numemon and friends await
+  the sloppy.
+
+Every choice locks in the moment it happens, exactly like the 1997
+device. `status` shows today's tally.
 
 Battle text uses each species' real signature attack in your language:
 `아구몬의 베이비 플레임!` / `AGUMON used Baby Flame!` — with official
