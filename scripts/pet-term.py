@@ -150,6 +150,12 @@ def breathe_offset(now):
     return int(now / 2) % 2
 
 
+def show_projectile(element):
+    """No projectile for attacks with no inferable element (Enigma etc.) —
+    a generic blob is nobody's actual technique."""
+    return element != "vpet"
+
+
 def projectile_line(tick, direction, element, width):
     """Frames 0..3 of the attack projectile; frame 3 is the impact."""
     span = max(10, width - 8)
@@ -450,11 +456,15 @@ class UI:
             if not bob:
                 out.append("\r\n")   # keep total height stable across bob frames
         # attack projectile line (frames 0..3, then quiet)
-        if self.attack_tick is not None and self.attack_tick < 4:
+        elem = r.get("element", "vpet")
+        if (self.attack_tick is not None and self.attack_tick < 4
+                and show_projectile(elem)):
             out.append(projectile_line(self.attack_tick, self.attack_dir,
-                                       r.get("element", "vpet"), 40) + "\r\n")
+                                       elem, 40) + "\r\n")
             self.attack_tick += 1
         else:
+            if self.attack_tick is not None and self.attack_tick < 4:
+                self.attack_tick += 1    # lunge still runs; line stays blank
             out.append(ESC + "[K\r\n")
         out.append(ESC + "[0m\r\n")
         out.append(" %s%s  Lv.%d   \U0001f525%dd\r\n" %

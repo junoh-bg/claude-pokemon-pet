@@ -222,6 +222,11 @@ class TestLiving(unittest.TestCase):
         left = pet_term.projectile_line(0, -1, "fire", 40)
         self.assertGreater(left.index("●"), l0.index("●"))    # starts from the right
 
+    def test_no_projectile_without_element(self):
+        self.assertFalse(pet_term.show_projectile("vpet"))
+        self.assertTrue(pet_term.show_projectile("fire"))
+        self.assertTrue(pet_term.show_projectile("holy"))
+
     def test_breathe_offset(self):
         self.assertIn(pet_term.breathe_offset(0.0), (0, 1))
         self.assertNotEqual(pet_term.breathe_offset(0.0), pet_term.breathe_offset(2.0))

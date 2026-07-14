@@ -368,7 +368,13 @@ function run(argv) {
       lastSlot = slot;
       var adir = facing === 'r' ? 1 : -1;
       lunge(adir);
-      fireProjectile(adir, TYPE_RGB[elem] || TYPE_RGB.normal);
+      // no projectile for attacks with no inferable element (e.g. Enigma):
+      // a generic blob is nobody's actual technique — lunge + spark only
+      if (elem !== 'vpet') {
+        fireProjectile(adir, TYPE_RGB[elem] || TYPE_RGB.normal);
+      } else {
+        burst(40, 200);
+      }
     }
     if (p.state === 'done' && prevRState !== 'done') {
       burst(120, 350);
