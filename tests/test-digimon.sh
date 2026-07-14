@@ -5,7 +5,7 @@ DPACK="$ROOT/data/digimon/pack.json"
 assert_eq "digimon pack exists" "yes" "$([ -f "$DPACK" ] && echo yes || echo no)"
 assert_json "franchise" "$DPACK" '.franchise' "digimon"
 assert_json "gates" "$DPACK" '.gates | join(",")' "0,2,5,10,18"
-assert_json "moves_by stage" "$DPACK" '.moves_by' "stage"
+assert_json "moves_by species" "$DPACK" '.moves_by' "species"
 assert_json "5 lines" "$DPACK" '.lines | length' "5"
 assert_json "70 species" "$DPACK" '.species | length' "70"
 assert_json "line mons are single roots" "$DPACK" '[.lines[].mons | length] | unique | join(",")' "1"
@@ -13,12 +13,20 @@ assert_json "v1 root" "$DPACK" '.lines[0].mons[0]' "botamon"
 assert_json "v1 members include agumon" "$DPACK" '.lines[0].members | index("agumon") != null' "true"
 assert_json "every edge endpoint is a species" "$DPACK" \
     '. as $p | [.edges | to_entries[] | .key, .value[].to] | unique | map(select($p.species[.] == null)) | length' "0"
-assert_json "every species has a sprite_url" "$DPACK" \
-    '[.species[] | select(.sprite_url | startswith("https://wikimon.net/Special:FilePath/") | not)] | length' "0"
+assert_json "every species has a digi-api sprite_url" "$DPACK" \
+    '[.species[] | select(.sprite_url | startswith("https://digi-api.com/images/digimon/") | not)] | length' "0"
+assert_json "sprites are png" "$DPACK" '.sprites.format' "png"
+assert_json "keying is floodfill" "$DPACK" '.sprites.keying' "floodfill"
+assert_json "moves by species" "$DPACK" '.moves_by' "species"
+assert_json "all 70 ko names present" "$DPACK" '[.species[] | select(.names.ko == null)] | length' "0"
+assert_json "all 70 attacks en" "$DPACK" '[.species[] | select(.attack.en == null)] | length' "0"
+assert_json "numemon official ko" "$DPACK" '.species.numemon.names.ko' "워매몬"
+assert_json "agumon attack ko" "$DPACK" '.species.agumon.attack.ko' "베이비 플레임"
+assert_json "mgv ko display trimmed" "$DPACK" '.species.metalgreymon_virus.names.ko' "메탈그레이몬"
 assert_json "reject edges exist" "$DPACK" '[.edges[][] | select(.quality == "reject")] | length >= 10' "true"
 assert_json "en name override" "$DPACK" '.species.metalgreymon_virus.names.en' "METALGREYMON"
 assert_json "ko name kept" "$DPACK" '.species.botamon.names.ko' "깜몬"
-assert_json "missing ko is null" "$DPACK" '.species.greymon.names.ko' "null"
+assert_json "greymon ko now official" "$DPACK" '.species.greymon.names.ko' "그레이몬"
 assert_json "5 move stages" "$DPACK" '.moves | length' "5"
 # guard against future curation regressions: a non-ultimate species with no
 # outgoing edges would silently stop that day's evolution forever
@@ -65,10 +73,20 @@ set_mistakes 9; "$CORE" resolve
 assert_eq "still meramon after mistakes" "meramon" "$(R .species)"
 teardown
 
-setup  # localized digimon: ko name + stage-keyed localized move
+setup  # localized digimon: ko name + real signature attack
 digimon_partner; echo ko > "$CACHE/lang"; set_tasks 0; "$CORE" resolve
 assert_eq "d ko name" "깜몬" "$(R .name)"
-assert_eq "d ko move" "거품 공격" "$(R '.moves[0]')"
+assert_eq "d ko attack" "산성 거품" "$(R '.moves[0]')"
+set_tasks 5; "$CORE" resolve
+assert_eq "agumon ko attack" "베이비 플레임" "$(R '.moves[0]')"
+teardown
+
+setup  # language purity: unverified ko attack falls back to 필살기, never english
+printf '{"franchise":"digimon","line":["botamon","koromon","agumon","greymon"],"type":"vpet","date":"2026-07-13","seed":0}' > "$CACHE/partner"
+echo ko > "$CACHE/lang"; set_tasks 10; "$CORE" resolve
+assert_eq "greymon ko fallback" "필살기" "$(R '.moves[0]')"
+echo en > "$CACHE/lang"; "$CORE" resolve
+assert_eq "greymon en attack" "Mega Flame" "$(R '.moves[0]')"
 teardown
 
 setup  # franchise switching

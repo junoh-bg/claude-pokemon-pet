@@ -6,212 +6,1366 @@
       "quality=reject marks canonical neglect/joke evolutions (fallback 'when you do not fulfill the requirements' lines)",
       "metalgreymon_virus slug maps to Metalgreymon_vpet_dm.gif (no variant suffix in the file name)",
       "korean names found for 44/70; missing list in korean_missing",
-      "sprites are 36x36 GIF89a, single frame, white background (no alpha) — key out white at render/install"
+      "sprites are 36x36 GIF89a, single frame, white background (no alpha) — key out white at render/install",
+      "2026-07-14: colorful art (digi-api, fetch-verified), complete ko names (digimon.net official), per-species attacks — see sprite-scout curation"
     ]
   },
   "versions": [
     {
       "version": 1,
       "stages": [
-        {"stage": "baby1", "members": ["botamon"]},
-        {"stage": "baby2", "members": ["koromon"]},
-        {"stage": "rookie", "members": ["agumon", "betamon"]},
-        {"stage": "champion", "members": ["greymon", "tyranomon", "devimon", "meramon", "airdramon", "seadramon", "numemon"]},
-        {"stage": "ultimate", "members": ["metalgreymon_virus", "mamemon", "monzaemon"]}
+        {
+          "stage": "baby1",
+          "members": [
+            "botamon"
+          ]
+        },
+        {
+          "stage": "baby2",
+          "members": [
+            "koromon"
+          ]
+        },
+        {
+          "stage": "rookie",
+          "members": [
+            "agumon",
+            "betamon"
+          ]
+        },
+        {
+          "stage": "champion",
+          "members": [
+            "greymon",
+            "tyranomon",
+            "devimon",
+            "meramon",
+            "airdramon",
+            "seadramon",
+            "numemon"
+          ]
+        },
+        {
+          "stage": "ultimate",
+          "members": [
+            "metalgreymon_virus",
+            "mamemon",
+            "monzaemon"
+          ]
+        }
       ],
       "edges": [
-        {"from": "botamon", "to": "koromon", "quality": "normal", "condition": "Wait about 60 minutes."},
-        {"from": "koromon", "to": "agumon", "quality": "normal", "condition": "0-3 Calls."},
-        {"from": "koromon", "to": "betamon", "quality": "normal", "condition": "4+ Calls."},
-        {"from": "agumon", "to": "greymon", "quality": "normal", "condition": "0-3 Calls, Train 32+."},
-        {"from": "agumon", "to": "tyranomon", "quality": "normal", "condition": "4+ calls, Train 5-15, Overfeed 3+, 0-4 Sleep Disturbances."},
-        {"from": "agumon", "to": "devimon", "quality": "normal", "condition": "0-3 Calls, Train 0-31."},
-        {"from": "betamon", "to": "devimon", "quality": "normal", "condition": "0-3 Calls, Train 48+."},
-        {"from": "agumon", "to": "meramon", "quality": "normal", "condition": "4+ Calls, Train 16+, Overfeed 3+, 0-6 Sleep Disturbances."},
-        {"from": "betamon", "to": "meramon", "quality": "normal", "condition": "0-3 Calls, Train 0-47."},
-        {"from": "betamon", "to": "airdramon", "quality": "normal", "condition": "4+ Calls, Train 8-31, Overfeed 0-3, 9+ Sleep Disturbances."},
-        {"from": "betamon", "to": "seadramon", "quality": "normal", "condition": "4+ Calls, Train 8-31, Overfeed 4+, 0-8 Sleep Disturbance."},
-        {"from": "agumon", "to": "numemon", "quality": "reject", "condition": "When you do not fulfill the requirements of other Digimon."},
-        {"from": "betamon", "to": "numemon", "quality": "reject", "condition": "When you do not fulfill the requirements of other Digimon."},
-        {"from": "greymon", "to": "metalgreymon_virus", "quality": "normal", "condition": "Fight 15+ battles with a victory ratio 80% or more."},
-        {"from": "devimon", "to": "metalgreymon_virus", "quality": "normal", "condition": "Fight 15+ battles with a victory ratio 80% or more."},
-        {"from": "airdramon", "to": "metalgreymon_virus", "quality": "normal", "condition": "Fight 15+ battles with a victory ratio 80% or more."},
-        {"from": "tyranomon", "to": "mamemon", "quality": "normal", "condition": "Fight 15+ battles with a victory ratio 80% or more."},
-        {"from": "meramon", "to": "mamemon", "quality": "normal", "condition": "Fight 15+ battles with a victory ratio 80% or more."},
-        {"from": "seadramon", "to": "mamemon", "quality": "normal", "condition": "Fight 15+ battles with a victory ratio 80% or more."},
-        {"from": "numemon", "to": "monzaemon", "quality": "reject", "condition": "Fight 15+ battles with a victory ratio 80% or more."}
+        {
+          "from": "botamon",
+          "to": "koromon",
+          "quality": "normal",
+          "condition": "Wait about 60 minutes."
+        },
+        {
+          "from": "koromon",
+          "to": "agumon",
+          "quality": "normal",
+          "condition": "0-3 Calls."
+        },
+        {
+          "from": "koromon",
+          "to": "betamon",
+          "quality": "normal",
+          "condition": "4+ Calls."
+        },
+        {
+          "from": "agumon",
+          "to": "greymon",
+          "quality": "normal",
+          "condition": "0-3 Calls, Train 32+."
+        },
+        {
+          "from": "agumon",
+          "to": "tyranomon",
+          "quality": "normal",
+          "condition": "4+ calls, Train 5-15, Overfeed 3+, 0-4 Sleep Disturbances."
+        },
+        {
+          "from": "agumon",
+          "to": "devimon",
+          "quality": "normal",
+          "condition": "0-3 Calls, Train 0-31."
+        },
+        {
+          "from": "betamon",
+          "to": "devimon",
+          "quality": "normal",
+          "condition": "0-3 Calls, Train 48+."
+        },
+        {
+          "from": "agumon",
+          "to": "meramon",
+          "quality": "normal",
+          "condition": "4+ Calls, Train 16+, Overfeed 3+, 0-6 Sleep Disturbances."
+        },
+        {
+          "from": "betamon",
+          "to": "meramon",
+          "quality": "normal",
+          "condition": "0-3 Calls, Train 0-47."
+        },
+        {
+          "from": "betamon",
+          "to": "airdramon",
+          "quality": "normal",
+          "condition": "4+ Calls, Train 8-31, Overfeed 0-3, 9+ Sleep Disturbances."
+        },
+        {
+          "from": "betamon",
+          "to": "seadramon",
+          "quality": "normal",
+          "condition": "4+ Calls, Train 8-31, Overfeed 4+, 0-8 Sleep Disturbance."
+        },
+        {
+          "from": "agumon",
+          "to": "numemon",
+          "quality": "reject",
+          "condition": "When you do not fulfill the requirements of other Digimon."
+        },
+        {
+          "from": "betamon",
+          "to": "numemon",
+          "quality": "reject",
+          "condition": "When you do not fulfill the requirements of other Digimon."
+        },
+        {
+          "from": "greymon",
+          "to": "metalgreymon_virus",
+          "quality": "normal",
+          "condition": "Fight 15+ battles with a victory ratio 80% or more."
+        },
+        {
+          "from": "devimon",
+          "to": "metalgreymon_virus",
+          "quality": "normal",
+          "condition": "Fight 15+ battles with a victory ratio 80% or more."
+        },
+        {
+          "from": "airdramon",
+          "to": "metalgreymon_virus",
+          "quality": "normal",
+          "condition": "Fight 15+ battles with a victory ratio 80% or more."
+        },
+        {
+          "from": "tyranomon",
+          "to": "mamemon",
+          "quality": "normal",
+          "condition": "Fight 15+ battles with a victory ratio 80% or more."
+        },
+        {
+          "from": "meramon",
+          "to": "mamemon",
+          "quality": "normal",
+          "condition": "Fight 15+ battles with a victory ratio 80% or more."
+        },
+        {
+          "from": "seadramon",
+          "to": "mamemon",
+          "quality": "normal",
+          "condition": "Fight 15+ battles with a victory ratio 80% or more."
+        },
+        {
+          "from": "numemon",
+          "to": "monzaemon",
+          "quality": "reject",
+          "condition": "Fight 15+ battles with a victory ratio 80% or more."
+        }
       ]
     },
     {
       "version": 2,
       "stages": [
-        {"stage": "baby1", "members": ["punimon"]},
-        {"stage": "baby2", "members": ["tunomon"]},
-        {"stage": "rookie", "members": ["gabumon", "elecmon"]},
-        {"stage": "champion", "members": ["kabuterimon", "garurumon", "angemon", "yukidarumon", "birdramon", "whamon", "vegimon"]},
-        {"stage": "ultimate", "members": ["skullgreymon", "metalmamemon", "vademon"]}
+        {
+          "stage": "baby1",
+          "members": [
+            "punimon"
+          ]
+        },
+        {
+          "stage": "baby2",
+          "members": [
+            "tunomon"
+          ]
+        },
+        {
+          "stage": "rookie",
+          "members": [
+            "gabumon",
+            "elecmon"
+          ]
+        },
+        {
+          "stage": "champion",
+          "members": [
+            "kabuterimon",
+            "garurumon",
+            "angemon",
+            "yukidarumon",
+            "birdramon",
+            "whamon",
+            "vegimon"
+          ]
+        },
+        {
+          "stage": "ultimate",
+          "members": [
+            "skullgreymon",
+            "metalmamemon",
+            "vademon"
+          ]
+        }
       ],
       "edges": [
-        {"from": "punimon", "to": "tunomon", "quality": "normal", "condition": "Wait about 60 minutes."},
-        {"from": "tunomon", "to": "gabumon", "quality": "normal", "condition": "0-3 Calls."},
-        {"from": "tunomon", "to": "elecmon", "quality": "normal", "condition": "4+ Calls."},
-        {"from": "gabumon", "to": "kabuterimon", "quality": "normal", "condition": "0-3 Calls, Train 48+."},
-        {"from": "gabumon", "to": "garurumon", "quality": "normal", "condition": "4+ Calls, Train 5-31, Overfeed 3+, 0-4 Sleep Disturbances."},
-        {"from": "gabumon", "to": "angemon", "quality": "normal", "condition": "0-3 Calls, Train 0-47."},
-        {"from": "elecmon", "to": "angemon", "quality": "normal", "condition": "0-3 Calls, Train 48+."},
-        {"from": "gabumon", "to": "yukidarumon", "quality": "normal", "condition": "4+ Calls, Train 32+, Overfeed 3+, 0-6 Sleep Disturbances."},
-        {"from": "elecmon", "to": "yukidarumon", "quality": "normal", "condition": "4+ Calls, Train 8-15, Overfeed 0-5, 5+ Sleep Disturbances."},
-        {"from": "elecmon", "to": "birdramon", "quality": "normal", "condition": "0-3 Calls, Train 0-47."},
-        {"from": "elecmon", "to": "whamon", "quality": "normal", "condition": "4+ Calls, Train 16+, Overfeed 6+, 0-4 Sleep Disturbances."},
-        {"from": "gabumon", "to": "vegimon", "quality": "reject", "condition": "When you do not fulfill the requirements of other Digimon."},
-        {"from": "elecmon", "to": "vegimon", "quality": "reject", "condition": "When you do not fulfill the requirements of other Digimon."},
-        {"from": "kabuterimon", "to": "skullgreymon", "quality": "normal", "condition": "Fight 15+ battles with a victory ratio 80% or more."},
-        {"from": "angemon", "to": "skullgreymon", "quality": "normal", "condition": "Fight 15+ battles with a victory ratio 80% or more."},
-        {"from": "birdramon", "to": "skullgreymon", "quality": "normal", "condition": "Fight 15+ battles with a victory ratio 80% or more."},
-        {"from": "garurumon", "to": "metalmamemon", "quality": "normal", "condition": "Fight 15+ battles with a victory ratio 80% or more."},
-        {"from": "yukidarumon", "to": "metalmamemon", "quality": "normal", "condition": "Fight 15+ battles with a victory ratio 80% or more."},
-        {"from": "whamon", "to": "metalmamemon", "quality": "normal", "condition": "Fight 15+ battles with a victory ratio 80% or more."},
-        {"from": "vegimon", "to": "vademon", "quality": "reject", "condition": "Fight 15+ battles with a victory ratio 80% or more."}
+        {
+          "from": "punimon",
+          "to": "tunomon",
+          "quality": "normal",
+          "condition": "Wait about 60 minutes."
+        },
+        {
+          "from": "tunomon",
+          "to": "gabumon",
+          "quality": "normal",
+          "condition": "0-3 Calls."
+        },
+        {
+          "from": "tunomon",
+          "to": "elecmon",
+          "quality": "normal",
+          "condition": "4+ Calls."
+        },
+        {
+          "from": "gabumon",
+          "to": "kabuterimon",
+          "quality": "normal",
+          "condition": "0-3 Calls, Train 48+."
+        },
+        {
+          "from": "gabumon",
+          "to": "garurumon",
+          "quality": "normal",
+          "condition": "4+ Calls, Train 5-31, Overfeed 3+, 0-4 Sleep Disturbances."
+        },
+        {
+          "from": "gabumon",
+          "to": "angemon",
+          "quality": "normal",
+          "condition": "0-3 Calls, Train 0-47."
+        },
+        {
+          "from": "elecmon",
+          "to": "angemon",
+          "quality": "normal",
+          "condition": "0-3 Calls, Train 48+."
+        },
+        {
+          "from": "gabumon",
+          "to": "yukidarumon",
+          "quality": "normal",
+          "condition": "4+ Calls, Train 32+, Overfeed 3+, 0-6 Sleep Disturbances."
+        },
+        {
+          "from": "elecmon",
+          "to": "yukidarumon",
+          "quality": "normal",
+          "condition": "4+ Calls, Train 8-15, Overfeed 0-5, 5+ Sleep Disturbances."
+        },
+        {
+          "from": "elecmon",
+          "to": "birdramon",
+          "quality": "normal",
+          "condition": "0-3 Calls, Train 0-47."
+        },
+        {
+          "from": "elecmon",
+          "to": "whamon",
+          "quality": "normal",
+          "condition": "4+ Calls, Train 16+, Overfeed 6+, 0-4 Sleep Disturbances."
+        },
+        {
+          "from": "gabumon",
+          "to": "vegimon",
+          "quality": "reject",
+          "condition": "When you do not fulfill the requirements of other Digimon."
+        },
+        {
+          "from": "elecmon",
+          "to": "vegimon",
+          "quality": "reject",
+          "condition": "When you do not fulfill the requirements of other Digimon."
+        },
+        {
+          "from": "kabuterimon",
+          "to": "skullgreymon",
+          "quality": "normal",
+          "condition": "Fight 15+ battles with a victory ratio 80% or more."
+        },
+        {
+          "from": "angemon",
+          "to": "skullgreymon",
+          "quality": "normal",
+          "condition": "Fight 15+ battles with a victory ratio 80% or more."
+        },
+        {
+          "from": "birdramon",
+          "to": "skullgreymon",
+          "quality": "normal",
+          "condition": "Fight 15+ battles with a victory ratio 80% or more."
+        },
+        {
+          "from": "garurumon",
+          "to": "metalmamemon",
+          "quality": "normal",
+          "condition": "Fight 15+ battles with a victory ratio 80% or more."
+        },
+        {
+          "from": "yukidarumon",
+          "to": "metalmamemon",
+          "quality": "normal",
+          "condition": "Fight 15+ battles with a victory ratio 80% or more."
+        },
+        {
+          "from": "whamon",
+          "to": "metalmamemon",
+          "quality": "normal",
+          "condition": "Fight 15+ battles with a victory ratio 80% or more."
+        },
+        {
+          "from": "vegimon",
+          "to": "vademon",
+          "quality": "reject",
+          "condition": "Fight 15+ battles with a victory ratio 80% or more."
+        }
       ]
     },
     {
       "version": 3,
       "stages": [
-        {"stage": "baby1", "members": ["poyomon"]},
-        {"stage": "baby2", "members": ["tokomon"]},
-        {"stage": "rookie", "members": ["patamon", "kunemon"]},
-        {"stage": "champion", "members": ["unimon", "centalmon", "orgemon", "bakemon", "shellmon", "drimogemon", "scumon"]},
-        {"stage": "ultimate", "members": ["andromon", "giromon", "etemon"]}
+        {
+          "stage": "baby1",
+          "members": [
+            "poyomon"
+          ]
+        },
+        {
+          "stage": "baby2",
+          "members": [
+            "tokomon"
+          ]
+        },
+        {
+          "stage": "rookie",
+          "members": [
+            "patamon",
+            "kunemon"
+          ]
+        },
+        {
+          "stage": "champion",
+          "members": [
+            "unimon",
+            "centalmon",
+            "orgemon",
+            "bakemon",
+            "shellmon",
+            "drimogemon",
+            "scumon"
+          ]
+        },
+        {
+          "stage": "ultimate",
+          "members": [
+            "andromon",
+            "giromon",
+            "etemon"
+          ]
+        }
       ],
       "edges": [
-        {"from": "poyomon", "to": "tokomon", "quality": "normal", "condition": "Wait about 60 minutes."},
-        {"from": "tokomon", "to": "patamon", "quality": "normal", "condition": "0-3 Calls."},
-        {"from": "tokomon", "to": "kunemon", "quality": "normal", "condition": "4+ Calls."},
-        {"from": "patamon", "to": "unimon", "quality": "normal", "condition": "0-3 Calls, Train 48+."},
-        {"from": "patamon", "to": "centalmon", "quality": "normal", "condition": "4+ Calls, Train 5-31, Overfeed 3+, 0-4 Sleep Disturbances."},
-        {"from": "patamon", "to": "orgemon", "quality": "normal", "condition": "0-3 Calls, Train 0-47."},
-        {"from": "kunemon", "to": "orgemon", "quality": "normal", "condition": "0-3 Calls, Train 48+."},
-        {"from": "patamon", "to": "bakemon", "quality": "normal", "condition": "4+ Calls, Train 32+, Overfeed 3+, 0-6 Sleep Disturbances."},
-        {"from": "kunemon", "to": "bakemon", "quality": "normal", "condition": "4+ Calls, Train 8-15, Overfeed 0-5, 5+ Sleep Disturbances."},
-        {"from": "kunemon", "to": "shellmon", "quality": "normal", "condition": "0-3 Calls, Train 0-47."},
-        {"from": "kunemon", "to": "drimogemon", "quality": "normal", "condition": "4+ Calls, Train 16+, Overfeed 6+, 0-4 Sleep Disturbances."},
-        {"from": "patamon", "to": "scumon", "quality": "reject", "condition": "When you do not fulfill the requirements of other Digimon."},
-        {"from": "kunemon", "to": "scumon", "quality": "reject", "condition": "When you do not fulfill the requirements of other Digimon."},
-        {"from": "unimon", "to": "andromon", "quality": "normal", "condition": "Fight 15+ battles with a victory ratio 80% or more."},
-        {"from": "orgemon", "to": "andromon", "quality": "normal", "condition": "Fight 15+ battles with a victory ratio 80% or more."},
-        {"from": "shellmon", "to": "andromon", "quality": "normal", "condition": "Fight 15+ battles with a victory ratio 80% or more."},
-        {"from": "centalmon", "to": "giromon", "quality": "normal", "condition": "Fight 15+ battles with a victory ratio 80% or more."},
-        {"from": "bakemon", "to": "giromon", "quality": "normal", "condition": "Fight 15+ battles with a victory ratio 80% or more."},
-        {"from": "drimogemon", "to": "giromon", "quality": "normal", "condition": "Fight 15+ battles with a victory ratio 80% or more."},
-        {"from": "scumon", "to": "etemon", "quality": "reject", "condition": "Fight 15+ battles with a victory ratio 80% or more."}
+        {
+          "from": "poyomon",
+          "to": "tokomon",
+          "quality": "normal",
+          "condition": "Wait about 60 minutes."
+        },
+        {
+          "from": "tokomon",
+          "to": "patamon",
+          "quality": "normal",
+          "condition": "0-3 Calls."
+        },
+        {
+          "from": "tokomon",
+          "to": "kunemon",
+          "quality": "normal",
+          "condition": "4+ Calls."
+        },
+        {
+          "from": "patamon",
+          "to": "unimon",
+          "quality": "normal",
+          "condition": "0-3 Calls, Train 48+."
+        },
+        {
+          "from": "patamon",
+          "to": "centalmon",
+          "quality": "normal",
+          "condition": "4+ Calls, Train 5-31, Overfeed 3+, 0-4 Sleep Disturbances."
+        },
+        {
+          "from": "patamon",
+          "to": "orgemon",
+          "quality": "normal",
+          "condition": "0-3 Calls, Train 0-47."
+        },
+        {
+          "from": "kunemon",
+          "to": "orgemon",
+          "quality": "normal",
+          "condition": "0-3 Calls, Train 48+."
+        },
+        {
+          "from": "patamon",
+          "to": "bakemon",
+          "quality": "normal",
+          "condition": "4+ Calls, Train 32+, Overfeed 3+, 0-6 Sleep Disturbances."
+        },
+        {
+          "from": "kunemon",
+          "to": "bakemon",
+          "quality": "normal",
+          "condition": "4+ Calls, Train 8-15, Overfeed 0-5, 5+ Sleep Disturbances."
+        },
+        {
+          "from": "kunemon",
+          "to": "shellmon",
+          "quality": "normal",
+          "condition": "0-3 Calls, Train 0-47."
+        },
+        {
+          "from": "kunemon",
+          "to": "drimogemon",
+          "quality": "normal",
+          "condition": "4+ Calls, Train 16+, Overfeed 6+, 0-4 Sleep Disturbances."
+        },
+        {
+          "from": "patamon",
+          "to": "scumon",
+          "quality": "reject",
+          "condition": "When you do not fulfill the requirements of other Digimon."
+        },
+        {
+          "from": "kunemon",
+          "to": "scumon",
+          "quality": "reject",
+          "condition": "When you do not fulfill the requirements of other Digimon."
+        },
+        {
+          "from": "unimon",
+          "to": "andromon",
+          "quality": "normal",
+          "condition": "Fight 15+ battles with a victory ratio 80% or more."
+        },
+        {
+          "from": "orgemon",
+          "to": "andromon",
+          "quality": "normal",
+          "condition": "Fight 15+ battles with a victory ratio 80% or more."
+        },
+        {
+          "from": "shellmon",
+          "to": "andromon",
+          "quality": "normal",
+          "condition": "Fight 15+ battles with a victory ratio 80% or more."
+        },
+        {
+          "from": "centalmon",
+          "to": "giromon",
+          "quality": "normal",
+          "condition": "Fight 15+ battles with a victory ratio 80% or more."
+        },
+        {
+          "from": "bakemon",
+          "to": "giromon",
+          "quality": "normal",
+          "condition": "Fight 15+ battles with a victory ratio 80% or more."
+        },
+        {
+          "from": "drimogemon",
+          "to": "giromon",
+          "quality": "normal",
+          "condition": "Fight 15+ battles with a victory ratio 80% or more."
+        },
+        {
+          "from": "scumon",
+          "to": "etemon",
+          "quality": "reject",
+          "condition": "Fight 15+ battles with a victory ratio 80% or more."
+        }
       ]
     },
     {
       "version": 4,
       "stages": [
-        {"stage": "baby1", "members": ["yuramon"]},
-        {"stage": "baby2", "members": ["tanemon"]},
-        {"stage": "rookie", "members": ["piyomon", "palmon"]},
-        {"stage": "champion", "members": ["monochromon", "cockatrimon", "leomon", "kuwagamon", "coelamon", "mojyamon", "nanimon"]},
-        {"stage": "ultimate", "members": ["megadramon", "piccolomon", "digitamamon"]}
+        {
+          "stage": "baby1",
+          "members": [
+            "yuramon"
+          ]
+        },
+        {
+          "stage": "baby2",
+          "members": [
+            "tanemon"
+          ]
+        },
+        {
+          "stage": "rookie",
+          "members": [
+            "piyomon",
+            "palmon"
+          ]
+        },
+        {
+          "stage": "champion",
+          "members": [
+            "monochromon",
+            "cockatrimon",
+            "leomon",
+            "kuwagamon",
+            "coelamon",
+            "mojyamon",
+            "nanimon"
+          ]
+        },
+        {
+          "stage": "ultimate",
+          "members": [
+            "megadramon",
+            "piccolomon",
+            "digitamamon"
+          ]
+        }
       ],
       "edges": [
-        {"from": "yuramon", "to": "tanemon", "quality": "normal", "condition": "Wait about 60 minutes."},
-        {"from": "tanemon", "to": "piyomon", "quality": "normal", "condition": "0-3 Calls."},
-        {"from": "tanemon", "to": "palmon", "quality": "normal", "condition": "4+ Calls."},
-        {"from": "piyomon", "to": "monochromon", "quality": "normal", "condition": "0-3 Calls, Train 48+."},
-        {"from": "piyomon", "to": "cockatrimon", "quality": "normal", "condition": "4+ Calls, Train 5-31, Overfeed 3+, 0-4 Sleep Disturbances."},
-        {"from": "piyomon", "to": "leomon", "quality": "normal", "condition": "0-3 Calls, Train 0-47."},
-        {"from": "palmon", "to": "leomon", "quality": "normal", "condition": "0-3 Calls, Train 48+."},
-        {"from": "piyomon", "to": "kuwagamon", "quality": "normal", "condition": "4+ Calls, Train 32+, Overfeed 3+, 0-6 Sleep Disturbances."},
-        {"from": "palmon", "to": "kuwagamon", "quality": "normal", "condition": "4+ Calls, Train 8-15, Overfeed 0-5, 5+ Sleep Disturbances."},
-        {"from": "palmon", "to": "coelamon", "quality": "normal", "condition": "0-3 Calls, Train 0-47."},
-        {"from": "palmon", "to": "mojyamon", "quality": "normal", "condition": "4+ Calls, Train 16+, Overfeed 6+, 0-4 Sleep Disturbances."},
-        {"from": "piyomon", "to": "nanimon", "quality": "reject", "condition": "When you do not fulfill the requirements of other Digimon."},
-        {"from": "palmon", "to": "nanimon", "quality": "reject", "condition": "When you do not fulfill the requirements of other Digimon."},
-        {"from": "monochromon", "to": "megadramon", "quality": "normal", "condition": "Fight 15+ battles with a victory ratio 80% or more."},
-        {"from": "leomon", "to": "megadramon", "quality": "normal", "condition": "Fight 15+ battles with a victory ratio 80% or more."},
-        {"from": "coelamon", "to": "megadramon", "quality": "normal", "condition": "Fight 15+ battles with a victory ratio 80% or more."},
-        {"from": "cockatrimon", "to": "piccolomon", "quality": "normal", "condition": "Fight 15+ battles with a victory ratio 80% or more."},
-        {"from": "kuwagamon", "to": "piccolomon", "quality": "normal", "condition": "Fight 15+ battles with a victory ratio 80% or more."},
-        {"from": "mojyamon", "to": "piccolomon", "quality": "normal", "condition": "Fight 15+ battles with a victory ratio 80% or more."},
-        {"from": "nanimon", "to": "digitamamon", "quality": "reject", "condition": "Fight 15+ battles with a victory ratio 80% or more."}
+        {
+          "from": "yuramon",
+          "to": "tanemon",
+          "quality": "normal",
+          "condition": "Wait about 60 minutes."
+        },
+        {
+          "from": "tanemon",
+          "to": "piyomon",
+          "quality": "normal",
+          "condition": "0-3 Calls."
+        },
+        {
+          "from": "tanemon",
+          "to": "palmon",
+          "quality": "normal",
+          "condition": "4+ Calls."
+        },
+        {
+          "from": "piyomon",
+          "to": "monochromon",
+          "quality": "normal",
+          "condition": "0-3 Calls, Train 48+."
+        },
+        {
+          "from": "piyomon",
+          "to": "cockatrimon",
+          "quality": "normal",
+          "condition": "4+ Calls, Train 5-31, Overfeed 3+, 0-4 Sleep Disturbances."
+        },
+        {
+          "from": "piyomon",
+          "to": "leomon",
+          "quality": "normal",
+          "condition": "0-3 Calls, Train 0-47."
+        },
+        {
+          "from": "palmon",
+          "to": "leomon",
+          "quality": "normal",
+          "condition": "0-3 Calls, Train 48+."
+        },
+        {
+          "from": "piyomon",
+          "to": "kuwagamon",
+          "quality": "normal",
+          "condition": "4+ Calls, Train 32+, Overfeed 3+, 0-6 Sleep Disturbances."
+        },
+        {
+          "from": "palmon",
+          "to": "kuwagamon",
+          "quality": "normal",
+          "condition": "4+ Calls, Train 8-15, Overfeed 0-5, 5+ Sleep Disturbances."
+        },
+        {
+          "from": "palmon",
+          "to": "coelamon",
+          "quality": "normal",
+          "condition": "0-3 Calls, Train 0-47."
+        },
+        {
+          "from": "palmon",
+          "to": "mojyamon",
+          "quality": "normal",
+          "condition": "4+ Calls, Train 16+, Overfeed 6+, 0-4 Sleep Disturbances."
+        },
+        {
+          "from": "piyomon",
+          "to": "nanimon",
+          "quality": "reject",
+          "condition": "When you do not fulfill the requirements of other Digimon."
+        },
+        {
+          "from": "palmon",
+          "to": "nanimon",
+          "quality": "reject",
+          "condition": "When you do not fulfill the requirements of other Digimon."
+        },
+        {
+          "from": "monochromon",
+          "to": "megadramon",
+          "quality": "normal",
+          "condition": "Fight 15+ battles with a victory ratio 80% or more."
+        },
+        {
+          "from": "leomon",
+          "to": "megadramon",
+          "quality": "normal",
+          "condition": "Fight 15+ battles with a victory ratio 80% or more."
+        },
+        {
+          "from": "coelamon",
+          "to": "megadramon",
+          "quality": "normal",
+          "condition": "Fight 15+ battles with a victory ratio 80% or more."
+        },
+        {
+          "from": "cockatrimon",
+          "to": "piccolomon",
+          "quality": "normal",
+          "condition": "Fight 15+ battles with a victory ratio 80% or more."
+        },
+        {
+          "from": "kuwagamon",
+          "to": "piccolomon",
+          "quality": "normal",
+          "condition": "Fight 15+ battles with a victory ratio 80% or more."
+        },
+        {
+          "from": "mojyamon",
+          "to": "piccolomon",
+          "quality": "normal",
+          "condition": "Fight 15+ battles with a victory ratio 80% or more."
+        },
+        {
+          "from": "nanimon",
+          "to": "digitamamon",
+          "quality": "reject",
+          "condition": "Fight 15+ battles with a victory ratio 80% or more."
+        }
       ]
     },
     {
       "version": 5,
       "stages": [
-        {"stage": "baby1", "members": ["zurumon"]},
-        {"stage": "baby2", "members": ["pagumon"]},
-        {"stage": "rookie", "members": ["gazimon", "gizamon"]},
-        {"stage": "champion", "members": ["darktyranomon", "cyclomon", "devidramon", "tuskmon", "flymon", "deltamon", "raremon"]},
-        {"stage": "ultimate", "members": ["metaltyranomon", "nanomon", "extyranomon"]}
+        {
+          "stage": "baby1",
+          "members": [
+            "zurumon"
+          ]
+        },
+        {
+          "stage": "baby2",
+          "members": [
+            "pagumon"
+          ]
+        },
+        {
+          "stage": "rookie",
+          "members": [
+            "gazimon",
+            "gizamon"
+          ]
+        },
+        {
+          "stage": "champion",
+          "members": [
+            "darktyranomon",
+            "cyclomon",
+            "devidramon",
+            "tuskmon",
+            "flymon",
+            "deltamon",
+            "raremon"
+          ]
+        },
+        {
+          "stage": "ultimate",
+          "members": [
+            "metaltyranomon",
+            "nanomon",
+            "extyranomon"
+          ]
+        }
       ],
       "edges": [
-        {"from": "zurumon", "to": "pagumon", "quality": "normal", "condition": "Wait about 60 minutes."},
-        {"from": "pagumon", "to": "gazimon", "quality": "normal", "condition": "0-3 Calls."},
-        {"from": "pagumon", "to": "gizamon", "quality": "normal", "condition": "4+ Calls."},
-        {"from": "gazimon", "to": "darktyranomon", "quality": "normal", "condition": "0-3 Calls, Train 48+."},
-        {"from": "gazimon", "to": "cyclomon", "quality": "normal", "condition": "4+ Calls, Train 5-31, Overfeed 3+, 0-4 Sleep Disturbances."},
-        {"from": "gazimon", "to": "devidramon", "quality": "normal", "condition": "0-3 Calls, Train 0-47."},
-        {"from": "gizamon", "to": "devidramon", "quality": "normal", "condition": "0-3 Calls, Train 48+."},
-        {"from": "gazimon", "to": "tuskmon", "quality": "normal", "condition": "4+ Calls, Train 32+, Overfeed 3+, 0-6 Sleep Disturbances."},
-        {"from": "gizamon", "to": "tuskmon", "quality": "normal", "condition": "4+ Calls, Train 8-15, Overfeed 0-5, 5+ Sleep Disturbances."},
-        {"from": "gizamon", "to": "flymon", "quality": "normal", "condition": "0-3 Calls, Train 0-47."},
-        {"from": "gizamon", "to": "deltamon", "quality": "normal", "condition": "4+ Calls, Train 32+, Overfeed 6+, 0-4 Sleep Disturbances."},
-        {"from": "gazimon", "to": "raremon", "quality": "reject", "condition": "When you do not fulfill the requirements of other Digimon."},
-        {"from": "gizamon", "to": "raremon", "quality": "reject", "condition": "When you do not fulfill the requirements of other Digimon."},
-        {"from": "darktyranomon", "to": "metaltyranomon", "quality": "normal", "condition": "Fight 15+ battles with a victory ratio 80% or more."},
-        {"from": "devidramon", "to": "metaltyranomon", "quality": "normal", "condition": "Fight 15+ battles with a victory ratio 80% or more."},
-        {"from": "flymon", "to": "metaltyranomon", "quality": "normal", "condition": "Fight 15+ battles with a victory ratio 80% or more."},
-        {"from": "cyclomon", "to": "nanomon", "quality": "normal", "condition": "Fight 15+ battles with a victory ratio 80% or more."},
-        {"from": "tuskmon", "to": "nanomon", "quality": "normal", "condition": "Fight 15+ battles with a victory ratio 80% or more."},
-        {"from": "deltamon", "to": "nanomon", "quality": "normal", "condition": "Fight 15+ battles with a victory ratio 80% or more."},
-        {"from": "raremon", "to": "extyranomon", "quality": "reject", "condition": "Fight 15+ battles with a victory ratio 80% or more."}
+        {
+          "from": "zurumon",
+          "to": "pagumon",
+          "quality": "normal",
+          "condition": "Wait about 60 minutes."
+        },
+        {
+          "from": "pagumon",
+          "to": "gazimon",
+          "quality": "normal",
+          "condition": "0-3 Calls."
+        },
+        {
+          "from": "pagumon",
+          "to": "gizamon",
+          "quality": "normal",
+          "condition": "4+ Calls."
+        },
+        {
+          "from": "gazimon",
+          "to": "darktyranomon",
+          "quality": "normal",
+          "condition": "0-3 Calls, Train 48+."
+        },
+        {
+          "from": "gazimon",
+          "to": "cyclomon",
+          "quality": "normal",
+          "condition": "4+ Calls, Train 5-31, Overfeed 3+, 0-4 Sleep Disturbances."
+        },
+        {
+          "from": "gazimon",
+          "to": "devidramon",
+          "quality": "normal",
+          "condition": "0-3 Calls, Train 0-47."
+        },
+        {
+          "from": "gizamon",
+          "to": "devidramon",
+          "quality": "normal",
+          "condition": "0-3 Calls, Train 48+."
+        },
+        {
+          "from": "gazimon",
+          "to": "tuskmon",
+          "quality": "normal",
+          "condition": "4+ Calls, Train 32+, Overfeed 3+, 0-6 Sleep Disturbances."
+        },
+        {
+          "from": "gizamon",
+          "to": "tuskmon",
+          "quality": "normal",
+          "condition": "4+ Calls, Train 8-15, Overfeed 0-5, 5+ Sleep Disturbances."
+        },
+        {
+          "from": "gizamon",
+          "to": "flymon",
+          "quality": "normal",
+          "condition": "0-3 Calls, Train 0-47."
+        },
+        {
+          "from": "gizamon",
+          "to": "deltamon",
+          "quality": "normal",
+          "condition": "4+ Calls, Train 32+, Overfeed 6+, 0-4 Sleep Disturbances."
+        },
+        {
+          "from": "gazimon",
+          "to": "raremon",
+          "quality": "reject",
+          "condition": "When you do not fulfill the requirements of other Digimon."
+        },
+        {
+          "from": "gizamon",
+          "to": "raremon",
+          "quality": "reject",
+          "condition": "When you do not fulfill the requirements of other Digimon."
+        },
+        {
+          "from": "darktyranomon",
+          "to": "metaltyranomon",
+          "quality": "normal",
+          "condition": "Fight 15+ battles with a victory ratio 80% or more."
+        },
+        {
+          "from": "devidramon",
+          "to": "metaltyranomon",
+          "quality": "normal",
+          "condition": "Fight 15+ battles with a victory ratio 80% or more."
+        },
+        {
+          "from": "flymon",
+          "to": "metaltyranomon",
+          "quality": "normal",
+          "condition": "Fight 15+ battles with a victory ratio 80% or more."
+        },
+        {
+          "from": "cyclomon",
+          "to": "nanomon",
+          "quality": "normal",
+          "condition": "Fight 15+ battles with a victory ratio 80% or more."
+        },
+        {
+          "from": "tuskmon",
+          "to": "nanomon",
+          "quality": "normal",
+          "condition": "Fight 15+ battles with a victory ratio 80% or more."
+        },
+        {
+          "from": "deltamon",
+          "to": "nanomon",
+          "quality": "normal",
+          "condition": "Fight 15+ battles with a victory ratio 80% or more."
+        },
+        {
+          "from": "raremon",
+          "to": "extyranomon",
+          "quality": "reject",
+          "condition": "Fight 15+ battles with a victory ratio 80% or more."
+        }
       ]
     }
   ],
   "sprites": {
-    "agumon": "Agumon_vpet_dm.gif", "airdramon": "Airdramon_vpet_dm.gif", "andromon": "Andromon_vpet_dm.gif",
-    "angemon": "Angemon_vpet_dm.gif", "bakemon": "Bakemon_vpet_dm.gif", "betamon": "Betamon_vpet_dm.gif",
-    "birdramon": "Birdramon_vpet_dm.gif", "botamon": "Botamon_vpet_dm.gif", "centalmon": "Centalmon_vpet_dm.gif",
-    "cockatrimon": "Cockatrimon_vpet_dm.gif", "coelamon": "Coelamon_vpet_dm.gif", "cyclomon": "Cyclomon_vpet_dm.gif",
-    "darktyranomon": "Darktyranomon_vpet_dm.gif", "deltamon": "Deltamon_vpet_dm.gif", "devidramon": "Devidramon_vpet_dm.gif",
-    "devimon": "Devimon_vpet_dm.gif", "digitamamon": "Digitamamon_vpet_dm.gif", "drimogemon": "Drimogemon_vpet_dm.gif",
-    "elecmon": "Elecmon_vpet_dm.gif", "etemon": "Etemon_vpet_dm.gif", "extyranomon": "Ex-tyranomon_vpet_dm.gif",
-    "flymon": "Flymon_vpet_dm.gif", "gabumon": "Gabumon_vpet_dm.gif", "garurumon": "Garurumon_vpet_dm.gif",
-    "gazimon": "Gazimon_vpet_dm.gif", "giromon": "Giromon_vpet_dm.gif", "gizamon": "Gizamon_vpet_dm.gif",
-    "greymon": "Greymon_vpet_dm.gif", "kabuterimon": "Kabuterimon_vpet_dm.gif", "koromon": "Koromon_vpet_dm.gif",
-    "kunemon": "Kunemon_vpet_dm.gif", "kuwagamon": "Kuwagamon_vpet_dm.gif", "leomon": "Leomon_vpet_dm.gif",
-    "mamemon": "Mamemon_vpet_dm.gif", "megadramon": "Megadramon_vpet_dm.gif", "meramon": "Meramon_vpet_dm.gif",
-    "metalmamemon": "Metalmamemon_vpet_dm.gif", "metaltyranomon": "Metaltyranomon_vpet_dm.gif", "mojyamon": "Mojyamon_vpet_dm.gif",
-    "monochromon": "Monochromon_vpet_dm.gif", "monzaemon": "Monzaemon_vpet_dm.gif", "nanimon": "Nanimon_vpet_dm.gif",
-    "nanomon": "Nanomon_vpet_dm.gif", "numemon": "Numemon_vpet_dm.gif", "orgemon": "Orgemon_vpet_dm.gif",
-    "pagumon": "Pagumon_vpet_dm.gif", "palmon": "Palmon_vpet_dm.gif", "patamon": "Patamon_vpet_dm.gif",
-    "piccolomon": "Piccolomon_vpet_dm.gif", "piyomon": "Piyomon_vpet_dm.gif", "poyomon": "Poyomon_vpet_dm.gif",
-    "punimon": "Punimon_vpet_dm.gif", "raremon": "Raremon_vpet_dm.gif", "scumon": "Scumon_vpet_dm.gif",
-    "seadramon": "Seadramon_vpet_dm.gif", "shellmon": "Shellmon_vpet_dm.gif", "skullgreymon": "Skullgreymon_vpet_dm.gif",
-    "tanemon": "Tanemon_vpet_dm.gif", "tokomon": "Tokomon_vpet_dm.gif", "tunomon": "Tunomon_vpet_dm.gif",
-    "tuskmon": "Tuskmon_vpet_dm.gif", "tyranomon": "Tyranomon_vpet_dm.gif", "unimon": "Unimon_vpet_dm.gif",
-    "vademon": "Vademon_vpet_dm.gif", "vegimon": "Vegimon_vpet_dm.gif", "whamon": "Whamon_vpet_dm.gif",
-    "yukidarumon": "Yukidarumon_vpet_dm.gif", "yuramon": "Yuramon_vpet_dm.gif", "zurumon": "Zurumon_vpet_dm.gif",
+    "agumon": "Agumon_vpet_dm.gif",
+    "airdramon": "Airdramon_vpet_dm.gif",
+    "andromon": "Andromon_vpet_dm.gif",
+    "angemon": "Angemon_vpet_dm.gif",
+    "bakemon": "Bakemon_vpet_dm.gif",
+    "betamon": "Betamon_vpet_dm.gif",
+    "birdramon": "Birdramon_vpet_dm.gif",
+    "botamon": "Botamon_vpet_dm.gif",
+    "centalmon": "Centalmon_vpet_dm.gif",
+    "cockatrimon": "Cockatrimon_vpet_dm.gif",
+    "coelamon": "Coelamon_vpet_dm.gif",
+    "cyclomon": "Cyclomon_vpet_dm.gif",
+    "darktyranomon": "Darktyranomon_vpet_dm.gif",
+    "deltamon": "Deltamon_vpet_dm.gif",
+    "devidramon": "Devidramon_vpet_dm.gif",
+    "devimon": "Devimon_vpet_dm.gif",
+    "digitamamon": "Digitamamon_vpet_dm.gif",
+    "drimogemon": "Drimogemon_vpet_dm.gif",
+    "elecmon": "Elecmon_vpet_dm.gif",
+    "etemon": "Etemon_vpet_dm.gif",
+    "extyranomon": "Ex-tyranomon_vpet_dm.gif",
+    "flymon": "Flymon_vpet_dm.gif",
+    "gabumon": "Gabumon_vpet_dm.gif",
+    "garurumon": "Garurumon_vpet_dm.gif",
+    "gazimon": "Gazimon_vpet_dm.gif",
+    "giromon": "Giromon_vpet_dm.gif",
+    "gizamon": "Gizamon_vpet_dm.gif",
+    "greymon": "Greymon_vpet_dm.gif",
+    "kabuterimon": "Kabuterimon_vpet_dm.gif",
+    "koromon": "Koromon_vpet_dm.gif",
+    "kunemon": "Kunemon_vpet_dm.gif",
+    "kuwagamon": "Kuwagamon_vpet_dm.gif",
+    "leomon": "Leomon_vpet_dm.gif",
+    "mamemon": "Mamemon_vpet_dm.gif",
+    "megadramon": "Megadramon_vpet_dm.gif",
+    "meramon": "Meramon_vpet_dm.gif",
+    "metalmamemon": "Metalmamemon_vpet_dm.gif",
+    "metaltyranomon": "Metaltyranomon_vpet_dm.gif",
+    "mojyamon": "Mojyamon_vpet_dm.gif",
+    "monochromon": "Monochromon_vpet_dm.gif",
+    "monzaemon": "Monzaemon_vpet_dm.gif",
+    "nanimon": "Nanimon_vpet_dm.gif",
+    "nanomon": "Nanomon_vpet_dm.gif",
+    "numemon": "Numemon_vpet_dm.gif",
+    "orgemon": "Orgemon_vpet_dm.gif",
+    "pagumon": "Pagumon_vpet_dm.gif",
+    "palmon": "Palmon_vpet_dm.gif",
+    "patamon": "Patamon_vpet_dm.gif",
+    "piccolomon": "Piccolomon_vpet_dm.gif",
+    "piyomon": "Piyomon_vpet_dm.gif",
+    "poyomon": "Poyomon_vpet_dm.gif",
+    "punimon": "Punimon_vpet_dm.gif",
+    "raremon": "Raremon_vpet_dm.gif",
+    "scumon": "Scumon_vpet_dm.gif",
+    "seadramon": "Seadramon_vpet_dm.gif",
+    "shellmon": "Shellmon_vpet_dm.gif",
+    "skullgreymon": "Skullgreymon_vpet_dm.gif",
+    "tanemon": "Tanemon_vpet_dm.gif",
+    "tokomon": "Tokomon_vpet_dm.gif",
+    "tunomon": "Tunomon_vpet_dm.gif",
+    "tuskmon": "Tuskmon_vpet_dm.gif",
+    "tyranomon": "Tyranomon_vpet_dm.gif",
+    "unimon": "Unimon_vpet_dm.gif",
+    "vademon": "Vademon_vpet_dm.gif",
+    "vegimon": "Vegimon_vpet_dm.gif",
+    "whamon": "Whamon_vpet_dm.gif",
+    "yukidarumon": "Yukidarumon_vpet_dm.gif",
+    "yuramon": "Yuramon_vpet_dm.gif",
+    "zurumon": "Zurumon_vpet_dm.gif",
     "metalgreymon_virus": "Metalgreymon_vpet_dm.gif"
   },
   "korean": {
-    "agumon": "아구몬", "airdramon": "에어드라몬", "andromon": "안드로몬", "angemon": "엔젤몬",
-    "bakemon": "고스몬", "betamon": "베타몬", "botamon": "깜몬", "centalmon": "켄터스몬",
-    "cockatrimon": "꼬끼몬", "coelamon": "실리컨몬", "cyclomon": "사이크로몬", "darktyranomon": "다크티라노몬",
-    "deltamon": "델타몬", "devidramon": "데블드라몬", "digitamamon": "디지타몬", "elecmon": "에렉몬",
-    "flymon": "플라이몬", "gabumon": "파피몬", "gazimon": "가지몬", "giromon": "째리몬",
-    "gizamon": "기자몬", "koromon": "코로몬", "kunemon": "쿠네몬", "leomon": "레오몬",
-    "megadramon": "메가드라몬", "mojyamon": "모털몬", "nanimon": "모야몬", "pagumon": "퍼그몬",
-    "palmon": "팔몬", "patamon": "파닥몬", "piccolomon": "피콜몬", "piyomon": "피요몬",
-    "poyomon": "포요몬", "punimon": "푸니몬", "raremon": "레어몬", "shellmon": "쉘몬",
-    "skullgreymon": "스컬그레이몬", "tanemon": "시드몬", "tokomon": "토코몬", "tunomon": "뿔몬",
-    "tuskmon": "태스크몬", "tyranomon": "티라노몬", "vegimon": "베지몬", "yukidarumon": "프리지몬"
+    "agumon": "아구몬",
+    "airdramon": "에어드라몬",
+    "andromon": "안드로몬",
+    "angemon": "엔젤몬",
+    "bakemon": "고스몬",
+    "betamon": "베타몬",
+    "botamon": "깜몬",
+    "centalmon": "켄터스몬",
+    "cockatrimon": "꼬끼몬",
+    "coelamon": "실리컨몬",
+    "cyclomon": "사이크로몬",
+    "darktyranomon": "다크티라노몬",
+    "deltamon": "델타몬",
+    "devidramon": "데블드라몬",
+    "digitamamon": "디지타몬",
+    "elecmon": "에렉몬",
+    "flymon": "플라이몬",
+    "gabumon": "파피몬",
+    "gazimon": "가지몬",
+    "giromon": "째리몬",
+    "gizamon": "기자몬",
+    "koromon": "코로몬",
+    "kunemon": "쿠네몬",
+    "leomon": "레오몬",
+    "megadramon": "메가드라몬",
+    "mojyamon": "모털몬",
+    "nanimon": "모야몬",
+    "pagumon": "퍼그몬",
+    "palmon": "팔몬",
+    "patamon": "파닥몬",
+    "piccolomon": "피콜몬",
+    "piyomon": "피요몬",
+    "poyomon": "포요몬",
+    "punimon": "푸니몬",
+    "raremon": "레어몬",
+    "shellmon": "쉘몬",
+    "skullgreymon": "스컬그레이몬",
+    "tanemon": "시드몬",
+    "tokomon": "토코몬",
+    "tunomon": "뿔몬",
+    "tuskmon": "태스크몬",
+    "tyranomon": "티라노몬",
+    "vegimon": "베지몬",
+    "yukidarumon": "프리지몬",
+    "birdramon": "버드라몬",
+    "devimon": "데블몬",
+    "drimogemon": "두리몬",
+    "etemon": "에테몬",
+    "extyranomon": "엑스티라노몬",
+    "garurumon": "가루몬",
+    "greymon": "그레이몬",
+    "kabuterimon": "캅테리몬",
+    "kuwagamon": "쿠가몬",
+    "mamemon": "콩알몬",
+    "meramon": "메라몬",
+    "metalgreymon_virus": "메탈그레이몬(바이러스종)",
+    "metalmamemon": "메탈콩알몬",
+    "metaltyranomon": "메탈티라노몬",
+    "monochromon": "모노크로몬",
+    "monzaemon": "퍼펫몬",
+    "nanomon": "데이터몬",
+    "numemon": "워매몬",
+    "orgemon": "우가몬",
+    "scumon": "스카몬",
+    "seadramon": "시드라몬",
+    "unimon": "유니몬",
+    "vademon": "베이더몬",
+    "whamon": "고래몬",
+    "yuramon": "유라몬",
+    "zurumon": "얍실몬"
   },
-  "korean_missing": ["birdramon", "devimon", "drimogemon", "etemon", "extyranomon", "garurumon", "greymon",
-    "kabuterimon", "kuwagamon", "mamemon", "meramon", "metalgreymon_virus", "metalmamemon", "metaltyranomon",
-    "monochromon", "monzaemon", "nanomon", "numemon", "orgemon", "scumon", "seadramon", "unimon", "vademon",
-    "whamon", "yuramon", "zurumon"]
+  "korean_missing": [
+    "birdramon",
+    "devimon",
+    "drimogemon",
+    "etemon",
+    "extyranomon",
+    "garurumon",
+    "greymon",
+    "kabuterimon",
+    "kuwagamon",
+    "mamemon",
+    "meramon",
+    "metalgreymon_virus",
+    "metalmamemon",
+    "metaltyranomon",
+    "monochromon",
+    "monzaemon",
+    "nanomon",
+    "numemon",
+    "orgemon",
+    "scumon",
+    "seadramon",
+    "unimon",
+    "vademon",
+    "whamon",
+    "yuramon",
+    "zurumon"
+  ],
+  "art": {
+    "agumon": "https://digi-api.com/images/digimon/w/Agumon.png",
+    "airdramon": "https://digi-api.com/images/digimon/w/Airdramon.png",
+    "andromon": "https://digi-api.com/images/digimon/w/Andromon.png",
+    "angemon": "https://digi-api.com/images/digimon/w/Angemon.png",
+    "bakemon": "https://digi-api.com/images/digimon/w/Bakemon.png",
+    "betamon": "https://digi-api.com/images/digimon/w/Betamon.png",
+    "birdramon": "https://digi-api.com/images/digimon/w/Birdramon.png",
+    "botamon": "https://digi-api.com/images/digimon/w/Botamon.png",
+    "centalmon": "https://digi-api.com/images/digimon/w/Centalmon.png",
+    "cockatrimon": "https://digi-api.com/images/digimon/w/Cockatrimon.png",
+    "coelamon": "https://digi-api.com/images/digimon/w/Coelamon.png",
+    "cyclomon": "https://digi-api.com/images/digimon/w/Cyclomon.png",
+    "darktyranomon": "https://digi-api.com/images/digimon/w/Dark_Tyranomon.png",
+    "deltamon": "https://digi-api.com/images/digimon/w/Deltamon.png",
+    "devidramon": "https://digi-api.com/images/digimon/w/Devidramon.png",
+    "devimon": "https://digi-api.com/images/digimon/w/Devimon.png",
+    "digitamamon": "https://digi-api.com/images/digimon/w/Digitamamon.png",
+    "drimogemon": "https://digi-api.com/images/digimon/w/Drimogemon.png",
+    "elecmon": "https://digi-api.com/images/digimon/w/Elecmon.png",
+    "etemon": "https://digi-api.com/images/digimon/w/Etemon.png",
+    "extyranomon": "https://digi-api.com/images/digimon/w/Ex-Tyranomon.png",
+    "flymon": "https://digi-api.com/images/digimon/w/Flymon.png",
+    "gabumon": "https://digi-api.com/images/digimon/w/Gabumon.png",
+    "garurumon": "https://digi-api.com/images/digimon/w/Garurumon.png",
+    "gazimon": "https://digi-api.com/images/digimon/w/Gazimon.png",
+    "giromon": "https://digi-api.com/images/digimon/w/Giromon.png",
+    "gizamon": "https://digi-api.com/images/digimon/w/Gizamon.png",
+    "greymon": "https://digi-api.com/images/digimon/w/Greymon.png",
+    "kabuterimon": "https://digi-api.com/images/digimon/w/Kabuterimon.png",
+    "koromon": "https://digi-api.com/images/digimon/w/Koromon.png",
+    "kunemon": "https://digi-api.com/images/digimon/w/Kunemon.png",
+    "kuwagamon": "https://digi-api.com/images/digimon/w/Kuwagamon.png",
+    "leomon": "https://digi-api.com/images/digimon/w/Leomon.png",
+    "mamemon": "https://digi-api.com/images/digimon/w/Mamemon.png",
+    "megadramon": "https://digi-api.com/images/digimon/w/Megadramon.png",
+    "meramon": "https://digi-api.com/images/digimon/w/Meramon.png",
+    "metalgreymon_virus": "https://digi-api.com/images/digimon/w/Metal_Greymon_(Virus).png",
+    "metalmamemon": "https://digi-api.com/images/digimon/w/Metal_Mamemon.png",
+    "metaltyranomon": "https://digi-api.com/images/digimon/w/Metal_Tyranomon.png",
+    "mojyamon": "https://digi-api.com/images/digimon/w/Mojyamon.png",
+    "monochromon": "https://digi-api.com/images/digimon/w/Monochromon.png",
+    "monzaemon": "https://digi-api.com/images/digimon/w/Monzaemon.png",
+    "nanimon": "https://digi-api.com/images/digimon/w/Nanimon.png",
+    "nanomon": "https://digi-api.com/images/digimon/w/Nanomon.png",
+    "numemon": "https://digi-api.com/images/digimon/w/Numemon.png",
+    "orgemon": "https://digi-api.com/images/digimon/w/Orgemon.png",
+    "pagumon": "https://digi-api.com/images/digimon/w/Pagumon.png",
+    "palmon": "https://digi-api.com/images/digimon/w/Palmon.png",
+    "patamon": "https://digi-api.com/images/digimon/w/Patamon.png",
+    "piccolomon": "https://digi-api.com/images/digimon/w/Piccolomon.png",
+    "piyomon": "https://digi-api.com/images/digimon/w/Piyomon.png",
+    "poyomon": "https://digi-api.com/images/digimon/w/Poyomon.png",
+    "punimon": "https://digi-api.com/images/digimon/w/Punimon.png",
+    "raremon": "https://digi-api.com/images/digimon/w/Raremon.png",
+    "scumon": "https://digi-api.com/images/digimon/w/Sukamon.png",
+    "seadramon": "https://digi-api.com/images/digimon/w/Seadramon.png",
+    "shellmon": "https://digi-api.com/images/digimon/w/Shellmon.png",
+    "skullgreymon": "https://digi-api.com/images/digimon/w/Skull_Greymon.png",
+    "tanemon": "https://digi-api.com/images/digimon/w/Tanemon.png",
+    "tokomon": "https://digi-api.com/images/digimon/w/Tokomon.png",
+    "tunomon": "https://digi-api.com/images/digimon/w/Tunomon.png",
+    "tuskmon": "https://digi-api.com/images/digimon/w/Tuskmon.png",
+    "tyranomon": "https://digi-api.com/images/digimon/w/Tyranomon.png",
+    "unimon": "https://digi-api.com/images/digimon/w/Unimon.png",
+    "vademon": "https://digi-api.com/images/digimon/w/Vademon.png",
+    "vegimon": "https://digi-api.com/images/digimon/w/Vegimon.png",
+    "whamon": "https://digi-api.com/images/digimon/w/Whamon.png",
+    "yukidarumon": "https://digi-api.com/images/digimon/w/Yukidarumon.png",
+    "yuramon": "https://digi-api.com/images/digimon/w/Yuramon.png",
+    "zurumon": "https://digi-api.com/images/digimon/w/Zurumon.png"
+  },
+  "attacks": {
+    "agumon": {
+      "en": "Baby Flame",
+      "ko": "베이비 플레임"
+    },
+    "airdramon": {
+      "en": "Spinning Needle",
+      "ko": "스피닝 니들"
+    },
+    "andromon": {
+      "en": "Gatling Missile",
+      "ko": "개틀링 미사일"
+    },
+    "angemon": {
+      "en": "Heaven's Knuckle",
+      "ko": "헤븐즈 너클"
+    },
+    "bakemon": {
+      "en": "Hell's Hand",
+      "ko": "헬즈 핸드"
+    },
+    "betamon": {
+      "en": "Electric Shock",
+      "ko": "전기쇼크"
+    },
+    "birdramon": {
+      "en": "Meteor Wing",
+      "ko": "메테오 윙"
+    },
+    "botamon": {
+      "en": "Acid Bubbles",
+      "ko": "산성 거품"
+    },
+    "centalmon": {
+      "en": "Hunting Cannon",
+      "ko": "헌팅 캐논"
+    },
+    "cockatrimon": {
+      "en": "Petra Fire",
+      "ko": "페트라 파이어"
+    },
+    "coelamon": {
+      "en": "Variable Darts",
+      "ko": "베리어블 다트"
+    },
+    "cyclomon": {
+      "en": "Hyper Heat",
+      "ko": "하이퍼 히트"
+    },
+    "darktyranomon": {
+      "en": "Fire Blast",
+      "ko": "파이어 블래스트"
+    },
+    "deltamon": {
+      "en": "Triplex Force",
+      "ko": "트리플렉스 포스"
+    },
+    "devidramon": {
+      "en": "Crimson Nail",
+      "ko": "크림슨 네일"
+    },
+    "devimon": {
+      "en": "Death Claw",
+      "ko": "데스 크로우"
+    },
+    "digitamamon": {
+      "en": "Enigma",
+      "ko": "에니그마"
+    },
+    "drimogemon": {
+      "en": "Drill Spin",
+      "ko": "드릴 스핀"
+    },
+    "elecmon": {
+      "en": "Sparkling Thunder",
+      "ko": "날벼락치기"
+    },
+    "etemon": {
+      "en": "Love Serenade",
+      "ko": "러브 세레나데"
+    },
+    "extyranomon": {
+      "en": "Black Matter",
+      "ko": null
+    },
+    "flymon": {
+      "en": "Poison Sting",
+      "ko": "독침 발사"
+    },
+    "gabumon": {
+      "en": "Petit Fire",
+      "ko": "쁘띠 파이어"
+    },
+    "garurumon": {
+      "en": "Foxfire",
+      "ko": "푸른화염포"
+    },
+    "gazimon": {
+      "en": "Paralyze Breath",
+      "ko": "패럴라이즈 브레스"
+    },
+    "giromon": {
+      "en": "Deadly Bomb",
+      "ko": "데들리 봄"
+    },
+    "gizamon": {
+      "en": "Spiral Edge",
+      "ko": "스파이럴 엣지"
+    },
+    "greymon": {
+      "en": "Mega Flame",
+      "ko": null
+    },
+    "kabuterimon": {
+      "en": "Mega Blaster",
+      "ko": "전기충격"
+    },
+    "koromon": {
+      "en": "Bubbles",
+      "ko": "거품"
+    },
+    "kunemon": {
+      "en": "Electric Thread",
+      "ko": "전기 실"
+    },
+    "kuwagamon": {
+      "en": "Scissor Arms",
+      "ko": "시저 암즈"
+    },
+    "leomon": {
+      "en": "Beast King Fist",
+      "ko": "수왕권"
+    },
+    "mamemon": {
+      "en": "Smiley Bomb",
+      "ko": "스마일리 봄"
+    },
+    "megadramon": {
+      "en": "Genocide Attack",
+      "ko": "제노사이드 어택"
+    },
+    "meramon": {
+      "en": "Burning Fist",
+      "ko": "불타는 주먹"
+    },
+    "metalgreymon_virus": {
+      "en": "Giga Destroyer",
+      "ko": "기가 디스트로이어"
+    },
+    "metalmamemon": {
+      "en": "Energy Bomb",
+      "ko": "에너지 봄"
+    },
+    "metaltyranomon": {
+      "en": "Giga Destroyer II",
+      "ko": "기가 디스트로이어 II"
+    },
+    "mojyamon": {
+      "en": "Icicle Rod",
+      "ko": "고드름 막대"
+    },
+    "monochromon": {
+      "en": "Volcano Strike",
+      "ko": "볼케이노 스트라이크"
+    },
+    "monzaemon": {
+      "en": "Lovely Attack",
+      "ko": "러블리 어택"
+    },
+    "nanimon": {
+      "en": "Poop",
+      "ko": "응가"
+    },
+    "nanomon": {
+      "en": "Plug Bomb",
+      "ko": "플러그 봄"
+    },
+    "numemon": {
+      "en": "Poop Throw",
+      "ko": "응가 투척"
+    },
+    "orgemon": {
+      "en": "Supreme King Fist",
+      "ko": "패왕권"
+    },
+    "pagumon": {
+      "en": "Poison Bubbles",
+      "ko": "독성 거품"
+    },
+    "palmon": {
+      "en": "Poison Ivy",
+      "ko": "포이즌 아이비"
+    },
+    "patamon": {
+      "en": "Air Shot",
+      "ko": "공기 팡"
+    },
+    "piccolomon": {
+      "en": "Bit Bomb",
+      "ko": "비트 봄"
+    },
+    "piyomon": {
+      "en": "Magical Fire",
+      "ko": "빙빙회오리"
+    },
+    "poyomon": {
+      "en": "Acid Bubbles",
+      "ko": "산성 거품"
+    },
+    "punimon": {
+      "en": "Acid Bubbles",
+      "ko": "산성 거품"
+    },
+    "raremon": {
+      "en": "Sludge",
+      "ko": "오물"
+    },
+    "scumon": {
+      "en": "Poop",
+      "ko": "응가"
+    },
+    "seadramon": {
+      "en": "Ice Arrow",
+      "ko": "얼음 화살"
+    },
+    "shellmon": {
+      "en": "Hydro Pressure",
+      "ko": "하이드로 프레셔"
+    },
+    "skullgreymon": {
+      "en": "Oblivion Bird",
+      "ko": "오블리비언 버드"
+    },
+    "tanemon": {
+      "en": "Adhesive Bubbles",
+      "ko": "점성 거품"
+    },
+    "tokomon": {
+      "en": "Bite",
+      "ko": "물어뜯기"
+    },
+    "tunomon": {
+      "en": "Acid Bubbles",
+      "ko": "산성 거품"
+    },
+    "tuskmon": {
+      "en": "Panzer Knuckle",
+      "ko": "팬저 너클"
+    },
+    "tyranomon": {
+      "en": "Fire Breath",
+      "ko": "불 뿜기"
+    },
+    "unimon": {
+      "en": "Holy Shot",
+      "ko": "홀리 샷"
+    },
+    "vademon": {
+      "en": "Devil's Blown Kiss",
+      "ko": "악마의 키스 날리기"
+    },
+    "vegimon": {
+      "en": "Poop Throw",
+      "ko": "응가 투척"
+    },
+    "whamon": {
+      "en": "Tidal Wave",
+      "ko": "타이달 웨이브"
+    },
+    "yukidarumon": {
+      "en": "Absolute Zero Punch",
+      "ko": "절대 영도 펀치"
+    },
+    "yuramon": {
+      "en": "Adhesive Bubbles",
+      "ko": "점성 거품"
+    },
+    "zurumon": {
+      "en": "Poison Bubbles",
+      "ko": "독성 거품"
+    }
+  }
 }

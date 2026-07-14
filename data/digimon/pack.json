@@ -7,11 +7,12 @@
     10,
     18
   ],
-  "moves_by": "stage",
+  "moves_by": "species",
   "mistake_threshold": 3,
   "sprites": {
-    "target_px": 180,
-    "whitekey": true
+    "format": "png",
+    "keying": "floodfill",
+    "target_px": 180
   },
   "lines": [
     {
@@ -136,490 +137,770 @@
         "en": "AGUMON",
         "ko": "아구몬"
       },
-      "sprite_url": "https://wikimon.net/Special:FilePath/Agumon_vpet_dm.gif"
+      "attack": {
+        "en": "Baby Flame",
+        "ko": "베이비 플레임"
+      },
+      "sprite_url": "https://digi-api.com/images/digimon/w/Agumon.png"
     },
     "airdramon": {
       "names": {
         "en": "AIRDRAMON",
         "ko": "에어드라몬"
       },
-      "sprite_url": "https://wikimon.net/Special:FilePath/Airdramon_vpet_dm.gif"
+      "attack": {
+        "en": "Spinning Needle",
+        "ko": "스피닝 니들"
+      },
+      "sprite_url": "https://digi-api.com/images/digimon/w/Airdramon.png"
     },
     "andromon": {
       "names": {
         "en": "ANDROMON",
         "ko": "안드로몬"
       },
-      "sprite_url": "https://wikimon.net/Special:FilePath/Andromon_vpet_dm.gif"
+      "attack": {
+        "en": "Gatling Missile",
+        "ko": "개틀링 미사일"
+      },
+      "sprite_url": "https://digi-api.com/images/digimon/w/Andromon.png"
     },
     "angemon": {
       "names": {
         "en": "ANGEMON",
         "ko": "엔젤몬"
       },
-      "sprite_url": "https://wikimon.net/Special:FilePath/Angemon_vpet_dm.gif"
+      "attack": {
+        "en": "Heaven's Knuckle",
+        "ko": "헤븐즈 너클"
+      },
+      "sprite_url": "https://digi-api.com/images/digimon/w/Angemon.png"
     },
     "bakemon": {
       "names": {
         "en": "BAKEMON",
         "ko": "고스몬"
       },
-      "sprite_url": "https://wikimon.net/Special:FilePath/Bakemon_vpet_dm.gif"
+      "attack": {
+        "en": "Hell's Hand",
+        "ko": "헬즈 핸드"
+      },
+      "sprite_url": "https://digi-api.com/images/digimon/w/Bakemon.png"
     },
     "betamon": {
       "names": {
         "en": "BETAMON",
         "ko": "베타몬"
       },
-      "sprite_url": "https://wikimon.net/Special:FilePath/Betamon_vpet_dm.gif"
+      "attack": {
+        "en": "Electric Shock",
+        "ko": "전기쇼크"
+      },
+      "sprite_url": "https://digi-api.com/images/digimon/w/Betamon.png"
     },
     "birdramon": {
       "names": {
         "en": "BIRDRAMON",
-        "ko": null
+        "ko": "버드라몬"
       },
-      "sprite_url": "https://wikimon.net/Special:FilePath/Birdramon_vpet_dm.gif"
+      "attack": {
+        "en": "Meteor Wing",
+        "ko": "메테오 윙"
+      },
+      "sprite_url": "https://digi-api.com/images/digimon/w/Birdramon.png"
     },
     "botamon": {
       "names": {
         "en": "BOTAMON",
         "ko": "깜몬"
       },
-      "sprite_url": "https://wikimon.net/Special:FilePath/Botamon_vpet_dm.gif"
+      "attack": {
+        "en": "Acid Bubbles",
+        "ko": "산성 거품"
+      },
+      "sprite_url": "https://digi-api.com/images/digimon/w/Botamon.png"
     },
     "centalmon": {
       "names": {
         "en": "CENTALMON",
         "ko": "켄터스몬"
       },
-      "sprite_url": "https://wikimon.net/Special:FilePath/Centalmon_vpet_dm.gif"
+      "attack": {
+        "en": "Hunting Cannon",
+        "ko": "헌팅 캐논"
+      },
+      "sprite_url": "https://digi-api.com/images/digimon/w/Centalmon.png"
     },
     "cockatrimon": {
       "names": {
         "en": "COCKATRIMON",
         "ko": "꼬끼몬"
       },
-      "sprite_url": "https://wikimon.net/Special:FilePath/Cockatrimon_vpet_dm.gif"
+      "attack": {
+        "en": "Petra Fire",
+        "ko": "페트라 파이어"
+      },
+      "sprite_url": "https://digi-api.com/images/digimon/w/Cockatrimon.png"
     },
     "coelamon": {
       "names": {
         "en": "COELAMON",
         "ko": "실리컨몬"
       },
-      "sprite_url": "https://wikimon.net/Special:FilePath/Coelamon_vpet_dm.gif"
+      "attack": {
+        "en": "Variable Darts",
+        "ko": "베리어블 다트"
+      },
+      "sprite_url": "https://digi-api.com/images/digimon/w/Coelamon.png"
     },
     "cyclomon": {
       "names": {
         "en": "CYCLOMON",
         "ko": "사이크로몬"
       },
-      "sprite_url": "https://wikimon.net/Special:FilePath/Cyclomon_vpet_dm.gif"
+      "attack": {
+        "en": "Hyper Heat",
+        "ko": "하이퍼 히트"
+      },
+      "sprite_url": "https://digi-api.com/images/digimon/w/Cyclomon.png"
     },
     "darktyranomon": {
       "names": {
         "en": "DARK TYRANOMON",
         "ko": "다크티라노몬"
       },
-      "sprite_url": "https://wikimon.net/Special:FilePath/Darktyranomon_vpet_dm.gif"
+      "attack": {
+        "en": "Fire Blast",
+        "ko": "파이어 블래스트"
+      },
+      "sprite_url": "https://digi-api.com/images/digimon/w/Dark_Tyranomon.png"
     },
     "deltamon": {
       "names": {
         "en": "DELTAMON",
         "ko": "델타몬"
       },
-      "sprite_url": "https://wikimon.net/Special:FilePath/Deltamon_vpet_dm.gif"
+      "attack": {
+        "en": "Triplex Force",
+        "ko": "트리플렉스 포스"
+      },
+      "sprite_url": "https://digi-api.com/images/digimon/w/Deltamon.png"
     },
     "devidramon": {
       "names": {
         "en": "DEVIDRAMON",
         "ko": "데블드라몬"
       },
-      "sprite_url": "https://wikimon.net/Special:FilePath/Devidramon_vpet_dm.gif"
+      "attack": {
+        "en": "Crimson Nail",
+        "ko": "크림슨 네일"
+      },
+      "sprite_url": "https://digi-api.com/images/digimon/w/Devidramon.png"
     },
     "devimon": {
       "names": {
         "en": "DEVIMON",
-        "ko": null
+        "ko": "데블몬"
       },
-      "sprite_url": "https://wikimon.net/Special:FilePath/Devimon_vpet_dm.gif"
+      "attack": {
+        "en": "Death Claw",
+        "ko": "데스 크로우"
+      },
+      "sprite_url": "https://digi-api.com/images/digimon/w/Devimon.png"
     },
     "digitamamon": {
       "names": {
         "en": "DIGITAMAMON",
         "ko": "디지타몬"
       },
-      "sprite_url": "https://wikimon.net/Special:FilePath/Digitamamon_vpet_dm.gif"
+      "attack": {
+        "en": "Enigma",
+        "ko": "에니그마"
+      },
+      "sprite_url": "https://digi-api.com/images/digimon/w/Digitamamon.png"
     },
     "drimogemon": {
       "names": {
         "en": "DRIMOGEMON",
-        "ko": null
+        "ko": "두리몬"
       },
-      "sprite_url": "https://wikimon.net/Special:FilePath/Drimogemon_vpet_dm.gif"
+      "attack": {
+        "en": "Drill Spin",
+        "ko": "드릴 스핀"
+      },
+      "sprite_url": "https://digi-api.com/images/digimon/w/Drimogemon.png"
     },
     "elecmon": {
       "names": {
         "en": "ELECMON",
         "ko": "에렉몬"
       },
-      "sprite_url": "https://wikimon.net/Special:FilePath/Elecmon_vpet_dm.gif"
+      "attack": {
+        "en": "Sparkling Thunder",
+        "ko": "날벼락치기"
+      },
+      "sprite_url": "https://digi-api.com/images/digimon/w/Elecmon.png"
     },
     "etemon": {
       "names": {
         "en": "ETEMON",
-        "ko": null
+        "ko": "에테몬"
       },
-      "sprite_url": "https://wikimon.net/Special:FilePath/Etemon_vpet_dm.gif"
+      "attack": {
+        "en": "Love Serenade",
+        "ko": "러브 세레나데"
+      },
+      "sprite_url": "https://digi-api.com/images/digimon/w/Etemon.png"
     },
     "extyranomon": {
       "names": {
         "en": "EX-TYRANOMON",
+        "ko": "엑스티라노몬"
+      },
+      "attack": {
+        "en": "Black Matter",
         "ko": null
       },
-      "sprite_url": "https://wikimon.net/Special:FilePath/Ex-tyranomon_vpet_dm.gif"
+      "sprite_url": "https://digi-api.com/images/digimon/w/Ex-Tyranomon.png"
     },
     "flymon": {
       "names": {
         "en": "FLYMON",
         "ko": "플라이몬"
       },
-      "sprite_url": "https://wikimon.net/Special:FilePath/Flymon_vpet_dm.gif"
+      "attack": {
+        "en": "Poison Sting",
+        "ko": "독침 발사"
+      },
+      "sprite_url": "https://digi-api.com/images/digimon/w/Flymon.png"
     },
     "gabumon": {
       "names": {
         "en": "GABUMON",
         "ko": "파피몬"
       },
-      "sprite_url": "https://wikimon.net/Special:FilePath/Gabumon_vpet_dm.gif"
+      "attack": {
+        "en": "Petit Fire",
+        "ko": "쁘띠 파이어"
+      },
+      "sprite_url": "https://digi-api.com/images/digimon/w/Gabumon.png"
     },
     "garurumon": {
       "names": {
         "en": "GARURUMON",
-        "ko": null
+        "ko": "가루몬"
       },
-      "sprite_url": "https://wikimon.net/Special:FilePath/Garurumon_vpet_dm.gif"
+      "attack": {
+        "en": "Foxfire",
+        "ko": "푸른화염포"
+      },
+      "sprite_url": "https://digi-api.com/images/digimon/w/Garurumon.png"
     },
     "gazimon": {
       "names": {
         "en": "GAZIMON",
         "ko": "가지몬"
       },
-      "sprite_url": "https://wikimon.net/Special:FilePath/Gazimon_vpet_dm.gif"
+      "attack": {
+        "en": "Paralyze Breath",
+        "ko": "패럴라이즈 브레스"
+      },
+      "sprite_url": "https://digi-api.com/images/digimon/w/Gazimon.png"
     },
     "giromon": {
       "names": {
         "en": "GIROMON",
         "ko": "째리몬"
       },
-      "sprite_url": "https://wikimon.net/Special:FilePath/Giromon_vpet_dm.gif"
+      "attack": {
+        "en": "Deadly Bomb",
+        "ko": "데들리 봄"
+      },
+      "sprite_url": "https://digi-api.com/images/digimon/w/Giromon.png"
     },
     "gizamon": {
       "names": {
         "en": "GIZAMON",
         "ko": "기자몬"
       },
-      "sprite_url": "https://wikimon.net/Special:FilePath/Gizamon_vpet_dm.gif"
+      "attack": {
+        "en": "Spiral Edge",
+        "ko": "스파이럴 엣지"
+      },
+      "sprite_url": "https://digi-api.com/images/digimon/w/Gizamon.png"
     },
     "greymon": {
       "names": {
         "en": "GREYMON",
+        "ko": "그레이몬"
+      },
+      "attack": {
+        "en": "Mega Flame",
         "ko": null
       },
-      "sprite_url": "https://wikimon.net/Special:FilePath/Greymon_vpet_dm.gif"
+      "sprite_url": "https://digi-api.com/images/digimon/w/Greymon.png"
     },
     "kabuterimon": {
       "names": {
         "en": "KABUTERIMON",
-        "ko": null
+        "ko": "캅테리몬"
       },
-      "sprite_url": "https://wikimon.net/Special:FilePath/Kabuterimon_vpet_dm.gif"
+      "attack": {
+        "en": "Mega Blaster",
+        "ko": "전기충격"
+      },
+      "sprite_url": "https://digi-api.com/images/digimon/w/Kabuterimon.png"
     },
     "koromon": {
       "names": {
         "en": "KOROMON",
         "ko": "코로몬"
       },
-      "sprite_url": "https://wikimon.net/Special:FilePath/Koromon_vpet_dm.gif"
+      "attack": {
+        "en": "Bubbles",
+        "ko": "거품"
+      },
+      "sprite_url": "https://digi-api.com/images/digimon/w/Koromon.png"
     },
     "kunemon": {
       "names": {
         "en": "KUNEMON",
         "ko": "쿠네몬"
       },
-      "sprite_url": "https://wikimon.net/Special:FilePath/Kunemon_vpet_dm.gif"
+      "attack": {
+        "en": "Electric Thread",
+        "ko": "전기 실"
+      },
+      "sprite_url": "https://digi-api.com/images/digimon/w/Kunemon.png"
     },
     "kuwagamon": {
       "names": {
         "en": "KUWAGAMON",
-        "ko": null
+        "ko": "쿠가몬"
       },
-      "sprite_url": "https://wikimon.net/Special:FilePath/Kuwagamon_vpet_dm.gif"
+      "attack": {
+        "en": "Scissor Arms",
+        "ko": "시저 암즈"
+      },
+      "sprite_url": "https://digi-api.com/images/digimon/w/Kuwagamon.png"
     },
     "leomon": {
       "names": {
         "en": "LEOMON",
         "ko": "레오몬"
       },
-      "sprite_url": "https://wikimon.net/Special:FilePath/Leomon_vpet_dm.gif"
+      "attack": {
+        "en": "Beast King Fist",
+        "ko": "수왕권"
+      },
+      "sprite_url": "https://digi-api.com/images/digimon/w/Leomon.png"
     },
     "mamemon": {
       "names": {
         "en": "MAMEMON",
-        "ko": null
+        "ko": "콩알몬"
       },
-      "sprite_url": "https://wikimon.net/Special:FilePath/Mamemon_vpet_dm.gif"
+      "attack": {
+        "en": "Smiley Bomb",
+        "ko": "스마일리 봄"
+      },
+      "sprite_url": "https://digi-api.com/images/digimon/w/Mamemon.png"
     },
     "megadramon": {
       "names": {
         "en": "MEGADRAMON",
         "ko": "메가드라몬"
       },
-      "sprite_url": "https://wikimon.net/Special:FilePath/Megadramon_vpet_dm.gif"
+      "attack": {
+        "en": "Genocide Attack",
+        "ko": "제노사이드 어택"
+      },
+      "sprite_url": "https://digi-api.com/images/digimon/w/Megadramon.png"
     },
     "meramon": {
       "names": {
         "en": "MERAMON",
-        "ko": null
+        "ko": "메라몬"
       },
-      "sprite_url": "https://wikimon.net/Special:FilePath/Meramon_vpet_dm.gif"
+      "attack": {
+        "en": "Burning Fist",
+        "ko": "불타는 주먹"
+      },
+      "sprite_url": "https://digi-api.com/images/digimon/w/Meramon.png"
     },
     "metalgreymon_virus": {
       "names": {
         "en": "METALGREYMON",
-        "ko": null
+        "ko": "메탈그레이몬"
       },
-      "sprite_url": "https://wikimon.net/Special:FilePath/Metalgreymon_vpet_dm.gif"
+      "attack": {
+        "en": "Giga Destroyer",
+        "ko": "기가 디스트로이어"
+      },
+      "sprite_url": "https://digi-api.com/images/digimon/w/Metal_Greymon_(Virus).png"
     },
     "metalmamemon": {
       "names": {
         "en": "METALMAMEMON",
-        "ko": null
+        "ko": "메탈콩알몬"
       },
-      "sprite_url": "https://wikimon.net/Special:FilePath/Metalmamemon_vpet_dm.gif"
+      "attack": {
+        "en": "Energy Bomb",
+        "ko": "에너지 봄"
+      },
+      "sprite_url": "https://digi-api.com/images/digimon/w/Metal_Mamemon.png"
     },
     "metaltyranomon": {
       "names": {
         "en": "METALTYRANOMON",
-        "ko": null
+        "ko": "메탈티라노몬"
       },
-      "sprite_url": "https://wikimon.net/Special:FilePath/Metaltyranomon_vpet_dm.gif"
+      "attack": {
+        "en": "Giga Destroyer II",
+        "ko": "기가 디스트로이어 II"
+      },
+      "sprite_url": "https://digi-api.com/images/digimon/w/Metal_Tyranomon.png"
     },
     "mojyamon": {
       "names": {
         "en": "MOJYAMON",
         "ko": "모털몬"
       },
-      "sprite_url": "https://wikimon.net/Special:FilePath/Mojyamon_vpet_dm.gif"
+      "attack": {
+        "en": "Icicle Rod",
+        "ko": "고드름 막대"
+      },
+      "sprite_url": "https://digi-api.com/images/digimon/w/Mojyamon.png"
     },
     "monochromon": {
       "names": {
         "en": "MONOCHROMON",
-        "ko": null
+        "ko": "모노크로몬"
       },
-      "sprite_url": "https://wikimon.net/Special:FilePath/Monochromon_vpet_dm.gif"
+      "attack": {
+        "en": "Volcano Strike",
+        "ko": "볼케이노 스트라이크"
+      },
+      "sprite_url": "https://digi-api.com/images/digimon/w/Monochromon.png"
     },
     "monzaemon": {
       "names": {
         "en": "MONZAEMON",
-        "ko": null
+        "ko": "퍼펫몬"
       },
-      "sprite_url": "https://wikimon.net/Special:FilePath/Monzaemon_vpet_dm.gif"
+      "attack": {
+        "en": "Lovely Attack",
+        "ko": "러블리 어택"
+      },
+      "sprite_url": "https://digi-api.com/images/digimon/w/Monzaemon.png"
     },
     "nanimon": {
       "names": {
         "en": "NANIMON",
         "ko": "모야몬"
       },
-      "sprite_url": "https://wikimon.net/Special:FilePath/Nanimon_vpet_dm.gif"
+      "attack": {
+        "en": "Poop",
+        "ko": "응가"
+      },
+      "sprite_url": "https://digi-api.com/images/digimon/w/Nanimon.png"
     },
     "nanomon": {
       "names": {
         "en": "NANOMON",
-        "ko": null
+        "ko": "데이터몬"
       },
-      "sprite_url": "https://wikimon.net/Special:FilePath/Nanomon_vpet_dm.gif"
+      "attack": {
+        "en": "Plug Bomb",
+        "ko": "플러그 봄"
+      },
+      "sprite_url": "https://digi-api.com/images/digimon/w/Nanomon.png"
     },
     "numemon": {
       "names": {
         "en": "NUMEMON",
-        "ko": null
+        "ko": "워매몬"
       },
-      "sprite_url": "https://wikimon.net/Special:FilePath/Numemon_vpet_dm.gif"
+      "attack": {
+        "en": "Poop Throw",
+        "ko": "응가 투척"
+      },
+      "sprite_url": "https://digi-api.com/images/digimon/w/Numemon.png"
     },
     "orgemon": {
       "names": {
         "en": "ORGEMON",
-        "ko": null
+        "ko": "우가몬"
       },
-      "sprite_url": "https://wikimon.net/Special:FilePath/Orgemon_vpet_dm.gif"
+      "attack": {
+        "en": "Supreme King Fist",
+        "ko": "패왕권"
+      },
+      "sprite_url": "https://digi-api.com/images/digimon/w/Orgemon.png"
     },
     "pagumon": {
       "names": {
         "en": "PAGUMON",
         "ko": "퍼그몬"
       },
-      "sprite_url": "https://wikimon.net/Special:FilePath/Pagumon_vpet_dm.gif"
+      "attack": {
+        "en": "Poison Bubbles",
+        "ko": "독성 거품"
+      },
+      "sprite_url": "https://digi-api.com/images/digimon/w/Pagumon.png"
     },
     "palmon": {
       "names": {
         "en": "PALMON",
         "ko": "팔몬"
       },
-      "sprite_url": "https://wikimon.net/Special:FilePath/Palmon_vpet_dm.gif"
+      "attack": {
+        "en": "Poison Ivy",
+        "ko": "포이즌 아이비"
+      },
+      "sprite_url": "https://digi-api.com/images/digimon/w/Palmon.png"
     },
     "patamon": {
       "names": {
         "en": "PATAMON",
         "ko": "파닥몬"
       },
-      "sprite_url": "https://wikimon.net/Special:FilePath/Patamon_vpet_dm.gif"
+      "attack": {
+        "en": "Air Shot",
+        "ko": "공기 팡"
+      },
+      "sprite_url": "https://digi-api.com/images/digimon/w/Patamon.png"
     },
     "piccolomon": {
       "names": {
         "en": "PICCOLOMON",
         "ko": "피콜몬"
       },
-      "sprite_url": "https://wikimon.net/Special:FilePath/Piccolomon_vpet_dm.gif"
+      "attack": {
+        "en": "Bit Bomb",
+        "ko": "비트 봄"
+      },
+      "sprite_url": "https://digi-api.com/images/digimon/w/Piccolomon.png"
     },
     "piyomon": {
       "names": {
         "en": "PIYOMON",
         "ko": "피요몬"
       },
-      "sprite_url": "https://wikimon.net/Special:FilePath/Piyomon_vpet_dm.gif"
+      "attack": {
+        "en": "Magical Fire",
+        "ko": "빙빙회오리"
+      },
+      "sprite_url": "https://digi-api.com/images/digimon/w/Piyomon.png"
     },
     "poyomon": {
       "names": {
         "en": "POYOMON",
         "ko": "포요몬"
       },
-      "sprite_url": "https://wikimon.net/Special:FilePath/Poyomon_vpet_dm.gif"
+      "attack": {
+        "en": "Acid Bubbles",
+        "ko": "산성 거품"
+      },
+      "sprite_url": "https://digi-api.com/images/digimon/w/Poyomon.png"
     },
     "punimon": {
       "names": {
         "en": "PUNIMON",
         "ko": "푸니몬"
       },
-      "sprite_url": "https://wikimon.net/Special:FilePath/Punimon_vpet_dm.gif"
+      "attack": {
+        "en": "Acid Bubbles",
+        "ko": "산성 거품"
+      },
+      "sprite_url": "https://digi-api.com/images/digimon/w/Punimon.png"
     },
     "raremon": {
       "names": {
         "en": "RAREMON",
         "ko": "레어몬"
       },
-      "sprite_url": "https://wikimon.net/Special:FilePath/Raremon_vpet_dm.gif"
+      "attack": {
+        "en": "Sludge",
+        "ko": "오물"
+      },
+      "sprite_url": "https://digi-api.com/images/digimon/w/Raremon.png"
     },
     "scumon": {
       "names": {
         "en": "SCUMON",
-        "ko": null
+        "ko": "스카몬"
       },
-      "sprite_url": "https://wikimon.net/Special:FilePath/Scumon_vpet_dm.gif"
+      "attack": {
+        "en": "Poop",
+        "ko": "응가"
+      },
+      "sprite_url": "https://digi-api.com/images/digimon/w/Sukamon.png"
     },
     "seadramon": {
       "names": {
         "en": "SEADRAMON",
-        "ko": null
+        "ko": "시드라몬"
       },
-      "sprite_url": "https://wikimon.net/Special:FilePath/Seadramon_vpet_dm.gif"
+      "attack": {
+        "en": "Ice Arrow",
+        "ko": "얼음 화살"
+      },
+      "sprite_url": "https://digi-api.com/images/digimon/w/Seadramon.png"
     },
     "shellmon": {
       "names": {
         "en": "SHELLMON",
         "ko": "쉘몬"
       },
-      "sprite_url": "https://wikimon.net/Special:FilePath/Shellmon_vpet_dm.gif"
+      "attack": {
+        "en": "Hydro Pressure",
+        "ko": "하이드로 프레셔"
+      },
+      "sprite_url": "https://digi-api.com/images/digimon/w/Shellmon.png"
     },
     "skullgreymon": {
       "names": {
         "en": "SKULLGREYMON",
         "ko": "스컬그레이몬"
       },
-      "sprite_url": "https://wikimon.net/Special:FilePath/Skullgreymon_vpet_dm.gif"
+      "attack": {
+        "en": "Oblivion Bird",
+        "ko": "오블리비언 버드"
+      },
+      "sprite_url": "https://digi-api.com/images/digimon/w/Skull_Greymon.png"
     },
     "tanemon": {
       "names": {
         "en": "TANEMON",
         "ko": "시드몬"
       },
-      "sprite_url": "https://wikimon.net/Special:FilePath/Tanemon_vpet_dm.gif"
+      "attack": {
+        "en": "Adhesive Bubbles",
+        "ko": "점성 거품"
+      },
+      "sprite_url": "https://digi-api.com/images/digimon/w/Tanemon.png"
     },
     "tokomon": {
       "names": {
         "en": "TOKOMON",
         "ko": "토코몬"
       },
-      "sprite_url": "https://wikimon.net/Special:FilePath/Tokomon_vpet_dm.gif"
+      "attack": {
+        "en": "Bite",
+        "ko": "물어뜯기"
+      },
+      "sprite_url": "https://digi-api.com/images/digimon/w/Tokomon.png"
     },
     "tunomon": {
       "names": {
         "en": "TUNOMON",
         "ko": "뿔몬"
       },
-      "sprite_url": "https://wikimon.net/Special:FilePath/Tunomon_vpet_dm.gif"
+      "attack": {
+        "en": "Acid Bubbles",
+        "ko": "산성 거품"
+      },
+      "sprite_url": "https://digi-api.com/images/digimon/w/Tunomon.png"
     },
     "tuskmon": {
       "names": {
         "en": "TUSKMON",
         "ko": "태스크몬"
       },
-      "sprite_url": "https://wikimon.net/Special:FilePath/Tuskmon_vpet_dm.gif"
+      "attack": {
+        "en": "Panzer Knuckle",
+        "ko": "팬저 너클"
+      },
+      "sprite_url": "https://digi-api.com/images/digimon/w/Tuskmon.png"
     },
     "tyranomon": {
       "names": {
         "en": "TYRANOMON",
         "ko": "티라노몬"
       },
-      "sprite_url": "https://wikimon.net/Special:FilePath/Tyranomon_vpet_dm.gif"
+      "attack": {
+        "en": "Fire Breath",
+        "ko": "불 뿜기"
+      },
+      "sprite_url": "https://digi-api.com/images/digimon/w/Tyranomon.png"
     },
     "unimon": {
       "names": {
         "en": "UNIMON",
-        "ko": null
+        "ko": "유니몬"
       },
-      "sprite_url": "https://wikimon.net/Special:FilePath/Unimon_vpet_dm.gif"
+      "attack": {
+        "en": "Holy Shot",
+        "ko": "홀리 샷"
+      },
+      "sprite_url": "https://digi-api.com/images/digimon/w/Unimon.png"
     },
     "vademon": {
       "names": {
         "en": "VADEMON",
-        "ko": null
+        "ko": "베이더몬"
       },
-      "sprite_url": "https://wikimon.net/Special:FilePath/Vademon_vpet_dm.gif"
+      "attack": {
+        "en": "Devil's Blown Kiss",
+        "ko": "악마의 키스 날리기"
+      },
+      "sprite_url": "https://digi-api.com/images/digimon/w/Vademon.png"
     },
     "vegimon": {
       "names": {
         "en": "VEGIMON",
         "ko": "베지몬"
       },
-      "sprite_url": "https://wikimon.net/Special:FilePath/Vegimon_vpet_dm.gif"
+      "attack": {
+        "en": "Poop Throw",
+        "ko": "응가 투척"
+      },
+      "sprite_url": "https://digi-api.com/images/digimon/w/Vegimon.png"
     },
     "whamon": {
       "names": {
         "en": "WHAMON",
-        "ko": null
+        "ko": "고래몬"
       },
-      "sprite_url": "https://wikimon.net/Special:FilePath/Whamon_vpet_dm.gif"
+      "attack": {
+        "en": "Tidal Wave",
+        "ko": "타이달 웨이브"
+      },
+      "sprite_url": "https://digi-api.com/images/digimon/w/Whamon.png"
     },
     "yukidarumon": {
       "names": {
         "en": "YUKIDARUMON",
         "ko": "프리지몬"
       },
-      "sprite_url": "https://wikimon.net/Special:FilePath/Yukidarumon_vpet_dm.gif"
+      "attack": {
+        "en": "Absolute Zero Punch",
+        "ko": "절대 영도 펀치"
+      },
+      "sprite_url": "https://digi-api.com/images/digimon/w/Yukidarumon.png"
     },
     "yuramon": {
       "names": {
         "en": "YURAMON",
-        "ko": null
+        "ko": "유라몬"
       },
-      "sprite_url": "https://wikimon.net/Special:FilePath/Yuramon_vpet_dm.gif"
+      "attack": {
+        "en": "Adhesive Bubbles",
+        "ko": "점성 거품"
+      },
+      "sprite_url": "https://digi-api.com/images/digimon/w/Yuramon.png"
     },
     "zurumon": {
       "names": {
         "en": "ZURUMON",
-        "ko": null
+        "ko": "얍실몬"
       },
-      "sprite_url": "https://wikimon.net/Special:FilePath/Zurumon_vpet_dm.gif"
+      "attack": {
+        "en": "Poison Bubbles",
+        "ko": "독성 거품"
+      },
+      "sprite_url": "https://digi-api.com/images/digimon/w/Zurumon.png"
     }
   },
   "edges": {

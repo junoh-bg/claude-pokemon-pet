@@ -118,9 +118,15 @@ RESOLVE_JQ='
   ([([100 - 15 * $mistakes + 10 * $tasks, 100] | min), 10] | max) as $hp |
   ($pack.species[$sp]) as $spec |
   (if $lang == "ko" then ($spec.names.ko // $spec.names.en) else $spec.names.en end) as $name |
-  (if ($pack.moves_by // "type") == "stage"
-   then ($pack.moves[$stage | tostring] // [])
-   else ($pack.moves[$p.type] // $pack.moves.normal) end) as $mv |
+  (($pack.moves_by // "type")) as $mb |
+  (if $mb == "species"
+   then [ (if $lang == "ko" then ($spec.attack.ko // "필살기")
+           else ($spec.attack.en // "ATTACK") end) ]
+   else
+     (if $mb == "stage" then ($pack.moves[$stage | tostring] // [])
+      else ($pack.moves[$p.type] // $pack.moves.normal // []) end) as $raw
+     | (if $lang == "ko" then ($raw | map($pack.moves_ko[.] // .)) else $raw end)
+   end) as $mv |
   {
     date: $today,
     franchise: $p.franchise, species: $sp, name: $name, type: $p.type,
@@ -130,7 +136,7 @@ RESOLVE_JQ='
     line: $line,
     line_names: ($line | map($pack.species[.] as $s |
         if $lang == "ko" then ($s.names.ko // $s.names.en) else $s.names.en end)),
-    moves: (if $lang == "ko" then ($mv | map($pack.moves_ko[.] // .)) else $mv end),
+    moves: $mv,
     lang: $lang, state: $state, state_ts: $ts
   }'
 

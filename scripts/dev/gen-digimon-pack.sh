@@ -9,13 +9,14 @@ cd "$ROOT"
 jq '
   def disp: {"metalgreymon_virus": "METALGREYMON", "extyranomon": "EX-TYRANOMON",
              "darktyranomon": "DARK TYRANOMON"}[.] // ascii_upcase;
+  def kdisp: if . == "메탈그레이몬(바이러스종)" then "메탈그레이몬" else . end;
   . as $c |
   {
     franchise: "digimon",
     gates: [0, 2, 5, 10, 18],
-    moves_by: "stage",
+    moves_by: "species",
     mistake_threshold: 3,
-    sprites: { target_px: 180, whitekey: true },
+    sprites: { format: "png", keying: "floodfill", target_px: 180 },
     lines: [ $c.versions[] | {
       version: .version, type: "vpet",
       mons: [ .stages[0].members[0] ],
@@ -23,8 +24,9 @@ jq '
     } ],
     species: ([ $c.versions[].stages[].members[] ] | unique | map({
       key: .,
-      value: { names: { en: disp, ko: ($c.korean[.] // null) },
-               sprite_url: ("https://wikimon.net/Special:FilePath/" + $c.sprites[.]) }
+      value: { names: { en: disp, ko: (($c.korean[.] // null) | if . then kdisp else . end) },
+               attack: ($c.attacks[.] // { en: "Attack", ko: null }),
+               sprite_url: $c.art[.] }
     }) | from_entries),
     edges: ([ $c.versions[].edges[] ]
       | map({from: .from, to: .to, quality: .quality})
