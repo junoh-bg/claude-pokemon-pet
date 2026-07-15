@@ -99,6 +99,23 @@ threshold 235 — NEVER global chroma key), ✅ complete ko localization
 back to 필살기, never mixed English), ✅ dual-franchise displayName
 (identity decision: keep the `claude-pokemon-pet` ID, no rename).
 
+Post-roadmap (2026-07-15): ✅ duel mode. Invariants:
+- the whole fight is PRE-COMPUTED into `duel.json` (seeded jq LCG); the
+  overlay/terminal/statusline replay it by wall clock — no timers/daemons
+- jq LCG constants must stay small (`(x*75+74) % 65537`): jq numbers are
+  IEEE doubles; bigger multipliers silently lose integer exactness
+- **jq `//` treats `false` as absent** — never `.somebool // default`; use
+  explicit `== true/false` comparisons (this bug deleted fresh duels once)
+- jq variables must not shadow keywords: `$try`/`$end` parse on jq 1.7
+  (macOS brew) but are syntax errors on jq 1.6 (Debian) — caught only by
+  the container run, so never skip it
+- outcome applies exactly once: `.duel-apply.lock` (skip-on-busy is safe
+  because the holder atomically flips `applied: true` before releasing)
+- HP is battle-driven (`$CACHE/hp`, date-stamped): duels deplete, tasks
+  heal +10, revive-at-60, day rollover resets; mistakes never touch HP
+- `fainted` is a sticky state word — only a `done` event clears it
+- duel FX obey the attack-FX hard rules below (no projectiles, ever)
+
 ## Attack FX — hard rules (user demand, repeated 3×)
 
 - **No flying projectiles/balls of any color, ever** — a traveling blob is

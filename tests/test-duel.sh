@@ -129,8 +129,9 @@ assert_eq "pokemon foe is a pack species" "yes" \
 teardown
 
 mkduel() { # <result> <end_ts> [date] — minimal hand-crafted finished duel
-    jq -n --arg res "$1" --argjson end "$2" --arg d "${3:-2026-07-13}" '
-      {date: $d, start_ts: ($end - 23), end_ts: $end, kind: "wild",
+    # NB: jq variables must not shadow keywords ($end, $try break jq 1.6)
+    jq -n --arg res "$1" --argjson endts "$2" --arg d "${3:-2026-07-13}" '
+      {date: $d, start_ts: ($endts - 23), end_ts: $endts, kind: "wild",
        opponent: {species: "gabumon", name: "GABUMON", level: 3,
                   element: "fire", move: "Petit Fire", franchise: "digimon"},
        turns: [{t: 3, side: "pet", move: "Baby Flame", dmg: 30, pet_hp: 100, foe_hp: 70},

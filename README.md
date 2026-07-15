@@ -44,7 +44,8 @@ worth symlinking onto your PATH).
 | `random` | reroll today's partner (same franchise) |
 | `digimon` · `pokemon` | switch franchise — rolls a fresh partner in it |
 | `pet <name>` | pick a species — English or Korean (`pet pikachu`, `pet 파이리`, `pet agumon`) |
-| `dex` | everything you've ever raised, per franchise, shinies marked |
+| `duel` | summon a wild challenger right now — the pet fights it on screen |
+| `dex` | everything you've ever raised, per franchise — shinies ✨ and defeated wild mons ⚔ marked |
 | `card` | render a trainer card (PNG/SVG file + ANSI inline) |
 | `term` | run the pet inside the current terminal (Linux/SSH/anywhere) |
 | `statusline` | print setup for the one-line statusline pet |
@@ -58,10 +59,32 @@ worth symlinking onto your PATH).
 |---|---|
 | You submit a prompt | slow bob — `PIKACHU is getting pumped!` |
 | Claude uses tools | roams and waddles; every battle caption fires a lunge with element-colored impact sparks — `AGUMON used Baby Flame!` strikes in fire-orange |
-| Task completes | excited hops, impact shake, **+1 level** |
-| A tool call fails | **+1 care mistake** — HP bar dips, the pet recoils (and Digimon evolution takes note) |
+| Task completes | excited hops, impact shake, **+1 level** — and maybe a wild challenger appears |
+| A tool call fails | **+1 care mistake** — the pet recoils (and Digimon evolution takes note) |
 | Permission needed | anxious fidget |
 | Idle | falls asleep, dimmed |
+
+## ⚔ Duels
+
+Completing tasks can attract a **wild challenger** — roughly one encounter
+every four tasks, at most three a day (or summon one anytime with
+`claude-pokemon-pet duel`). A same-franchise opponent at your pet's
+evolution tier slides in, and the two exchange real signature attacks for
+about twenty seconds while you keep working: lunges, element-tinted impact
+sparks, and two HP bars that genuinely deplete.
+
+- **Win** → **+1 level** (real EXP — it counts toward evolution) and the
+  defeated wild mon is recorded in your dex with a ⚔ marker.
+- **Lose** → your pet **faints** (dimmed, knocked out) until your next
+  completed task revives it at 60 HP.
+- **HP is real now**: duel damage persists after the fight, every completed
+  task heals +10, and a new day starts fresh at 100. A wounded pet can lose
+  a fight it would otherwise win — finish some tasks before picking one.
+- Your all-time record (`⚔3-1`) lives next to the pet's name, in the
+  statusline, and on the trainer card.
+
+The whole fight is scripted by the core the moment the challenger appears —
+the overlay, terminal, and statusline all replay the same battle in sync.
 
 - **Level = tasks Claude completed today** (resets at midnight; the daily
   gacha rolls a fresh partner each morning — shiny 1/64 ✨).

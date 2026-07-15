@@ -228,12 +228,12 @@ DUEL_JQ='
          if ($e | length) == 0 then $sp else walk($e[0].to; $n - 1) end
        end;
      def foe_of($i): walk($pack.lines[$i].mons[0]; $r.stage - 1);
-     (foe_of($rolls[0] % $nl)) as $try |
-     (if $try == $r.species then foe_of($rolls[1] % $nl) else $try end)
+     (foe_of($rolls[0] % $nl)) as $cand |
+     (if $cand == $r.species then foe_of($rolls[1] % $nl) else $cand end)
    else
      def foe_of($i): ($pack.lines[$i].mons) as $m | $m[[($r.stage - 1), (($m | length) - 1)] | min];
-     (foe_of($rolls[0] % $nl)) as $try |
-     (if $try == $r.species then foe_of($rolls[1] % $nl) else $try end)
+     (foe_of($rolls[0] % $nl)) as $cand |
+     (if $cand == $r.species then foe_of($rolls[1] % $nl) else $cand end)
    end) as $foe |
   ($pack.lines[$rolls[0] % $nl].type // "normal") as $ftype |
   ($pack.species[$foe]) as $fs |
