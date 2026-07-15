@@ -115,16 +115,14 @@ assert_eq "post-rollover tasks reset"   "0"          "$(R .tasks)"
 assert_eq "post-rollover devolves"      "charmander" "$(R .species)"
 teardown
 
-setup  # shiny passthrough + hp math
+setup  # shiny passthrough + battle-driven hp (mistakes never touch it)
 charmander_partner
 tmp=$(mktemp); jq '.shiny = true' "$CACHE/partner" > "$tmp" && mv "$tmp" "$CACHE/partner"
 set_tasks 2; echo "2026-07-13 3" > "$CACHE/mistakes"; "$CORE" resolve
 assert_eq "shiny in resolved" "true" "$(R .shiny)"
-assert_eq "hp dips with mistakes" "75" "$(R .hp_pct)"
-echo "2026-07-13 9" > "$CACHE/mistakes"; "$CORE" resolve
-assert_eq "hp floors at 10" "10" "$(R .hp_pct)"
-echo "2026-07-13 0" > "$CACHE/mistakes"; set_tasks 12; "$CORE" resolve
-assert_eq "hp caps at 100" "100" "$(R .hp_pct)"
+assert_eq "hp ignores mistakes (battle-driven)" "100" "$(R .hp_pct)"
+echo "2026-07-13 35" > "$CACHE/hp"; "$CORE" resolve
+assert_eq "hp comes from the hp file" "35" "$(R .hp_pct)"
 teardown
 
 setup  # element mirrors the type for pokemon

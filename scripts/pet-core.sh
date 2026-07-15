@@ -77,6 +77,38 @@ read_streak() {
     if [ "$d" = "$TODAY" ] || [ "$d" = "$(yesterday)" ]; then echo "${c:-0}"; else echo 0; fi
 }
 
+# ── battle HP: date-stamped "<date> <pct>"; duels deplete it, tasks heal ──
+read_hp() {
+    local d p
+    if [ -f "$CACHE/hp" ]; then
+        read -r d p < "$CACHE/hp"
+        [ "$d" = "$TODAY" ] && { echo "${p:-100}"; return; }
+    fi
+    echo 100
+}
+write_hp() { printf '%s %s\n' "$TODAY" "$1" > "$CACHE/hp"; }
+
+cur_state() {
+    local st ts
+    st=idle
+    [ -f "$CACHE/state" ] && read -r st ts < "$CACHE/state"
+    echo "$st"
+}
+
+# A completed task heals +10 (cap 100); if the pet fainted in a duel, the
+# task revives it at 60 instead (no additional heal on top).
+heal_or_revive() {
+    local hp
+    if [ "$(cur_state)" = "fainted" ]; then
+        hp=60
+    else
+        hp=$(( $(read_hp) + 10 ))
+        [ "$hp" -gt 100 ] && hp=100
+    fi
+    write_hp "$hp"
+    printf 'done %s\n' "$NOW" > "$CACHE/state"
+}
+
 # ── care mistakes: PostToolUseFailure events, except user interrupts.
 # Payload shape verified in docs/notes/2026-07-13-posttooluse-payload.md.
 is_interrupt() {
@@ -89,14 +121,15 @@ is_interrupt() {
 
 cmd_event() {
     local ev="${1:-idle}"
+    # fainted (a lost duel) is sticky: only a completed task clears it
     case "$ev" in
-        done)    printf 'done %s\n' "$NOW" > "$CACHE/state"
-                 counter_lock; update_streak; bump_daily tasks; counter_unlock ;;
-        mistake) printf 'working %s\n' "$NOW" > "$CACHE/state"
+        done)    counter_lock; update_streak; bump_daily tasks
+                 heal_or_revive; counter_unlock ;;
+        mistake) [ "$(cur_state)" = "fainted" ] || printf 'working %s\n' "$NOW" > "$CACHE/state"
                  if ! is_interrupt; then
                      counter_lock; bump_daily mistakes; counter_unlock
                  fi ;;
-        *)       printf '%s %s\n' "$ev" "$NOW" > "$CACHE/state" ;;
+        *)       [ "$(cur_state)" = "fainted" ] || printf '%s %s\n' "$ev" "$NOW" > "$CACHE/state" ;;
     esac
     cmd_resolve
 }
@@ -115,7 +148,6 @@ RESOLVE_JQ='
   (if $final then ((($tasks - $base) % 10) * 10)
    else ([([((($tasks - $base) * 100 / ((($g[$stage] // ($base + 10)) - $base))) | floor), 100] | min), 0] | max)
    end) as $pct |
-  ([([100 - 15 * $mistakes + 10 * $tasks, 100] | min), 10] | max) as $hp |
   ($pack.species[$sp]) as $spec |
   (if $lang == "ko" then ($spec.names.ko // $spec.names.en) else $spec.names.en end) as $name |
   (($pack.moves_by // "type")) as $mb |
@@ -221,18 +253,20 @@ extend_line() { # <pack-file>
 cmd_resolve() {
     command -v jq >/dev/null 2>&1 || return 0   # hook path must survive a bare PATH
     jq -e . "$CACHE/partner" >/dev/null 2>&1 || default_partner   # missing or corrupt: self-heal
-    local pack tasks mistakes streak lang state ts tmp
+    local pack tasks mistakes streak lang state ts tmp hp
     pack="$(pack_file "$(active_franchise)")"
     jq -e '.edges' "$pack" >/dev/null 2>&1 && extend_line "$pack"
     tasks="$(read_daily tasks)"
     mistakes="$(read_daily mistakes)"
     streak="$(read_streak)"
+    hp="$(read_hp)"
     lang="$(cur_lang)"
     state=idle; ts="$NOW"
     [ -f "$CACHE/state" ] && read -r state ts < "$CACHE/state"
     tmp="$(mktemp)"
     jq -n --slurpfile pk "$pack" --slurpfile pt "$CACHE/partner" \
        --argjson tasks "$tasks" --argjson mistakes "$mistakes" --argjson streak "$streak" \
+       --argjson hp "$hp" \
        --arg lang "$lang" --arg state "$state" --argjson ts "${ts:-0}" --arg today "$TODAY" \
        "$RESOLVE_JQ" > "$tmp" && mv "$tmp" "$CACHE/resolved.json"
     update_dex
