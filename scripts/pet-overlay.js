@@ -84,6 +84,7 @@ function run(argv) {
         case 'done':     return pick(['효과는 굉장했다!', josa(N, '은', '는') + ' 경험치를 얻었다!']);
         case 'waiting':  return josa(N, '은', '는') + ' 지시를 기다리고 있다';
         case 'hello':    return '가라! ' + N + '!';
+        case 'fainted':  return josa(N, '은', '는') + ' 기절했다… 작업을 완료하면 회복!';
         default:         return josa(N, '은', '는') + ' 쿨쿨 잠들어 있다';
       }
     }
@@ -93,6 +94,7 @@ function run(argv) {
       case 'done':     return pick(["It's super effective!", N + ' gained EXP. Points!']);
       case 'waiting':  return N + ' looks at you expectantly';
       case 'hello':    return 'Go! ' + N + '!';
+      case 'fainted':  return N + ' fainted… complete a task to revive!';
       default:         return N + ' is fast asleep';
     }
   }
@@ -244,6 +246,83 @@ function run(argv) {
       $.CGRectMake(expX, 22, EXPW * frac, 3), 1.5, 1.5, null));
   }
 
+  // ── duel chrome: a second sprite + split HP bars, hidden outside fights ──
+  var foeView = $.NSImageView.alloc.initWithFrame($.NSMakeRect(122, 60, 100, 120));
+  foeView.setImageScaling(3);
+  foeView.setAnimates(true);
+  foeView.setWantsLayer(true);
+  foeView.layer.setMagnificationFilter($('nearest'));
+  foeView.setHidden(true);
+  win.contentView.addSubview(foeView);
+  var foeHpTrack = $.CAShapeLayer.layer, foeHpFill = $.CAShapeLayer.layer;
+  foeHpTrack.setPath($.CGPathCreateWithRoundedRect($.CGRectMake(128, 22, 88, 3), 1.5, 1.5, null));
+  foeHpTrack.setFillColor(cg(0.50, 0.53, 0.68, 0.95));
+  foeHpTrack.setHidden(true); foeHpFill.setHidden(true);
+  win.contentView.layer.addSublayer(foeHpTrack);
+  win.contentView.layer.addSublayer(foeHpFill);
+  var foeSpecies = '';
+  function loadFoe(species) {
+    if (species === foeSpecies) return;
+    var img = $.NSImage.alloc.initWithContentsOfFile($(SPRITES + '/' + species + '.gif'));
+    if (!img || img.isNil()) img = $.NSImage.alloc.initWithContentsOfFile($(SPRITES + '/' + species + '.png'));
+    if (img && !img.isNil()) { foeView.setImage(img); foeSpecies = species; }
+  }
+  function hpColor(pct) {
+    return pct > 60 ? cg(0.35, 0.85, 0.45, 0.95)
+         : pct > 30 ? cg(0.95, 0.80, 0.30, 0.95) : cg(0.95, 0.35, 0.30, 0.95);
+  }
+  var duelMode = false;
+  function setDuelLayout(on) {
+    if (on === duelMode) return;
+    duelMode = on;
+    try {
+      if (on) {
+        imageView.setFrame($.NSMakeRect(2, 60, 100, 120));
+        imageView.layer.setAnchorPoint($.CGPointMake(0.5, 0));
+        imageView.layer.setPosition($.CGPointMake(52, 60));
+        hpTrack.setPath($.CGPathCreateWithRoundedRect($.CGRectMake(8, 22, 88, 3), 1.5, 1.5, null));
+        expTrack.setHidden(true); expFill.setHidden(true);
+        foeView.setHidden(false); foeHpTrack.setHidden(false); foeHpFill.setHidden(false);
+        // entrance: slide in from beyond the right edge
+        var slide = $.CABasicAnimation.animationWithKeyPath($('transform.translation.x'));
+        slide.setFromValue($.NSNumber.numberWithDouble(140));
+        slide.setToValue($.NSNumber.numberWithDouble(0));
+        slide.setDuration(0.9);
+        foeView.layer.addAnimationForKey(slide, $('slidein'));
+      } else {
+        imageView.setFrame($.NSMakeRect(12, 48, winW - 24, 190));
+        imageView.layer.setAnchorPoint($.CGPointMake(0.5, 0));
+        imageView.layer.setPosition($.CGPointMake(12 + (winW - 24) / 2, 48));
+        hpTrack.setPath($.CGPathCreateWithRoundedRect($.CGRectMake(expX, 22, EXPW, 3), 1.5, 1.5, null));
+        expTrack.setHidden(false); expFill.setHidden(false);
+        foeView.setHidden(true); foeHpTrack.setHidden(true); foeHpFill.setHidden(true);
+        foeSpecies = '';
+      }
+    } catch (e) {}
+  }
+  function setDuelBars(petHp, foeHp) {
+    try {
+      hpFill.setFillColor(hpColor(petHp));
+      hpFill.setPath($.CGPathCreateWithRoundedRect(
+        $.CGRectMake(8, 22, 88 * Math.max(0.02, petHp / 100), 3), 1.5, 1.5, null));
+      foeHpFill.setFillColor(hpColor(foeHp));
+      foeHpFill.setPath($.CGPathCreateWithRoundedRect(
+        $.CGRectMake(128, 22, 88 * Math.max(0.02, foeHp / 100), 3), 1.5, 1.5, null));
+    } catch (e) {}
+  }
+  function foeLunge() {
+    try {
+      var a = $.CAKeyframeAnimation.animationWithKeyPath($('transform.translation.x'));
+      var vals = $.NSMutableArray.array;   // NEVER $([...]) — bridges as NSNull
+      vals.addObject($.NSNumber.numberWithDouble(0));
+      vals.addObject($.NSNumber.numberWithDouble(-14));
+      vals.addObject($.NSNumber.numberWithDouble(0));
+      a.setValues(vals);
+      a.setDuration(0.25);
+      foeView.layer.addAnimationForKey(a, $('lunge'));
+    } catch (e) {}
+  }
+
   // Battle FX: type-colored particle bursts + done-flash shake. Guarded —
   // any failure here must never break the pet itself.
   var TYPE_RGB = { fire: [1, .5, .2], water: [.3, .6, 1], grass: [.4, .9, .4],
@@ -335,7 +414,7 @@ function run(argv) {
     return w + ((c >= 0xAC00 && c <= 0xD7A3 && fin > 0 && fin !== 8) ? '으로' : '로');
   }
   var evolveStart = 0, evolveOld = '', evolveNew = '', prevStage = 0, prevName = '';
-  var prevRState = '', lastSlot = 0;
+  var prevRState = '', lastSlot = 0, lastDuelTurn = -2;
   function refresh() {
     var p = petState();
     if (!p) return;                        // core hasn't resolved yet
@@ -353,6 +432,65 @@ function run(argv) {
     prevName = p.name;
     var elem = p.element || p.type;
     if (elem !== fxColor) setupEmitter(elem);
+    // duel takeover: replay the pre-computed battle script by wall clock
+    var nowS = Date.now() / 1000;
+    var duel = p.duel && p.duel.date === p.date && nowS < p.duel.end_ts + 6 ? p.duel : null;
+    if (duel) {
+      loadFoe(duel.opponent.species);
+      setDuelLayout(true);
+      setSprite(p.species, 'r', current.shiny);           // face the challenger
+      var ti = -1;
+      for (var di = 0; di < duel.turns.length; di++) {
+        if (nowS >= duel.start_ts + duel.turns[di].t) ti = di;
+      }
+      var turn = ti >= 0 ? duel.turns[ti] : null;
+      if (ti !== lastDuelTurn) {                          // a new turn landed
+        lastDuelTurn = ti;
+        if (turn) {
+          var atkElem = turn.side === 'pet' ? (p.element || 'vpet') : (duel.opponent.element || 'vpet');
+          if (turn.side === 'pet') { lunge(1); } else { foeLunge(); }
+          if (atkElem !== 'vpet') {                       // star glints at the DEFENDER
+            setupEmitter(atkElem);
+            burst(60, 220, turn.side === 'pet' ? 162 : 62, 120);
+          }
+        }
+      }
+      setDuelBars(turn ? turn.pet_hp : Math.min(100, p.hp_pct || 100), turn ? turn.foe_hp : 100);
+      var dcap;
+      if (nowS < duel.start_ts + 3) {
+        dcap = p.lang === 'ko' ? '야생의 ' + josa(duel.opponent.name, '이', '가') + ' 나타났다!'
+                               : 'A wild ' + duel.opponent.name + ' appeared!';
+      } else if (nowS >= duel.end_ts) {
+        if (duel.result === 'win') {
+          dcap = p.lang === 'ko'
+            ? '이겼다! 야생의 ' + josa(duel.opponent.name, '을', '를') + ' 쓰러뜨렸다! +1 Lv'
+            : 'You won! Wild ' + duel.opponent.name + ' was defeated! +1 Lv';
+          if (nowS - duel.end_ts < 1.2) shakeUntil = Date.now() + 400;   // victory beat
+        } else {
+          dcap = p.lang === 'ko'
+            ? josa(p.name, '은', '는') + ' 기절했다… 작업을 완료하면 회복!'
+            : p.name + ' fainted… complete a task to revive!';
+        }
+      } else if (turn) {
+        var atkName = turn.side === 'pet' ? p.name : duel.opponent.name;
+        dcap = p.lang === 'ko' ? atkName + '의 ' + turn.move + '!'
+                               : atkName + ' used ' + turn.move + '!';
+      } else {
+        dcap = p.lang === 'ko' ? '승부 개시!' : 'Battle start!';
+      }
+      nameLabel.setStringValue($(p.name + ' Lv.' + p.tasks + ' vs ' + duel.opponent.name + ' Lv.' + duel.opponent.level));
+      moodLabel.setStringValue($(dcap));
+      centerLabel(nameLabel);
+      centerLabel(moodLabel);
+      win.setAlphaValue(1.0);
+      prevRState = p.state;
+      prevMistakes = p.mistakes;
+      prevStage = p.stage;
+      prevName = p.name;
+      return;                                             // the duel owns the frame
+    }
+    setDuelLayout(false);
+    lastDuelTurn = -2;
     var slot = Math.floor(Date.now() / 7000);
     if (p.state === 'working' && slot !== lastSlot) {
       lastSlot = slot;
@@ -373,8 +511,9 @@ function run(argv) {
     }
     prevMistakes = p.mistakes;
     setSprite(p.species, p.state === 'working' ? facing : 'l', current.shiny);
-    nameLabel.setStringValue($(p.name + '  Lv.' + p.tasks +
-      (p.streak >= 2 ? '  🔥' + p.streak : '')));
+    var rec = p.record || {};
+    var recSeg = (rec.w || 0) + (rec.l || 0) > 0 ? '  ⚔' + (rec.w || 0) + '-' + (rec.l || 0) : '';
+    nameLabel.setStringValue($(p.name + '  Lv.' + p.tasks + recSeg));
     var caption, evoAge = Date.now() - evolveStart;
     if (evolveStart && evoAge < 10000) {
       if (evoAge < 2500) {
@@ -393,7 +532,7 @@ function run(argv) {
     centerLabel(moodLabel);
     setExp(p);
     setHp(p);
-    win.setAlphaValue(p.state === 'idle' ? 0.55 : 1.0);
+    win.setAlphaValue(p.state === 'idle' || p.state === 'fainted' ? 0.55 : 1.0);
   }
 
   // ── Motion engine (20fps) + manual ⌥-drag ──
@@ -469,6 +608,8 @@ function run(argv) {
       case 'hello':
         dy = Math.abs(Math.sin(t * 5.0)) * Math.max(0, 22 - current.age * 4);
         break;
+      case 'fainted':
+        break;                       // knocked out: no sway at all
       default:
         dy = 1.5 * Math.sin(t * 0.7);
     }
