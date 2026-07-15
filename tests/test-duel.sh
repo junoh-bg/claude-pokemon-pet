@@ -128,4 +128,93 @@ assert_eq "pokemon foe is a pack species" "yes" \
         | sed 's/true/yes/; s/false/no/')"
 teardown
 
+mkduel() { # <result> <end_ts> [date] — minimal hand-crafted finished duel
+    jq -n --arg res "$1" --argjson end "$2" --arg d "${3:-2026-07-13}" '
+      {date: $d, start_ts: ($end - 23), end_ts: $end, kind: "wild",
+       opponent: {species: "gabumon", name: "GABUMON", level: 3,
+                  element: "fire", move: "Petit Fire", franchise: "digimon"},
+       turns: [{t: 3, side: "pet", move: "Baby Flame", dmg: 30, pet_hp: 100, foe_hp: 70},
+               {t: 7, side: "foe", move: "Petit Fire", dmg: 25, pet_hp: 75, foe_hp: 70},
+               {t: 11, side: "pet", move: "Baby Flame", dmg: 35,
+                pet_hp: (if $res == "win" then 75 else 0 end),
+                foe_hp: (if $res == "win" then 0 else 70 end)}],
+       result: $res, applied: false}' > "$CACHE/duel.json"
+}
+
+setup  # win: +1 task, wild dex entry, W bump, hp persists, applied once
+pin_digimon
+echo "2026-07-13 4" > "$CACHE/tasks"
+mkduel win 2000
+PET_NOW=2001 "$CORE" resolve
+assert_eq "win applies exactly once" "true" "$(D .applied)"
+assert_eq "win awards +1 Lv" "5" "$(R .tasks)"
+assert_json "wild foe in dex" "$CACHE/dex.json" \
+    '[.[] | select(.species == "gabumon" and .wild == true)] | length' "1"
+read -r w l < "$CACHE/duels"
+assert_eq "record 1-0" "1 0" "$w $l"
+assert_eq "pet hp persists after the win" "75" "$(R .hp_pct)"
+PET_NOW=2002 "$CORE" resolve
+assert_eq "no double apply" "5" "$(R .tasks)"
+teardown
+
+setup  # lose: faint, L bump, hp 0; done revives at 60
+pin_digimon
+mkduel lose 2000
+PET_NOW=2001 "$CORE" resolve
+assert_eq "lose faints the pet" "fainted" "$(R .state)"
+assert_eq "lose zeroes hp" "0" "$(R .hp_pct)"
+read -r w l < "$CACHE/duels"
+assert_eq "record 0-1" "0 1" "$w $l"
+PET_NOW=2010 "$CORE" event done
+assert_eq "task revives" "done" "$(R .state)"
+assert_eq "revive hp 60" "60" "$(R .hp_pct)"
+teardown
+
+setup  # apply is race-safe: 20 concurrent resolves award exactly one level
+pin_digimon
+echo "2026-07-13 4" > "$CACHE/tasks"
+mkduel win 2000
+for i in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20; do
+    PET_NOW=2001 "$CORE" resolve &
+done
+wait
+assert_eq "concurrent apply bumps once" "5" "$(R .tasks)"
+read -r w l < "$CACHE/duels"
+assert_eq "record counted once" "1 0" "$w $l"
+teardown
+
+setup  # a duel from yesterday is discarded unapplied at rollover
+pin_digimon
+mkduel win 2000 2026-07-12
+"$CORE" resolve
+assert_eq "stale duel discarded" "no" "$([ -f "$CACHE/duel.json" ] && echo yes || echo no)"
+assert_eq "stale duel awards nothing" "0" "$(R .tasks)"
+teardown
+
+setup  # resolved.json embeds the duel while live, drops it after the linger
+pin_digimon
+"$CORE" resolve
+PET_SEED=1 PET_NOW=5000 "$CORE" duel >/dev/null
+PET_NOW=5001 "$CORE" resolve
+assert_eq "live duel embedded" "5000" "$(R .duel.start_ts)"
+assert_eq "record embedded" "0" "$(R '.record.w + .record.l')"
+endts="$(D .end_ts)"
+PET_NOW="$(( endts + 7 ))" "$CORE" resolve
+assert_eq "duel dropped after linger" "null" "$(R .duel)"
+teardown
+
+setup  # dex: owning a species later clears the wild flag and the ⚔ marker
+printf '[{"species":"gabumon","franchise":"digimon","date":"2026-07-13","shiny":false,"wild":true}]' \
+    > "$CACHE/dex.json"
+printf '{"franchise":"digimon","line":["punimon","tunomon","gabumon"],"type":"vpet","date":"2026-07-13","seed":0}' \
+    > "$CACHE/partner"
+echo "2026-07-13 5" > "$CACHE/tasks"
+"$CORE" resolve
+assert_json "owning clears wild" "$CACHE/dex.json" \
+    '[.[] | select(.species == "gabumon")][0].wild' "false"
+out="$("$CORE" dex | grep gabumon)"
+case "$out" in *"⚔"*) ok=yes ;; *) ok=no ;; esac
+assert_eq "owned gabumon loses its ⚔ marker" "no" "$ok"
+teardown
+
 report

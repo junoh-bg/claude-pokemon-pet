@@ -192,6 +192,9 @@ RESOLVE_JQ='
    end) as $mv |
   (if $mb == "species" then elem_of(($spec.attack.en // "")) else $p.type end) as $element |
   (if ($pack.edges // null) != null then ($g | length) else $len end) as $stages_total |
+  (($dl[0] // null)) as $dj |
+  (if $dj != null and $dj.date == $today and ($now < ($dj.end_ts + 6))
+   then $dj else null end) as $duel |
   {
     date: $today,
     franchise: $p.franchise, species: $sp, name: $name, type: $p.type,
@@ -199,6 +202,7 @@ RESOLVE_JQ='
     stage: $stage, stages: $stages_total, final: $final,
     tasks: $tasks, mistakes: $mistakes, streak: $streak, shiny: ($p.shiny // false),
     exp_pct: $pct, exp_gold: $final, hp_pct: $hp,
+    record: {w: $w, l: $l}, duel: $duel,
     line: $line,
     line_names: ($line | map($pack.species[.] as $s |
         if $lang == "ko" then ($s.names.ko // $s.names.en) else $s.names.en end)),
@@ -297,6 +301,59 @@ gen_duel() { # [force] — returns 0 iff a duel was generated
     return 0
 }
 
+dex_add_wild() { # <species> <franchise> — defeated wild mon, ⚔ entry
+    [ -f "$CACHE/dex.json" ] || echo '[]' > "$CACHE/dex.json"
+    local tmp; tmp="$(mktemp)"
+    jq --arg s "$1" --arg f "$2" --arg d "$TODAY" \
+       'if any(.[]; .species == $s and .franchise == $f) then .
+        else . + [{species: $s, franchise: $f, date: $d, shiny: false, wild: true}] end' \
+       "$CACHE/dex.json" > "$tmp" && mv "$tmp" "$CACHE/dex.json"
+}
+
+# Settle a finished fight exactly once. mkdir lock + atomic applied-flag
+# rewrite: skip-on-busy is safe because the holder flips applied before
+# releasing, so latecomers see it settled.
+apply_duel_outcome() {
+    [ -f "$CACHE/duel.json" ] || return 0
+    local appl ddate end
+    # NOTE: jq "//" treats false as absent — never use `.applied // default`
+    # on a boolean (it silently rewrites false)
+    appl="$(jq -r 'if (.applied == true or .applied == false) then (.applied | tostring) else "corrupt" end' \
+        "$CACHE/duel.json" 2>/dev/null || echo corrupt)"
+    case "$appl" in false) ;; true) return 0 ;; *) rm -f "$CACHE/duel.json"; return 0 ;; esac
+    ddate="$(jq -r '.date // ""' "$CACHE/duel.json")"
+    [ "$ddate" = "$TODAY" ] || { rm -f "$CACHE/duel.json"; return 0; }   # rollover: discard
+    end="$(jq -r '.end_ts // 0' "$CACHE/duel.json")"
+    [ "$NOW" -ge "${end:-0}" ] || return 0
+    local lock="$CACHE/.duel-apply.lock"
+    clear_stale_lock "$lock"
+    mkdir "$lock" 2>/dev/null || return 0
+    appl="$(jq -r 'if .applied == false then "false" else "true" end' \
+        "$CACHE/duel.json" 2>/dev/null || echo true)"   # re-check under lock
+    if [ "$appl" = "false" ]; then
+        local res fhp w l tmp
+        res="$(jq -r '.result' "$CACHE/duel.json")"
+        fhp="$(jq -r '.turns[-1].pet_hp // 100' "$CACHE/duel.json")"
+        w=0; l=0
+        [ -f "$CACHE/duels" ] && read -r w l < "$CACHE/duels"
+        if [ "$res" = "win" ]; then
+            counter_lock; bump_daily tasks; counter_unlock   # the EXP bonus
+            dex_add_wild "$(jq -r '.opponent.species' "$CACHE/duel.json")" \
+                         "$(jq -r '.opponent.franchise' "$CACHE/duel.json")"
+            printf '%s %s\n' "$(( ${w:-0} + 1 ))" "${l:-0}" > "$CACHE/duels"
+            [ "${fhp:-0}" -lt 5 ] && fhp=5
+        else
+            printf '%s %s\n' "${w:-0}" "$(( ${l:-0} + 1 ))" > "$CACHE/duels"
+            printf 'fainted %s\n' "$NOW" > "$CACHE/state"
+            fhp=0
+        fi
+        write_hp "$fhp"
+        tmp="$(mktemp)"
+        jq '.applied = true' "$CACHE/duel.json" > "$tmp" && mv "$tmp" "$CACHE/duel.json"
+    fi
+    rmdir "$lock" 2>/dev/null
+}
+
 cmd_duel() {
     command -v jq >/dev/null 2>&1 || { echo "duel: jq required" >&2; exit 1; }
     [ -f "$CACHE/resolved.json" ] || cmd_resolve
@@ -321,22 +378,25 @@ update_dex() {
     tmp="$(mktemp)"
     jq --arg s "$sp" --arg f "$fr" --arg d "$TODAY" --argjson sh "$sh" \
        'if any(.[]; .species == $s and .franchise == $f)
-        then map(if .species == $s and .franchise == $f and $sh then .shiny = true else . end)
+        then map(if .species == $s and .franchise == $f
+                 then (.wild = false | if $sh then .shiny = true else . end)
+                 else . end)
         else . + [{species: $s, franchise: $f, date: $d, shiny: $sh}] end' \
        "$CACHE/dex.json" > "$tmp" && mv "$tmp" "$CACHE/dex.json"
 }
 
 cmd_dex() {
     [ -f "$CACHE/dex.json" ] || echo '[]' > "$CACHE/dex.json"
-    local f pack total caught
+    local f pack total caught wild
     for f in pokemon digimon; do
         pack="$(pack_file "$f")"; [ -f "$pack" ] || continue
         total="$(jq '.species | length' "$pack")"
-        caught="$(jq --arg f "$f" '[.[] | select(.franchise == $f)] | length' "$CACHE/dex.json")"
-        echo "$f: caught $caught/$total"
+        caught="$(jq --arg f "$f" '[.[] | select(.franchise == $f and .wild != true)] | length' "$CACHE/dex.json")"
+        wild="$(jq --arg f "$f" '[.[] | select(.franchise == $f and .wild == true)] | length' "$CACHE/dex.json")"
+        echo "$f: caught $caught/$total (⚔ $wild wild)"
     done
     echo "shiny: $(jq '[.[] | select(.shiny)] | length' "$CACHE/dex.json") ✨"
-    jq -r 'sort_by(.date)[] | "  \(.date)  \(.species)\(if .shiny then " ✨" else "" end)"' "$CACHE/dex.json"
+    jq -r 'sort_by(.date)[] | "  \(.date)  \(.species)\(if .shiny then " ✨" else "" end)\(if .wild == true then " ⚔" else "" end)"' "$CACHE/dex.json"
 }
 
 # ── digimon-style growth: extend the line when daily gates unlock stages.
@@ -379,8 +439,9 @@ extend_line() { # <pack-file>
 
 cmd_resolve() {
     command -v jq >/dev/null 2>&1 || return 0   # hook path must survive a bare PATH
+    apply_duel_outcome
     jq -e . "$CACHE/partner" >/dev/null 2>&1 || default_partner   # missing or corrupt: self-heal
-    local pack tasks mistakes streak lang state ts tmp hp
+    local pack tasks mistakes streak lang state ts tmp hp w l duelsrc
     pack="$(pack_file "$(active_franchise)")"
     jq -e '.edges' "$pack" >/dev/null 2>&1 && extend_line "$pack"
     tasks="$(read_daily tasks)"
@@ -390,8 +451,14 @@ cmd_resolve() {
     lang="$(cur_lang)"
     state=idle; ts="$NOW"
     [ -f "$CACHE/state" ] && read -r state ts < "$CACHE/state"
+    w=0; l=0
+    [ -f "$CACHE/duels" ] && read -r w l < "$CACHE/duels"
+    duelsrc="$CACHE/duel.json"
+    [ -f "$duelsrc" ] || duelsrc=/dev/null
     tmp="$(mktemp)"
     jq -n --slurpfile pk "$pack" --slurpfile pt "$CACHE/partner" \
+       --slurpfile dl "$duelsrc" --argjson now "$NOW" \
+       --argjson w "${w:-0}" --argjson l "${l:-0}" \
        --argjson tasks "$tasks" --argjson mistakes "$mistakes" --argjson streak "$streak" \
        --argjson hp "$hp" \
        --arg lang "$lang" --arg state "$state" --argjson ts "${ts:-0}" --arg today "$TODAY" \
