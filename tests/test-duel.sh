@@ -132,11 +132,13 @@ mkduel() { # <result> <end_ts> [date] — minimal hand-crafted finished duel
     # NB: jq variables must not shadow keywords ($end, $try break jq 1.6)
     jq -n --arg res "$1" --argjson endts "$2" --arg d "${3:-2026-07-13}" '
       {date: $d, start_ts: ($endts - 23), end_ts: $endts, kind: "wild",
-       opponent: {species: "gabumon", name: "GABUMON", level: 3,
-                  element: "fire", move: "Petit Fire", franchise: "digimon"},
-       turns: [{t: 3, side: "pet", move: "Baby Flame", dmg: 30, pet_hp: 100, foe_hp: 70},
-               {t: 7, side: "foe", move: "Petit Fire", dmg: 25, pet_hp: 75, foe_hp: 70},
-               {t: 11, side: "pet", move: "Baby Flame", dmg: 35,
+       opponent: {species: "gabumon", level: 3,
+                  name: {en: "GABUMON", ko: "파피몬"},
+                  move: {en: "Petit Fire", ko: "쁘띠 파이어"},
+                  element: "fire", franchise: "digimon"},
+       turns: [{t: 3, side: "pet", dmg: 30, pet_hp: 100, foe_hp: 70},
+               {t: 7, side: "foe", dmg: 25, pet_hp: 75, foe_hp: 70},
+               {t: 11, side: "pet", dmg: 35,
                 pet_hp: (if $res == "win" then 75 else 0 end),
                 foe_hp: (if $res == "win" then 0 else 70 end)}],
        result: $res, applied: false}' > "$CACHE/duel.json"
@@ -202,6 +204,47 @@ assert_eq "record embedded" "0" "$(R '.record.w + .record.l')"
 endts="$(D .end_ts)"
 PET_NOW="$(( endts + 7 ))" "$CORE" resolve
 assert_eq "duel dropped after linger" "null" "$(R .duel)"
+teardown
+
+setup  # concurrent done events can never blow past one live duel (reviewed race)
+pin_digimon
+"$CORE" resolve
+for i in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20; do
+    PET_SEED=2 "$CORE" event done &
+done
+wait
+read -r _ dcount < "$CACHE/duels_today"
+assert_eq "concurrent dones generate exactly one duel" "1" "$dcount"
+assert_eq "surviving duel.json parses" "wild" "$(D .kind)"
+teardown
+
+setup  # duel.json is language-neutral: a mid-duel lang switch re-localizes
+pin_digimon
+"$CORE" resolve
+PET_SEED=1 PET_NOW=5000 "$CORE" duel >/dev/null
+assert_eq "en opponent name embedded" \
+    "$(D .opponent.name.en)" "$(PET_NOW=5001 "$CORE" resolve; R .duel.opponent.name)"
+echo ko > "$CACHE/lang"
+PET_NOW=5002 "$CORE" resolve
+assert_eq "ko switch re-localizes the opponent" \
+    "$(D .opponent.name.ko)" "$(R .duel.opponent.name)"
+assert_eq "ko move too" "$(D .opponent.move.ko)" "$(R .duel.opponent.move)"
+teardown
+
+setup  # garbage hp file self-heals to 100 (torn write)
+pin_pokemon
+printf '2026-07-13 garbage\n' > "$CACHE/hp"
+"$CORE" resolve
+assert_eq "garbage hp self-heals" "100" "$(R .hp_pct)"
+teardown
+
+setup  # status surfaces hp and the duel record
+pin_pokemon
+printf '3 1\n' > "$CACHE/duels"
+echo "2026-07-13 45" > "$CACHE/hp"
+out="$("$CORE" status)"
+case "$out" in *"hp:      45/100"*"3W-1L"*) ok=yes ;; *) ok="no($out)" ;; esac
+assert_eq "status shows hp and record" "yes" "$ok"
 teardown
 
 setup  # dex: owning a species later clears the wild flag and the ⚔ marker

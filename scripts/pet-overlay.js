@@ -473,8 +473,10 @@ function run(argv) {
         }
       } else if (turn) {
         var atkName = turn.side === 'pet' ? p.name : duel.opponent.name;
-        dcap = p.lang === 'ko' ? atkName + '의 ' + turn.move + '!'
-                               : atkName + ' used ' + turn.move + '!';
+        var atkMove = turn.side === 'pet' ? ((p.moves && p.moves[0]) || 'ATTACK')
+                                          : (duel.opponent.move || 'ATTACK');
+        dcap = p.lang === 'ko' ? atkName + '의 ' + atkMove + '!'
+                               : atkName + ' used ' + atkMove + '!';
       } else {
         dcap = p.lang === 'ko' ? '승부 개시!' : 'Battle start!';
       }

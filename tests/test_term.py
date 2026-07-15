@@ -249,17 +249,17 @@ class TestResolved(unittest.TestCase):
 
 
 def _mkduel(result="win", start=1000):
+    # the EMBEDDED form renderers see: opponent name/move already localized
+    # by resolve; turns are language-neutral (no move strings)
     return {"date": "2026-07-13", "start_ts": start, "end_ts": start + 15,
             "kind": "wild",
             "opponent": {"species": "gabumon", "name": "가부몬", "level": 3,
                          "element": "fire", "move": "쁘띠 파이어",
                          "franchise": "digimon"},
             "turns": [
-                {"t": 3, "side": "pet", "move": "베이비 플레임", "dmg": 30,
-                 "pet_hp": 100, "foe_hp": 70},
-                {"t": 7, "side": "foe", "move": "쁘띠 파이어", "dmg": 25,
-                 "pet_hp": 75, "foe_hp": 70},
-                {"t": 11, "side": "pet", "move": "베이비 플레임", "dmg": 35,
+                {"t": 3, "side": "pet", "dmg": 30, "pet_hp": 100, "foe_hp": 70},
+                {"t": 7, "side": "foe", "dmg": 25, "pet_hp": 75, "foe_hp": 70},
+                {"t": 11, "side": "pet", "dmg": 35,
                  "pet_hp": 75 if result == "win" else 0,
                  "foe_hp": 0 if result == "win" else 70}],
             "result": result, "applied": False}

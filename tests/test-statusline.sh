@@ -42,7 +42,7 @@ printf '{"franchise":"digimon","line":["botamon","koromon","agumon"],"type":"vpe
 echo "2026-07-13 5" > "$CACHE/tasks"
 PET_SEED=1 PET_NOW=5000 "$CORE" duel >/dev/null
 out="$(PET_NOW=5001 "$SL")"
-foename="$(jq -r '.opponent.name' "$CACHE/duel.json")"
+foename="$(jq -r '.duel.opponent.name' "$CACHE/resolved.json")"
 case "$out" in "⚔ AGUMON vs $foename"*) ok=yes ;; *) ok="no($out)" ;; esac
 assert_eq "statusline shows the live duel" "yes" "$ok"
 printf '2 1\n' > "$CACHE/duels"

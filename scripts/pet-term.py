@@ -230,10 +230,15 @@ def duel_caption(d, r, now):
         return (josa(pet, "은", "는") + " 기절했다… 작업을 완료하면 회복!") if ko \
             else (pet + " fainted… complete a task to revive!")
     turn = d["turns"][ti]
-    attacker = pet if turn["side"] == "pet" else foe
+    # turns are language-neutral; the move strings come from the already-
+    # localized pet moves / embedded opponent move
+    if turn["side"] == "pet":
+        attacker, move = pet, (r.get("moves") or ["ATTACK"])[0]
+    else:
+        attacker, move = foe, d["opponent"].get("move", "ATTACK")
     if ko:
-        return attacker + "의 " + turn["move"] + "!"
-    return attacker + " used " + turn["move"] + "!"
+        return attacker + "의 " + move + "!"
+    return attacker + " used " + move + "!"
 
 
 def join_sprites(left, right, left_w, gap):

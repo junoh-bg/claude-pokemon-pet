@@ -82,7 +82,11 @@ read_hp() {
     local d p
     if [ -f "$CACHE/hp" ]; then
         read -r d p < "$CACHE/hp"
-        [ "$d" = "$TODAY" ] && { echo "${p:-100}"; return; }
+        if [ "$d" = "$TODAY" ]; then
+            # torn/garbage writes self-heal to full, like partner corruption
+            case "${p:-}" in ''|*[!0-9]*) echo 100 ;; *) echo "$p" ;; esac
+            return
+        fi
     fi
     echo 100
 }
@@ -193,8 +197,13 @@ RESOLVE_JQ='
   (if $mb == "species" then elem_of(($spec.attack.en // "")) else $p.type end) as $element |
   (if ($pack.edges // null) != null then ($g | length) else $len end) as $stages_total |
   (($dl[0] // null)) as $dj |
+  # embed the duel with opponent name/move flattened to the CURRENT lang —
+  # duel.json stores both locales precisely so this stays switchable
   (if $dj != null and $dj.date == $today and ($now < ($dj.end_ts + 6))
-   then $dj else null end) as $duel |
+   then ($dj | .opponent = ($dj.opponent
+          | .name = (if $lang == "ko" then (.name.ko // .name.en) else .name.en end)
+          | .move = (if $lang == "ko" then (.move.ko // .move.en) else .move.en end)))
+   else null end) as $duel |
   {
     date: $today,
     franchise: $p.franchise, species: $sp, name: $name, type: $p.type,
@@ -237,11 +246,8 @@ DUEL_JQ='
    end) as $foe |
   ($pack.lines[$rolls[0] % $nl].type // "normal") as $ftype |
   ($pack.species[$foe]) as $fs |
-  (if $lang == "ko" then ($fs.names.ko // $fs.names.en) else $fs.names.en end) as $fname |
-  species_move($pack; $foe; $lang; $ftype) as $fmove |
   species_elem($pack; $foe; $ftype) as $felem |
   ([($r.tasks + ($rolls[2] % 5) - 2), 1] | max) as $flevel |
-  ($r.moves[0] // "ATTACK") as $pmove |
   # alternating damage rolls until a side drops; pet swings first, +4 bias
   def fight($php; $fhp; $i; $acc):
     if $php <= 0 or $fhp <= 0 or $i >= 20 then $acc
@@ -252,7 +258,6 @@ DUEL_JQ='
       (if $side == "foe" then [($php - $dmg), 0] | max else $php end) as $np |
       fight($np; $nf; $i + 1;
             $acc + [{t: (3 + 4 * $i), side: $side,
-                     move: (if $side == "pet" then $pmove else $fmove end),
                      dmg: $dmg, pet_hp: $np, foe_hp: $nf}])
     end;
   fight($hp; 100; 0; []) as $turns |
@@ -260,8 +265,13 @@ DUEL_JQ='
     date: $today, start_ts: $now,
     end_ts: ($now + $turns[-1].t + 4),
     kind: $kind,
-    opponent: { species: $foe, name: $fname, level: $flevel,
-                element: $felem, move: $fmove, franchise: $r.franchise },
+    # language-NEUTRAL on disk: both locales stored, resolve localizes at
+    # embed time so a mid-duel lang switch never mixes languages
+    opponent: { species: $foe, level: $flevel,
+                name: { en: $fs.names.en, ko: ($fs.names.ko // $fs.names.en) },
+                move: { en: species_move($pack; $foe; "en"; $ftype),
+                        ko: species_move($pack; $foe; "ko"; $ftype) },
+                element: $felem, franchise: $r.franchise },
     turns: $turns,
     result: (if $turns[-1].foe_hp == 0 then "win" else "lose" end),
     applied: false
@@ -275,7 +285,18 @@ duel_active() {
     [ "$ddate" = "$TODAY" ] && [ "$NOW" -lt $(( ${end:-0} + 6 )) ]
 }
 
+# check-then-generate is a read-modify-write on duel.json + duels_today:
+# without the lock, concurrent done-hooks blow past the daily cap and race
+# whole generations against each other (reviewed, reproduced 20-way)
 gen_duel() { # [force] — returns 0 iff a duel was generated
+    local rc
+    counter_lock
+    gen_duel_unlocked "${1:-}"; rc=$?
+    counter_unlock
+    return "$rc"
+}
+
+gen_duel_unlocked() {
     command -v jq >/dev/null 2>&1 || return 1
     [ -f "$CACHE/resolved.json" ] || return 1
     duel_active && return 1
@@ -295,7 +316,6 @@ gen_duel() { # [force] — returns 0 iff a duel was generated
     jq -n --slurpfile pk "$pack" --slurpfile rs "$CACHE/resolved.json" \
        --argjson seed "$seed" --argjson hp "$(read_hp)" --argjson now "$NOW" \
        --arg today "$TODAY" --arg kind "$( [ "${1:-}" = force ] && echo manual || echo wild )" \
-       --arg lang "$(cur_lang)" \
        "$JQ_DEFS$DUEL_JQ" > "$tmp" 2>/dev/null && mv "$tmp" "$CACHE/duel.json" || { rm -f "$tmp"; return 1; }
     [ "${1:-}" != "force" ] && bump_daily duels_today
     return 0
@@ -363,9 +383,12 @@ cmd_duel() {
     fi
     if gen_duel force; then
         cmd_resolve
-        echo "⚔ a wild $(jq -r '.opponent.name' "$CACHE/duel.json") appeared!"
-    else
+        echo "⚔ a wild $(jq -r '.duel.opponent.name' "$CACHE/resolved.json") appeared!"
+    elif duel_active; then
         echo "a duel is already underway"
+    else
+        echo "duel: couldn't start one (missing pack or pet data)" >&2
+        exit 1
     fi
 }
 
@@ -617,6 +640,7 @@ cmd_status() {
            "now:     \(.name) (stage \(.stage)/\(.stages))",
            "state:   \(.state)",
            "tasks:   \(.tasks) today · mistakes: \(.mistakes) · streak: \(.streak)d",
+           "hp:      \(.hp_pct)/100 · duels: \(.record.w // 0)W-\(.record.l // 0)L",
            "lang:    \(.lang)"' "$CACHE/resolved.json"
 }
 
