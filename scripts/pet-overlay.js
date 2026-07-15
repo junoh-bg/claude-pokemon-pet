@@ -251,7 +251,7 @@ function run(argv) {
     fighting: [.8, .4, .3], rock: [.7, .6, .4], ground: [.8, .7, .4],
     poison: [.7, .4, .9], bug: [.7, .9, .3], flying: [.7, .8, 1],
     ghost: [.5, .4, .9], ice: [.6, .9, 1], dragon: [.5, .5, 1],
-    vpet: [.75, .95, .6], holy: [1, .85, .4], dark: [.55, .35, .75] };
+    vpet: [1, .95, .8], holy: [1, .85, .4], dark: [.55, .35, .75] };
   var emitter = null, fxColor = '', fxOn = false, fxOffUntil = 0, shakeUntil = 0;
   function setupEmitter(type) {
     try {
@@ -260,7 +260,19 @@ function run(argv) {
       var img = $.NSImage.alloc.initWithSize($.NSMakeSize(8, 8));
       img.lockFocus;
       $.NSColor.colorWithSRGBRedGreenBlueAlpha(rgb[0], rgb[1], rgb[2], 1).set;
-      $.NSBezierPath.bezierPathWithOvalInRect($.NSMakeRect(0, 0, 8, 8)).fill;
+      // 4-point star glint, not a circle — round particles read as "balls
+      // coming out of the pet", which is nobody's actual technique
+      var star = $.NSBezierPath.bezierPath;
+      star.moveToPoint($.NSMakePoint(4, 0));
+      star.lineToPoint($.NSMakePoint(5.2, 2.8));
+      star.lineToPoint($.NSMakePoint(8, 4));
+      star.lineToPoint($.NSMakePoint(5.2, 5.2));
+      star.lineToPoint($.NSMakePoint(4, 8));
+      star.lineToPoint($.NSMakePoint(2.8, 5.2));
+      star.lineToPoint($.NSMakePoint(0, 4));
+      star.lineToPoint($.NSMakePoint(2.8, 2.8));
+      star.closePath;
+      star.fill;
       img.unlockFocus;
       var cell = $.CAEmitterCell.emitterCell;
       // NSImage bridges into layer contents on macOS; a raw CGImageRef does
@@ -289,9 +301,7 @@ function run(argv) {
     } catch (e) {}
   }
 
-  // attack theater: a lunge toward the target plus an element-colored
-  // projectile whose lifecycle is managed by the move() tick (no timers)
-  var projectiles = [];
+  // attack theater: a lunge toward the target plus element-tinted sparks
   var recoilUntil = 0, prevMistakes = 0;
   function lunge(dir) {
     try {
@@ -303,26 +313,6 @@ function run(argv) {
       a.setValues(vals);
       a.setDuration(0.25);
       imageView.layer.addAnimationForKey(a, $('lunge'));
-    } catch (e) {}
-  }
-  function fireProjectile(dir, rgb) {
-    try {
-      var dot = $.CAShapeLayer.layer;
-      dot.setPath($.CGPathCreateWithEllipseInRect($.CGRectMake(-5, -5, 10, 10), null));
-      dot.setFillColor(cg(rgb[0], rgb[1], rgb[2], 0.95));
-      var sx = winW / 2 + dir * 26, sy = 130;
-      var ix = sx + dir * 105, iy = sy + 8;
-      dot.setPosition($.CGPointMake(sx, sy));
-      win.contentView.layer.addSublayer(dot);
-      var path = $.CGPathCreateMutable();
-      $.CGPathMoveToPoint(path, null, sx, sy);
-      $.CGPathAddQuadCurveToPoint(path, null, sx + dir * 55, sy + 42, ix, iy);
-      var fly = $.CAKeyframeAnimation.animationWithKeyPath($('position'));
-      fly.setPath(path);
-      fly.setDuration(0.4);
-      dot.addAnimationForKey(fly, $('fly'));
-      dot.setPosition($.CGPointMake(ix, iy));   // model = end point (no snap-back)
-      projectiles.push({ layer: dot, until: Date.now() + 430, ix: ix, iy: iy });
     } catch (e) {}
   }
 
@@ -368,11 +358,10 @@ function run(argv) {
       lastSlot = slot;
       var adir = facing === 'r' ? 1 : -1;
       lunge(adir);
-      // no projectile AND no green spark for attacks with no inferable
-      // element (e.g. Enigma) — the lunge alone carries the attack
-      if (elem !== 'vpet') {
-        fireProjectile(adir, TYPE_RGB[elem] || TYPE_RGB.normal);
-      }
+      // NO flying projectiles of any color, ever (user demand ×3) — the
+      // attack is the lunge, plus star-glint sparks for real elements only,
+      // bursting at the strike point, never out of the pet itself
+      if (elem !== 'vpet') burst(50, 250, winW / 2 + adir * 80, 138);
     }
     if (p.state === 'done' && prevRState !== 'done') {
       burst(120, 350);
@@ -460,17 +449,6 @@ function run(argv) {
       if (Date.now() < recoilUntil) rot = -0.14 * Math.sin((recoilUntil - Date.now()) / 100);
       imageView.layer.setValueForKeyPath($.NSNumber.numberWithDouble(rot), $('transform.rotation'));
     } catch (e) {}
-    // projectile lifecycle: impact spark, then cleanup
-    for (var pi = projectiles.length - 1; pi >= 0; pi--) {
-      if (Date.now() >= projectiles[pi].until) {
-        try {
-          burst(90, 180, projectiles[pi].ix, projectiles[pi].iy);
-          projectiles[pi].layer.removeFromSuperlayer;
-        } catch (e) {}
-        projectiles.splice(pi, 1);
-      }
-    }
-
     t += DT;
     var dx = 0, dy = 0;
     switch (current.state) {
