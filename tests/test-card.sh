@@ -70,6 +70,21 @@ print(rgba[3])")
 fi
 teardown
 
+setup  # card shows the all-time duel record in both languages
+printf '{"franchise":"digimon","line":["botamon"],"type":"vpet","date":"2026-07-13","seed":0}' > "$CACHE/partner"
+printf '3 1\n' > "$CACHE/duels"
+set_tasks 0; "$CORE" resolve
+out="$("$CORE" card)"
+case "$out" in *"⚔ 3W-1L"*) ok=yes ;; *) ok=no ;; esac
+assert_eq "ansi card record" "yes" "$ok"
+grep -q "⚔ 3W-1L" "$CACHE/card.svg" && ok=yes || ok=no
+assert_eq "svg card record" "yes" "$ok"
+echo ko > "$CACHE/lang"; "$CORE" resolve
+out="$("$CORE" card)"
+case "$out" in *"⚔ 3승 1패"*) ok=yes ;; *) ok=no ;; esac
+assert_eq "ko card record" "yes" "$ok"
+teardown
+
 setup  # korean card is fully korean
 printf '{"franchise":"pokemon","line":["charmander","charmeleon","charizard"],"type":"fire","date":"2026-07-13","seed":0,"shiny":false}' > "$CACHE/partner"
 echo ko > "$CACHE/lang"; set_tasks 3; "$CORE" resolve; "$CORE" card >/dev/null

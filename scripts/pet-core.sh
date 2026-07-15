@@ -501,10 +501,12 @@ cmd_card() {
     typ="$(jq -r '.type' "$CACHE/resolved.json")"
     hex="$(printf '%s\n' "$TYPE_HEX_TABLE" | while read -r t h; do [ "$t" = "$typ" ] && echo "$h"; done)"
     [ -n "$hex" ] || hex="#b5ad9b"
-    local pcount dcount scount
+    local pcount dcount scount w l rec
     pcount="$(jq '[.[] | select(.franchise == "pokemon")] | length' "$CACHE/dex.json")"
     dcount="$(jq '[.[] | select(.franchise == "digimon")] | length' "$CACHE/dex.json")"
     scount="$(jq '[.[] | select(.shiny)] | length' "$CACHE/dex.json")"
+    w=0; l=0
+    [ -f "$CACHE/duels" ] && read -r w l < "$CACHE/duels"
     local sfx cand mime
     sfx="$( [ "$shiny" = "true" ] && echo -shiny )"
     sprite=""; mime="image/gif"
@@ -529,9 +531,11 @@ cmd_card() {
     if [ "$lang" = "ko" ]; then
         L_TRAINER="트레이너"; L_STREAK="연속"; L_DAYS="일"
         L_STAGE="진화 단계"; L_DEX="도감"
+        rec="⚔ ${w:-0}승 ${l:-0}패"
     else
         L_TRAINER="TRAINER"; L_STREAK="STREAK"; L_DAYS="d"
         L_STAGE="STAGE"; L_DEX="DEX"
+        rec="⚔ ${w:-0}W-${l:-0}L"
     fi
     local star=""
     [ "$shiny" = "true" ] && star='<path d="M292 30 l4 9 9 1 -7 7 2 10 -8 -5 -8 5 2 -10 -7 -7 9 -1 z" fill="#f5d76e"/>'
@@ -554,6 +558,7 @@ cmd_card() {
   <text x="28" y="118" font-size="13" fill="#9aa08c">$L_STREAK $streak$L_DAYS</text>
   <text x="28" y="146" font-size="13" fill="#9aa08c">$L_DEX pokemon $pcount/151 · digimon $dcount/70</text>
   <text x="28" y="168" font-size="13" fill="#9aa08c">shiny $scount</text>
+  <text x="28" y="190" font-size="13" fill="#9aa08c">$rec</text>
   $star
   <image href="data:$mime;base64,$b64" x="290" y="60" width="160" height="160"/>
   <text x="28" y="244" font-size="12" fill="#6f7462">$L_TRAINER $user_x · $TODAY</text>
@@ -567,6 +572,7 @@ CARDEOF
     printf '▌ %s%s  Lv.%s\n' "$name" "$( [ "$shiny" = "true" ] && printf ' ✨' )" "$lv"
     printf '▌ %s %s/%s\n' "$L_STAGE" "$stage" "$stages"
     printf '▌ %s %s%s · %s p:%s/151 d:%s/70 ✨%s\n' "$L_STREAK" "$streak" "$L_DAYS" "$L_DEX" "$pcount" "$dcount" "$scount"
+    printf '▌ %s\n' "$rec"
     printf '▌ %s %s · %s\n' "$L_TRAINER" "$USER" "$TODAY"
     printf '▙▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄\n'
     echo "card: $CACHE/card.svg"
