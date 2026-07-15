@@ -98,3 +98,15 @@ threshold 235 — NEVER global chroma key), ✅ complete ko localization
 (official names + per-species signature attacks; unverified ko attacks fall
 back to 필살기, never mixed English), ✅ dual-franchise displayName
 (identity decision: keep the `claude-pokemon-pet` ID, no rename).
+
+## Attack FX — hard rules (user demand, repeated 3×)
+
+- **No flying projectiles/balls of any color, ever** — a traveling blob is
+  nobody's actual technique. This includes "elemental" balls (a purple ball
+  for Death Claw is as fake as a green one for Bubbles).
+- Attack visual = **lunge + element-tinted impact sparks**; element-less
+  (`vpet`) attacks get the lunge only — no sparks, no burst.
+- Particle emitter cells are **4-point star glints, never circles** — round
+  particles read as "balls coming out of the pet".
+- `vpet` tint is warm white ([1,.95,.8] overlay / 256-color 230 terminal),
+  never green.

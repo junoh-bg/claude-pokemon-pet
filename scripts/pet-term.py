@@ -138,7 +138,7 @@ ELEMENT_256 = {"fire": 203, "water": 75, "grass": 114, "electric": 220,
                "ice": 87, "poison": 135, "psychic": 213, "normal": 187,
                "fighting": 173, "rock": 137, "ground": 179, "bug": 149,
                "flying": 153, "ghost": 141, "dragon": 105, "holy": 222,
-               "dark": 99, "vpet": 150}
+               "dark": 99, "vpet": 230}
 
 
 def element_color(element):
@@ -150,19 +150,11 @@ def breathe_offset(now):
     return int(now / 2) % 2
 
 
-def show_projectile(element):
-    """No projectile for attacks with no inferable element (Enigma etc.) —
-    a generic blob is nobody's actual technique."""
-    return element != "vpet"
-
-
-def projectile_line(tick, direction, element, width):
-    """Frames 0..3 of the attack projectile; frame 3 is the impact."""
-    span = max(10, width - 8)
-    step = span // 4
-    x = 4 + step * tick if direction > 0 else width - 4 - step * tick
-    glyph = "✶" if tick >= 3 else ("●∙∙" if direction > 0 else "∙∙●")
-    return " " * max(0, x) + ESC + "[" + element_color(element) + "m" + glyph + ESC + "[0m"
+def spark_line(direction, element, width):
+    """Element-tinted impact sparks at the strike point. Never a traveling
+    ball — a flying blob is nobody's actual technique."""
+    x = width - 7 if direction > 0 else 4
+    return " " * max(0, x) + ESC + "[" + element_color(element) + "m✦✧✦" + ESC + "[0m"
 
 
 def sprite_file(species, shiny):
@@ -455,16 +447,15 @@ class UI:
                 out.append((invert_line(l) if invert else l) + "\r\n")
             if not bob:
                 out.append("\r\n")   # keep total height stable across bob frames
-        # attack projectile line (frames 0..3, then quiet)
+        # impact sparks on the last attack frames (lunge frames 0-1 stay
+        # clean); the spark line is reserved so layout height never shifts
         elem = r.get("element", "vpet")
-        if (self.attack_tick is not None and self.attack_tick < 4
-                and show_projectile(elem)):
-            out.append(projectile_line(self.attack_tick, self.attack_dir,
-                                       elem, 40) + "\r\n")
+        if self.attack_tick is not None and self.attack_tick < 4:
+            if self.attack_tick >= 2 and elem != "vpet":
+                out.append(spark_line(self.attack_dir, elem, 40))
+            out.append(ESC + "[K\r\n")
             self.attack_tick += 1
         else:
-            if self.attack_tick is not None and self.attack_tick < 4:
-                self.attack_tick += 1    # lunge still runs; line stays blank
             out.append(ESC + "[K\r\n")
         out.append(ESC + "[0m\r\n")
         out.append(" %s%s  Lv.%d   \U0001f525%dd\r\n" %

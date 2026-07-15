@@ -57,7 +57,7 @@ worth symlinking onto your PATH).
 | Session event | Pet reaction |
 |---|---|
 | You submit a prompt | slow bob — `PIKACHU is getting pumped!` |
-| Claude uses tools | roams and waddles; every battle caption fires a lunge + element-colored projectile — `AGUMON used Baby Flame!` arcs out in fire-orange |
+| Claude uses tools | roams and waddles; every battle caption fires a lunge with element-colored impact sparks — `AGUMON used Baby Flame!` strikes in fire-orange |
 | Task completes | excited hops, impact shake, **+1 level** |
 | A tool call fails | **+1 care mistake** — HP bar dips, the pet recoils (and Digimon evolution takes note) |
 | Permission needed | anxious fidget |

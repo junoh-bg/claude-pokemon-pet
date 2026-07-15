@@ -212,20 +212,20 @@ class TestLiving(unittest.TestCase):
         self.assertEqual(pet_term.element_color("holy"), "38;5;222")
         self.assertEqual(pet_term.element_color("nonsense"), "38;5;150")
 
-    def test_projectile_line(self):
-        l0 = pet_term.projectile_line(0, 1, "fire", 40)
-        l3 = pet_term.projectile_line(3, 1, "fire", 40)
-        self.assertIn("●", l0)
-        self.assertIn("✶", l3)                                # impact frame
-        self.assertLess(l0.index("●"), l3.index("✶"))
-        self.assertIn("38;5;203", l0)
-        left = pet_term.projectile_line(0, -1, "fire", 40)
-        self.assertGreater(left.index("●"), l0.index("●"))    # starts from the right
+    def test_spark_line(self):
+        right = pet_term.spark_line(1, "fire", 40)
+        left = pet_term.spark_line(-1, "fire", 40)
+        self.assertIn("✦✧✦", right)
+        self.assertIn("38;5;203", right)
+        self.assertGreater(right.index("✦"), left.index("✦"))  # strike side
 
-    def test_no_projectile_without_element(self):
-        self.assertFalse(pet_term.show_projectile("vpet"))
-        self.assertTrue(pet_term.show_projectile("fire"))
-        self.assertTrue(pet_term.show_projectile("holy"))
+    def test_no_flying_projectiles_ever(self):
+        # user demand: no traveling balls of any color — the projectile
+        # renderer must not exist, only the impact spark
+        self.assertFalse(hasattr(pet_term, "projectile_line"))
+        self.assertFalse(hasattr(pet_term, "show_projectile"))
+        for elem in ("fire", "dark", "poison", "vpet"):
+            self.assertNotIn("●", pet_term.spark_line(1, elem, 40))
 
     def test_breathe_offset(self):
         self.assertIn(pet_term.breathe_offset(0.0), (0, 1))
