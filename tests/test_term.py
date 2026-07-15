@@ -248,5 +248,78 @@ class TestResolved(unittest.TestCase):
         self.assertEqual(last2, last)
 
 
+def _mkduel(result="win", start=1000):
+    # the EMBEDDED form renderers see: opponent name/move already localized
+    # by resolve; turns are language-neutral (no move strings)
+    return {"date": "2026-07-13", "start_ts": start, "end_ts": start + 15,
+            "kind": "wild",
+            "opponent": {"species": "gabumon", "name": "가부몬", "level": 3,
+                         "element": "fire", "move": "쁘띠 파이어",
+                         "franchise": "digimon"},
+            "turns": [
+                {"t": 3, "side": "pet", "dmg": 30, "pet_hp": 100, "foe_hp": 70},
+                {"t": 7, "side": "foe", "dmg": 25, "pet_hp": 75, "foe_hp": 70},
+                {"t": 11, "side": "pet", "dmg": 35,
+                 "pet_hp": 75 if result == "win" else 0,
+                 "foe_hp": 0 if result == "win" else 70}],
+            "result": result, "applied": False}
+
+
+class TestDuel(unittest.TestCase):
+    def test_duel_phase_boundaries(self):
+        d = _mkduel()
+        self.assertEqual(pet_term.duel_phase(d, 1000), ("entrance", -1))
+        self.assertEqual(pet_term.duel_phase(d, 1002.9), ("entrance", -1))
+        self.assertEqual(pet_term.duel_phase(d, 1003), ("turn", 0))
+        self.assertEqual(pet_term.duel_phase(d, 1008), ("turn", 1))
+        self.assertEqual(pet_term.duel_phase(d, 1011), ("turn", 2))
+        self.assertEqual(pet_term.duel_phase(d, 1015), ("result", 2))
+        self.assertEqual(pet_term.duel_phase(d, 1021), ("over", 2))
+
+    def test_duel_captions_ko(self):
+        d = _mkduel()
+        r = {"name": "아구몬", "lang": "ko", "moves": ["베이비 플레임"]}
+        self.assertEqual(pet_term.duel_caption(d, r, 1001),
+                         "야생의 가부몬이 나타났다!")
+        self.assertIn("아구몬의 베이비 플레임!", pet_term.duel_caption(d, r, 1003))
+        self.assertIn("가부몬의 쁘띠 파이어!", pet_term.duel_caption(d, r, 1007))
+        win = pet_term.duel_caption(d, r, 1016)
+        self.assertIn("이겼다", win)
+        self.assertIn("+1 Lv", win)
+        lose = pet_term.duel_caption(_mkduel("lose"), r, 1016)
+        self.assertIn("기절", lose)
+
+    def test_duel_captions_en(self):
+        d = _mkduel()
+        r = {"name": "AGUMON", "lang": "en", "moves": ["Baby Flame"]}
+        self.assertEqual(pet_term.duel_caption(d, r, 1001),
+                         "A wild 가부몬 appeared!")
+        self.assertIn("used", pet_term.duel_caption(d, r, 1003))
+        self.assertIn("You won", pet_term.duel_caption(d, r, 1016))
+
+    def test_ga_josa(self):
+        self.assertEqual(pet_term.josa("가부몬", "이", "가"), "가부몬이")
+        self.assertEqual(pet_term.josa("니드리나", "이", "가"), "니드리나가")
+
+    def test_join_sprites_pads_to_fixed_width(self):
+        left = ["\x1b[0mAB\x1b[0m", "\x1b[0mA\x1b[0m"]
+        right = ["\x1b[0mZ\x1b[0m"]
+        out = pet_term.join_sprites(left, right, 10, 4)
+        self.assertEqual(len(out), 2)                      # padded to max height
+        # shorter sprite pads on top (feet-aligned): its row lands at the bottom
+        self.assertEqual(pet_term.visible_len(out[0]), 10 + 4 + 0)
+        self.assertEqual(pet_term.visible_len(out[1]), 10 + 4 + 1)
+
+    def test_caption_fainted(self):
+        r = {"name": "아구몬", "lang": "ko", "state": "fainted", "state_ts": 0,
+             "moves": []}
+        st, line = pet_term.caption(r, 1e9)
+        self.assertEqual(st, "fainted")
+        self.assertIn("기절", line)
+        r["lang"] = "en"
+        st, line = pet_term.caption(r, 1e9)
+        self.assertIn("fainted", line)
+
+
 if __name__ == "__main__":
     unittest.main()

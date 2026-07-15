@@ -1,7 +1,7 @@
 {
   "name": "claude-pokemon-pet",
   "displayName": "Claude Pet — Pokémon & Digimon",
-  "version": "0.10.3",
+  "version": "0.11.0",
   "description": "A floating Pokémon companion for Claude Code — a random gen-1 partner appears daily, reacts to your session, and evolves as you complete tasks.",
   "author": {
     "name": "junoh-bg",

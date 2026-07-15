@@ -8,7 +8,7 @@ Manage the Pokémon pet overlay by running the bundled CLI:
 ${CLAUDE_PLUGIN_ROOT}/scripts/claude-pokemon-pet <subcommand>
 ```
 
-Subcommands: `toggle` | `on` | `off` | `random` | `digimon` | `pokemon` | `pet <name>` | `dex` | `card` | `lang <ko|en|auto>` | `statusline` | `sprites` | `status`.
+Subcommands: `toggle` | `on` | `off` | `random` | `digimon` | `pokemon` | `pet <name>` | `duel` | `dex` | `card` | `lang <ko|en|auto>` | `statusline` | `sprites` | `status`.
 
 Map the user's request ("$ARGUMENTS") to the right subcommand:
 - empty or "toggle" → `toggle`
@@ -17,6 +17,7 @@ Map the user's request ("$ARGUMENTS") to the right subcommand:
 - a pokémon or digimon name, English or Korean (e.g. "pikachu", "파이리", "agumon") → `pet <name>`
 - "korean"/"한국어" → `lang ko`; "english"/"영어" → `lang en`; "auto" → `lang auto`
 - "statusline" → `statusline` (prints setup instructions)
+- "duel", "battle", "대결", "배틀" → `duel` (starts a wild battle; the overlay/terminal pet plays it out — report the challenger it announces)
 - "dex", "collection", "도감" → `dex` (collection progress)
 - "card", "trainer card", "카드" → `card` (renders a shareable trainer card; report the printed file paths)
 - "status", "who is my pet" → `status`

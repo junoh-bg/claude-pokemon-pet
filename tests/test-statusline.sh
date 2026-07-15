@@ -37,4 +37,25 @@ out="$("$SL")"; rc=$?
 assert_eq "empty cache exits 0" "0" "$rc"
 teardown
 
+setup  # duel line while live; record suffix; fainted emoji
+printf '{"franchise":"digimon","line":["botamon","koromon","agumon"],"type":"vpet","date":"2026-07-13","seed":0}' > "$CACHE/partner"
+echo "2026-07-13 5" > "$CACHE/tasks"
+PET_SEED=1 PET_NOW=5000 "$CORE" duel >/dev/null
+out="$(PET_NOW=5001 "$SL")"
+foename="$(jq -r '.duel.opponent.name' "$CACHE/resolved.json")"
+case "$out" in "⚔ AGUMON vs $foename"*) ok=yes ;; *) ok="no($out)" ;; esac
+assert_eq "statusline shows the live duel" "yes" "$ok"
+printf '2 1\n' > "$CACHE/duels"
+rm -f "$CACHE/duel.json"
+PET_NOW=99999 "$CORE" resolve
+out="$(PET_NOW=99999 "$SL")"
+case "$out" in *"⚔2-1"*) ok=yes ;; *) ok="no($out)" ;; esac
+assert_eq "record suffix on the normal line" "yes" "$ok"
+printf 'fainted 99999\n' > "$CACHE/state"
+PET_NOW=99999 "$CORE" resolve
+out="$(PET_NOW=99999 "$SL")"
+case "$out" in *"💫"*) ok=yes ;; *) ok="no($out)" ;; esac
+assert_eq "fainted emoji" "yes" "$ok"
+teardown
+
 report
