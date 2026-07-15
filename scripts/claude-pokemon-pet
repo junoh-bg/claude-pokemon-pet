@@ -54,6 +54,7 @@ case "${1:-toggle}" in
     autostart) [ -f "$CACHE/off" ] || [ -n "$(pid)" ] || start ;;
     random)    "$CORE" roll ;;
     digimon|pokemon) "$CORE" franchise "$1" ;;
+    duel)      "$CORE" duel ;;
     dex)       "$CORE" dex ;;
     card)      "$CORE" card ;;
     pet)       "$CORE" pick "${2:-}" ;;
@@ -85,7 +86,7 @@ case "${1:-toggle}" in
         "$CORE" status
         ;;
     *)
-        echo "usage: claude-pokemon-pet [toggle|on|off|random|digimon|pokemon|pet <name>|dex|card|lang <ko|en|auto>|term|statusline|sprites|status]" >&2
+        echo "usage: claude-pokemon-pet [toggle|on|off|random|digimon|pokemon|pet <name>|duel|dex|card|lang <ko|en|auto>|term|statusline|sprites|status]" >&2
         exit 1
         ;;
 esac

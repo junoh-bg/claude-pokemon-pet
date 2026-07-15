@@ -132,7 +132,38 @@ cmd_event() {
         *)       [ "$(cur_state)" = "fainted" ] || printf '%s %s\n' "$ev" "$NOW" > "$CACHE/state" ;;
     esac
     cmd_resolve
+    # ambient encounters: a completed task may attract a wild challenger
+    if [ "$ev" = "done" ] && gen_duel; then
+        cmd_resolve   # embed the fresh duel into resolved.json
+    fi
 }
+
+# jq defs shared by resolve and duel generation (keep the element table in
+# exactly one place)
+JQ_DEFS='
+  def elem_of($atk):
+    ($atk | ascii_downcase) as $a |
+    if   ($a | test("flame|fire|burning|heat|volcano")) then "fire"
+    elif ($a | test("ice|icicle|snow|zero"))    then "ice"
+    elif ($a | test("thunder|electric|shock|spark")) then "electric"
+    elif ($a | test("water|hydro|tidal|wave"))  then "water"
+    elif ($a | test("poison|sludge|acid|poop")) then "poison"
+    elif ($a | test("heaven|holy"))             then "holy"
+    elif ($a | test("death|devil|hell|dark|oblivion")) then "dark"
+    else "vpet" end;
+  def species_move($pack; $sp; $lang; $ltype):
+    ($pack.species[$sp]) as $spec |
+    if ($pack.moves_by // "type") == "species"
+    then (if $lang == "ko" then ($spec.attack.ko // "필살기")
+          else ($spec.attack.en // "ATTACK") end)
+    else (($pack.moves[$ltype] // $pack.moves.normal // ["TACKLE"])[0]) as $raw
+       | (if $lang == "ko" then ($pack.moves_ko[$raw] // $raw) else $raw end)
+    end;
+  def species_elem($pack; $sp; $ltype):
+    if ($pack.moves_by // "type") == "species"
+    then elem_of(($pack.species[$sp].attack.en // ""))
+    else $ltype end;
+'
 
 # ── resolve: reduce pack + partner + counters to resolved.json ──
 RESOLVE_JQ='
@@ -159,17 +190,7 @@ RESOLVE_JQ='
       else ($pack.moves[$p.type] // $pack.moves.normal // []) end) as $raw
      | (if $lang == "ko" then ($raw | map($pack.moves_ko[.] // .)) else $raw end)
    end) as $mv |
-  (if $mb == "species"
-   then (($spec.attack.en // "") | ascii_downcase) as $atk
-      | (if   ($atk | test("flame|fire|burning|heat|volcano")) then "fire"
-         elif ($atk | test("ice|icicle|snow|zero"))    then "ice"
-         elif ($atk | test("thunder|electric|shock|spark")) then "electric"
-         elif ($atk | test("water|hydro|tidal|wave"))  then "water"
-         elif ($atk | test("poison|sludge|acid|poop")) then "poison"
-         elif ($atk | test("heaven|holy"))             then "holy"
-         elif ($atk | test("death|devil|hell|dark|oblivion")) then "dark"
-         else "vpet" end)
-   else $p.type end) as $element |
+  (if $mb == "species" then elem_of(($spec.attack.en // "")) else $p.type end) as $element |
   (if ($pack.edges // null) != null then ($g | length) else $len end) as $stages_total |
   {
     date: $today,
@@ -184,6 +205,112 @@ RESOLVE_JQ='
     moves: $mv,
     lang: $lang, state: $state, state_ts: $ts
   }'
+
+# ── duels: pre-computed battle scripts (spec 2026-07-15). The whole fight
+# is generated up front; renderers replay it by wall clock — no daemons.
+# LCG constants stay small ((x*75+74) % 65537): jq numbers are IEEE doubles
+# and bigger multipliers would overflow exact integer arithmetic.
+DUEL_JQ='
+  def nxt: (. * 75 + 74) % 65537;
+  ($pk[0]) as $pack | ($rs[0]) as $r |
+  [foreach range(0; 24) as $_ ($seed | nxt; nxt; .)] as $rolls |
+  ($pack.lines | length) as $nl |
+  # stage-matched foe: same distance-from-egg in a random line; reroll once
+  # if the pick lands on the pet itself
+  (if ($pack.edges // null) != null then
+     def walk($sp; $n):
+       if $n <= 0 then $sp else
+         ((($pack.edges // {})[$sp] // []) | map(select(.quality != "reject"))) as $e |
+         if ($e | length) == 0 then $sp else walk($e[0].to; $n - 1) end
+       end;
+     def foe_of($i): walk($pack.lines[$i].mons[0]; $r.stage - 1);
+     (foe_of($rolls[0] % $nl)) as $try |
+     (if $try == $r.species then foe_of($rolls[1] % $nl) else $try end)
+   else
+     def foe_of($i): ($pack.lines[$i].mons) as $m | $m[[($r.stage - 1), (($m | length) - 1)] | min];
+     (foe_of($rolls[0] % $nl)) as $try |
+     (if $try == $r.species then foe_of($rolls[1] % $nl) else $try end)
+   end) as $foe |
+  ($pack.lines[$rolls[0] % $nl].type // "normal") as $ftype |
+  ($pack.species[$foe]) as $fs |
+  (if $lang == "ko" then ($fs.names.ko // $fs.names.en) else $fs.names.en end) as $fname |
+  species_move($pack; $foe; $lang; $ftype) as $fmove |
+  species_elem($pack; $foe; $ftype) as $felem |
+  ([($r.tasks + ($rolls[2] % 5) - 2), 1] | max) as $flevel |
+  ($r.moves[0] // "ATTACK") as $pmove |
+  # alternating damage rolls until a side drops; pet swings first, +4 bias
+  def fight($php; $fhp; $i; $acc):
+    if $php <= 0 or $fhp <= 0 or $i >= 20 then $acc
+    else
+      (if $i % 2 == 0 then "pet" else "foe" end) as $side |
+      (18 + ($rolls[$i + 3] % 18) + (if $side == "pet" then 4 else 0 end)) as $dmg |
+      (if $side == "pet" then [($fhp - $dmg), 0] | max else $fhp end) as $nf |
+      (if $side == "foe" then [($php - $dmg), 0] | max else $php end) as $np |
+      fight($np; $nf; $i + 1;
+            $acc + [{t: (3 + 4 * $i), side: $side,
+                     move: (if $side == "pet" then $pmove else $fmove end),
+                     dmg: $dmg, pet_hp: $np, foe_hp: $nf}])
+    end;
+  fight($hp; 100; 0; []) as $turns |
+  {
+    date: $today, start_ts: $now,
+    end_ts: ($now + $turns[-1].t + 4),
+    kind: $kind,
+    opponent: { species: $foe, name: $fname, level: $flevel,
+                element: $felem, move: $fmove, franchise: $r.franchise },
+    turns: $turns,
+    result: (if $turns[-1].foe_hp == 0 then "win" else "lose" end),
+    applied: false
+  }'
+
+duel_active() {
+    [ -f "$CACHE/duel.json" ] || return 1
+    local end ddate
+    ddate="$(jq -r '.date // ""' "$CACHE/duel.json" 2>/dev/null)" || return 1
+    end="$(jq -r '.end_ts // 0' "$CACHE/duel.json" 2>/dev/null)" || return 1
+    [ "$ddate" = "$TODAY" ] && [ "$NOW" -lt $(( ${end:-0} + 6 )) ]
+}
+
+gen_duel() { # [force] — returns 0 iff a duel was generated
+    command -v jq >/dev/null 2>&1 || return 1
+    [ -f "$CACHE/resolved.json" ] || return 1
+    duel_active && return 1
+    [ "$(cur_state)" = "fainted" ] && return 1
+    local pack duels seed tmp
+    pack="$(pack_file "$(active_franchise)")"
+    [ -f "$pack" ] || return 1
+    duels="$(read_daily duels_today)"
+    seed=$(( $(jq -r '.seed // 0' "$CACHE/partner" 2>/dev/null || echo 0) \
+             + $(read_daily tasks) * 7 + duels * 13 ))
+    [ -n "${PET_SEED:-}" ] && seed="$PET_SEED"
+    if [ "${1:-}" != "force" ]; then
+        [ "$duels" -lt 3 ] || return 1
+        [ $(( (seed * 75 + 74) % 65537 % 4 )) -eq 0 ] || return 1
+    fi
+    tmp="$(mktemp)"
+    jq -n --slurpfile pk "$pack" --slurpfile rs "$CACHE/resolved.json" \
+       --argjson seed "$seed" --argjson hp "$(read_hp)" --argjson now "$NOW" \
+       --arg today "$TODAY" --arg kind "$( [ "${1:-}" = force ] && echo manual || echo wild )" \
+       --arg lang "$(cur_lang)" \
+       "$JQ_DEFS$DUEL_JQ" > "$tmp" 2>/dev/null && mv "$tmp" "$CACHE/duel.json" || { rm -f "$tmp"; return 1; }
+    [ "${1:-}" != "force" ] && bump_daily duels_today
+    return 0
+}
+
+cmd_duel() {
+    command -v jq >/dev/null 2>&1 || { echo "duel: jq required" >&2; exit 1; }
+    [ -f "$CACHE/resolved.json" ] || cmd_resolve
+    if [ "$(cur_state)" = "fainted" ]; then
+        echo "your pet has fainted — complete a task to revive it"
+        return 0
+    fi
+    if gen_duel force; then
+        cmd_resolve
+        echo "⚔ a wild $(jq -r '.opponent.name' "$CACHE/duel.json") appeared!"
+    else
+        echo "a duel is already underway"
+    fi
+}
 
 update_dex() {
     [ -f "$CACHE/dex.json" ] || echo '[]' > "$CACHE/dex.json"
@@ -268,7 +395,7 @@ cmd_resolve() {
        --argjson tasks "$tasks" --argjson mistakes "$mistakes" --argjson streak "$streak" \
        --argjson hp "$hp" \
        --arg lang "$lang" --arg state "$state" --argjson ts "${ts:-0}" --arg today "$TODAY" \
-       "$RESOLVE_JQ" > "$tmp" && mv "$tmp" "$CACHE/resolved.json"
+       "$JQ_DEFS$RESOLVE_JQ" > "$tmp" && mv "$tmp" "$CACHE/resolved.json"
     update_dex
 }
 
@@ -522,8 +649,9 @@ case "${1:-}" in
     franchise)       cmd_franchise "${2:-}" ;;
     lang)            cmd_lang "${2:-}" ;;
     resolve)         cmd_resolve ;;
+    duel)            cmd_duel ;;
     dex)             cmd_dex ;;
     card)            cmd_card ;;
     status)          cmd_status ;;
-    *) echo "usage: pet-core.sh <event <state>|roll|roll-if-new-day|pick <name>|lang <ko|en|auto>|resolve>" >&2; exit 1 ;;
+    *) echo "usage: pet-core.sh <event <state>|roll|roll-if-new-day|pick <name>|lang <ko|en|auto>|resolve|duel>" >&2; exit 1 ;;
 esac
