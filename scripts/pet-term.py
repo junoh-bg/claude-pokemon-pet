@@ -200,6 +200,55 @@ def ro_josa(w):
     return w + ("으로" if 0xAC00 <= c <= 0xD7A3 and fin > 0 and fin != 8 else "로")
 
 
+def duel_phase(d, now):
+    """Where the wall clock sits inside a pre-computed battle script."""
+    if now < d["start_ts"] + 3:
+        return "entrance", -1
+    if now >= d["end_ts"] + 6:
+        return "over", len(d["turns"]) - 1
+    if now >= d["end_ts"]:
+        return "result", len(d["turns"]) - 1
+    ti = -1
+    for i, turn in enumerate(d["turns"]):
+        if now >= d["start_ts"] + turn["t"]:
+            ti = i
+    return ("entrance", -1) if ti < 0 else ("turn", ti)
+
+
+def duel_caption(d, r, now):
+    phase, ti = duel_phase(d, now)
+    foe = d["opponent"]["name"]
+    pet = r["name"]
+    ko = r.get("lang") == "ko"
+    if phase == "entrance":
+        return ("야생의 " + josa(foe, "이", "가") + " 나타났다!") if ko \
+            else ("A wild " + foe + " appeared!")
+    if phase in ("result", "over"):
+        if d["result"] == "win":
+            return ("이겼다! 야생의 " + josa(foe, "을", "를") + " 쓰러뜨렸다! +1 Lv") if ko \
+                else ("You won! Wild " + foe + " was defeated! +1 Lv")
+        return (josa(pet, "은", "는") + " 기절했다… 작업을 완료하면 회복!") if ko \
+            else (pet + " fainted… complete a task to revive!")
+    turn = d["turns"][ti]
+    attacker = pet if turn["side"] == "pet" else foe
+    if ko:
+        return attacker + "의 " + turn["move"] + "!"
+    return attacker + " used " + turn["move"] + "!"
+
+
+def join_sprites(left, right, left_w, gap):
+    """Two half-block sprite blocks side by side; the left column stays a
+    fixed left_w visible cells so the right sprite never wobbles."""
+    rows = max(len(left), len(right))
+    left = [""] * (rows - len(left)) + left      # pad short sprites on top
+    right = [""] * (rows - len(right)) + right
+    out = []
+    for l, r_line in zip(left, right):
+        pad = left_w - visible_len(l)
+        out.append(l + " " * max(0, pad + gap) + r_line)
+    return out
+
+
 def evo_caption(old, new, lang, evo_age):
     """Evolution cinematic caption; mirrors the overlay's two phases."""
     if evo_age < 2.5:
@@ -232,6 +281,7 @@ def caption(r, now):
             "done": pick(["효과는 굉장했다!", josa(n, "은", "는") + " 경험치를 얻었다!"], now),
             "waiting": josa(n, "은", "는") + " 지시를 기다리고 있다",
             "hello": "가라! " + n + "!",
+            "fainted": josa(n, "은", "는") + " 기절했다… 작업을 완료하면 회복!",
             "idle": josa(n, "은", "는") + " 쿨쿨 잠들어 있다",
         }
     else:
@@ -241,6 +291,7 @@ def caption(r, now):
             "done": pick(["It's super effective!", n + " gained EXP. Points!"], now),
             "waiting": n + " looks at you expectantly",
             "hello": "Go! " + n + "!",
+            "fainted": n + " fainted… complete a task to revive!",
             "idle": n + " is fast asleep",
         }
     return st, lines.get(st, lines["idle"])
@@ -304,6 +355,33 @@ def iterm_show(gif_bytes, rows):
     sys.stdout.flush()
 
 
+def decode_sprite(species, franchise, shiny):
+    """Decode a cached sprite to (Anim, raw_bytes); (None, b'') on failure."""
+    path = os.path.join(CACHE, "sprites", sprite_file(species, shiny))
+    if shiny and not os.path.exists(path):    # shiny variant not cached yet
+        path = os.path.join(CACHE, "sprites", sprite_file(species, False))
+    if not os.path.exists(path):              # png franchise packs (digimon art)
+        png = os.path.join(CACHE, "sprites", species + ".png")
+        if os.path.exists(png):
+            path = png
+    try:
+        with open(path, "rb") as fh:
+            data = fh.read()
+        if path.endswith(".png"):
+            rgba, w, h = petpng.decode(data)
+            if franchise == "digimon":   # solid-white bg → border flood-fill key
+                rgba = petpng.floodfill_whitekey(rgba, w, h)
+            return petgif.Anim(w, h, [petgif.Frame(rgba, 200)]), data
+        anim = petgif.decode(data)
+        if franchise == "digimon":       # legacy gif cache: exact white key
+            anim = petgif.Anim(anim.width, anim.height,
+                               [petgif.Frame(whitekey(f.rgba), f.delay_ms)
+                                for f in anim.frames])
+        return anim, data
+    except Exception:                    # any decode failure degrades to text
+        return None, b""
+
+
 # ── UI loop ────────────────────────────────────────────────────────
 class UI:
     def __init__(self, root, backend):
@@ -321,6 +399,8 @@ class UI:
         self.evolve_start, self.evolve_old, self.evolve_new = 0.0, "", ""
         self.last_slot, self.attack_tick, self.attack_dir = 0, None, 1
         self.prev_mistakes, self.recoil_flash = -1, False
+        self._foe_species, self.foe_anim = None, None
+        self.duel_key = None
         self.truecolor = os.environ.get("COLORTERM", "") in ("truecolor", "24bit")
 
     def load_species(self, species, franchise=None, shiny=False):
@@ -328,31 +408,15 @@ class UI:
             sys.stdout.buffer.write(kitty_delete(77))
         self._iterm_sent = None
         self._kitty_sent = None
-        path = os.path.join(CACHE, "sprites", sprite_file(species, shiny))
-        if shiny and not os.path.exists(path):    # shiny variant not cached yet
-            path = os.path.join(CACHE, "sprites", sprite_file(species, False))
-        if not os.path.exists(path):              # png franchise packs (digimon art)
-            png = os.path.join(CACHE, "sprites", species + ".png")
-            if os.path.exists(png):
-                path = png
-        try:
-            with open(path, "rb") as fh:
-                self.gif_bytes = fh.read()
-            if path.endswith(".png"):
-                rgba, w, h = petpng.decode(self.gif_bytes)
-                if franchise == "digimon":   # solid-white bg → border flood-fill key
-                    rgba = petpng.floodfill_whitekey(rgba, w, h)
-                self.anim = petgif.Anim(w, h, [petgif.Frame(rgba, 200)])
-            else:
-                self.anim = petgif.decode(self.gif_bytes)
-                if franchise == "digimon":   # legacy gif cache: exact white key
-                    self.anim = petgif.Anim(self.anim.width, self.anim.height,
-                                            [petgif.Frame(whitekey(f.rgba), f.delay_ms)
-                                             for f in self.anim.frames])
-        except Exception:            # any decode failure degrades to placeholder text
-            self.anim = None
+        self.anim, self.gif_bytes = decode_sprite(species, franchise, shiny)
         self.species, self.frame_i = species, 0
         self._lines_cache = {}
+
+    def load_foe(self, species, franchise):
+        if species == self._foe_species:
+            return
+        self.foe_anim, _ = decode_sprite(species, franchise, False)
+        self._foe_species = species
 
     def sprite_lines(self, state, now):
         if not self.anim:
@@ -377,6 +441,47 @@ class UI:
         pad = " " * padn
         return [pad + l for l in lines]
 
+    def draw_duel(self, r, d, now, out):
+        phase, ti = duel_phase(d, now)
+        size = shutil.get_terminal_size(fallback=(80, 24))
+        wide = size.columns >= 60
+        cols = 24
+        pet_lines = ["  (sprite missing)"]
+        if self.anim:
+            fr = self.frame_i % len(self.anim.frames)
+            pet_lines = halfblocks(self.anim.frames[fr].rgba, self.anim.width,
+                                   self.anim.height, cols, self.truecolor,
+                                   mirrored=True)          # face the challenger
+        if wide and self.foe_anim:
+            foe_lines = halfblocks(self.foe_anim.frames[0].rgba,
+                                   self.foe_anim.width, self.foe_anim.height,
+                                   cols, self.truecolor)
+            for line in join_sprites(pet_lines, foe_lines, cols + 2, 6):
+                out.append(line + "\r\n")
+        else:
+            for line in pet_lines:
+                out.append(line + "\r\n")
+        # sparks on the defender's side just after a turn lands (never a
+        # traveling ball; vpet attackers lunge only)
+        turn = d["turns"][ti] if ti >= 0 else None
+        elem = (r.get("element", "vpet") if turn and turn["side"] == "pet"
+                else d["opponent"].get("element", "vpet"))
+        if (phase == "turn" and turn
+                and now - (d["start_ts"] + turn["t"]) < 1.0 and elem != "vpet"):
+            out.append(spark_line(1 if turn["side"] == "pet" else -1, elem, 40))
+        out.append(ESC + "[K\r\n" + ESC + "[0m\r\n")
+        php = turn["pet_hp"] if turn else min(100, r.get("hp_pct", 100))
+        fhp = turn["foe_hp"] if turn else 100
+        out.append(" %s %s  vs  %s %s Lv.%d\r\n" %
+                   (r["name"], hp_bar(php, width=5),
+                    d["opponent"]["name"], hp_bar(fhp, width=5),
+                    d["opponent"]["level"]))
+        out.append(" " + duel_caption(d, r, now) + ESC + "[K\r\n")
+        out.append(ESC + "[0J")
+        sys.stdout.write("".join(out))
+        sys.stdout.flush()
+        self.frame_i += 1
+
     def draw(self):
         now = time.time()
         r = load_resolved(CACHE)
@@ -399,6 +504,23 @@ class UI:
             self.load_species(r["species"], r.get("franchise"), bool(r.get("shiny")))
         self.prev_stage, self.prev_name = r.get("stage", 0), r["name"]
         st, mood = caption(r, now)
+        # duel takeover: the battle script owns the frame while it is live
+        duel = r.get("duel")
+        duel_live = bool(duel) and duel.get("date") == r.get("date") \
+            and now < duel.get("end_ts", 0) + 6
+        if duel_live:
+            if self.duel_key != duel["start_ts"]:   # entering: clear protocol art
+                self.duel_key = duel["start_ts"]
+                out.append(ESC + "[2J")
+                if self.backend == "kitty":
+                    sys.stdout.buffer.write(kitty_delete(77))
+                self._kitty_sent = self._iterm_sent = None
+            self.load_foe(duel["opponent"]["species"], duel["opponent"]["franchise"])
+            self.draw_duel(r, duel, now, out)
+            return
+        if self.duel_key is not None:               # leaving: clear the duel frame
+            self.duel_key = None
+            out.append(ESC + "[2J")
         evo_age = now - self.evolve_start if self.evolve_start else 99
         if evo_age < 10:
             mood = evo_caption(self.evolve_old, self.evolve_new, r.get("lang", "en"), evo_age)
@@ -412,7 +534,7 @@ class UI:
         m = r.get("mistakes", 0)
         self.recoil_flash = self.prev_mistakes >= 0 and m > self.prev_mistakes
         self.prev_mistakes = m
-        dim = ESC + "[2m" if st == "idle" else ""
+        dim = ESC + "[2m" if st in ("idle", "fainted") else ""
         out.append(dim)
         rows = 12
         if self.backend == "kitty" and self.anim:
@@ -458,8 +580,11 @@ class UI:
         else:
             out.append(ESC + "[K\r\n")
         out.append(ESC + "[0m\r\n")
-        out.append(" %s%s  Lv.%d   \U0001f525%dd\r\n" %
-                   ("✨ " if r.get("shiny") else "", r["name"], r["tasks"], r["streak"]))
+        rec = r.get("record") or {}
+        seg = ("   ⚔%d-%d" % (rec.get("w", 0), rec.get("l", 0))
+               if rec.get("w", 0) + rec.get("l", 0) > 0 else "")
+        out.append(" %s%s  Lv.%d%s\r\n" %
+                   ("✨ " if r.get("shiny") else "", r["name"], r["tasks"], seg))
         out.append(" " + exp_bar(r["exp_pct"], r["exp_gold"]) +
                    "  " + hp_bar(r.get("hp_pct", 100), width=5) + "\r\n")
         out.append(" " + mood + ESC + "[K\r\n")
