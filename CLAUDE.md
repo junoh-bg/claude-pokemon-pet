@@ -39,7 +39,7 @@ never make the core depend on a renderer. Franchise data lives in JSON packs
 
 ## Code review
 
-- Reviewer: `/code-review medium` on the branch diff; it reads the checklist below from this file. Re-reviews: `/code-review low` on the fix paths.
+- Reviewer: `/code-review medium` on the branch diff (`high` for risky changes); it reads the checklist below from this file. Re-reviews run at the same level on the fix paths.
 - Checklist: bash-3.2 compat; behavior parity vs v1 formulas; hook-path
   exit-0/silence; atomic writes (mktemp+mv) for JSON state; RESOLVE_JQ math
   vs golden tests; test hermeticity; stale refs after file moves.
